@@ -4,9 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8030cf15-be42-448b-b24a-3dd128dbaf28" name="Changes" comment="Added the database.sqlite and the handle_db.py file. The database contains a users table and the handle_db file some basic user handling functions">
+    <list default="true" id="8030cf15-be42-448b-b24a-3dd128dbaf28" name="Changes" comment="Created the authors table in the database and the fetch_authors, does_author_exist and create_author functions in the handle_db.py file">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database.sqlite" beforeDir="false" afterPath="$PROJECT_DIR$/database.sqlite" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/handle_db.py" beforeDir="false" afterPath="$PROJECT_DIR$/handle_db.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -72,7 +71,14 @@
       <option name="project" value="LOCAL" />
       <updated>1730913767505</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="Created the authors table in the database and the fetch_authors, does_author_exist and create_author functions in the handle_db.py file">
+      <created>1732117465088</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1732117465088</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -89,6 +95,7 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Initial commit - Project set up" />
     <MESSAGE value="Added the database.sqlite and the handle_db.py file. The database contains a users table and the handle_db file some basic user handling functions" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added the database.sqlite and the handle_db.py file. The database contains a users table and the handle_db file some basic user handling functions" />
+    <MESSAGE value="Created the authors table in the database and the fetch_authors, does_author_exist and create_author functions in the handle_db.py file" />
+    <option name="LAST_COMMIT_MESSAGE" value="Created the authors table in the database and the fetch_authors, does_author_exist and create_author functions in the handle_db.py file" />
   </component>
 </project>
