@@ -192,6 +192,69 @@ def change_user_details(name, new_name, new_email, pw_hash, new_pw_hash, confirm
 
 
 #
+# Function fetch_authors
+#
+# Use: Gets all authors stored in the database
+#
+# Returns: A list of all authors stored in the database file
+#
+# Parameters: None
+#
+def fetch_authors():
+    db, cur = prepare_db()
+    authors = cur.execute("SELECT * FROM authors;").fetchall()
+    cur.close()
+    db.close()
+    return authors
+
+
+#
+# Function does_author_exist
+#
+# Use: Checks if there is already an existing author with the provided name
+#
+# Returns: A boolean that indicates if there is already an author with the provided name
+#
+# Parameters: name - The name that should be checked
+#
+def does_author_exist(name):
+    authors = fetch_users()
+    is_existent = False
+    for author in authors:
+        if author[1] == name:
+            is_existent = True
+            break
+    return is_existent
+
+
+#
+# Function create_author
+#
+# Use: Creates a new author with the give parameters
+#
+# Returns: True if the author was created, otherwise False
+#
+# Parameters:
+#   name - the name the new author should have
+#   has_nobel_price - a boolean that indicates if the author has a Nobel Prize
+#   country - the country that the author is from
+#   date_of_birth - the date of birth of the new author
+#   date_of_death - the date when the author passed away or none if he/she is still alive
+#
+def create_author(name, has_nobel_prize, country, date_of_birth, date_of_death=None):
+    if not does_author_exist(name):
+        db, cur = prepare_db()
+        cur.execute(f"""INSERT INTO authors (author_name, has_nobel_prize, author_country, date_of_birth, date_of_death) 
+        VALUES ('{name}', '{has_nobel_prize}', '{country}', {date_of_birth}, {date_of_death});""")
+        db.commit()
+        cur.close()
+        db.close()
+        return True
+    else:
+        return False
+
+
+#
 # Main programm loop
 # Is executed when the module is run as a standalone python script
 # Contains some information to be printed and is used for testing functions
