@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+
+<html>
+
+    <head>
+
+        {% block head %}
+
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        {% endblock %}
+
+    </head>
+
+    <body>
+	
+		<h1>Lerchbacher Bücherdatenbank</h1>
+		
+		<div class="nav-bar">
+
+			<a class="books-button" href="/books">Bücher</a>
+			
+			<a class="authors-button" href="/authors">Autoren</a>
+			
+			<a class="search-button" href="/search">Suche</a>
+			
+			<a class="home-button" href="/">Home</a>
+			
+			<a class="about-button" href="/about">Über</a>
+			
+		</div>
+
+        <b>&#x1f6a7; This site is under construction! / Auf dieser Seite befinden sich Bauarbeiten! &#x1f6a7;</b>
+	
+        <br>
+
+        {% block content %}
+        {% endblock %}
+
+        <hr>
+
+        <div class="footer">
+
+            <p>Lerbacher Bücherdatenbank Website, &copy; 2025 Lars Lerchbacher</p>
+
+        </div>
+
+    </body>
+
+</html>

@@ -4,8 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8030cf15-be42-448b-b24a-3dd128dbaf28" name="Changes" comment="Created the authors table in the database and the fetch_authors, does_author_exist and create_author functions in the handle_db.py file">
+    <list default="true" id="8030cf15-be42-448b-b24a-3dd128dbaf28" name="Changes" comment="Finished the author handling functions and commented all code in the handle_db.py file. Updated it´s module version number to 0.0.2">
+      <change beforePath="$PROJECT_DIR$/.idea/Buecherdatenbank.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Buecherdatenbank.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database.sqlite" beforeDir="false" afterPath="$PROJECT_DIR$/database.sqlite" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/handle_db.py" beforeDir="false" afterPath="$PROJECT_DIR$/handle_db.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -33,18 +36,31 @@
   </component>
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
+    &quot;Python.app.executor&quot;: &quot;Run&quot;,
     &quot;Python.handle_db.executor&quot;: &quot;Run&quot;,
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/Lars/OneDrive - HTL Leoben/Dokumente/Privat/Python/Buecherdatenbank/.venv/Scripts/python.exe&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Lars/OneDrive - HTL Leoben/Dokumente/Privat/Python/Aktiv/Punchcard_Reader&quot;,
     &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;
   }
 }</component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Lars\OneDrive - HTL Leoben\Dokumente\Privat\Python\Buecherdatenbank\templates" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Lars\OneDrive - HTL Leoben\Dokumente\Privat\Python\Aktiv\Buecherdatenbank" />
+      <recent name="C:\Users\Lars\OneDrive - HTL Leoben\Dokumente\Privat\Python\Buecherdatenbank\static" />
+      <recent name="C:\Users\Lars\OneDrive - HTL Leoben\Dokumente\Privat\Python\Buecherdatenbank" />
+    </key>
+  </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-python-sdk-98f27166c754-ba05f1cad1b1-com.jetbrains.pycharm.community.sharedIndexes.bundled-PC-242.21829.153" />
+        <option value="bundled-python-sdk-495700d161d3-aa17d162503b-com.jetbrains.pycharm.community.sharedIndexes.bundled-PC-243.22562.220" />
       </set>
     </attachedChunks>
   </component>
@@ -78,7 +94,14 @@
       <option name="project" value="LOCAL" />
       <updated>1732117465088</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Finished the author handling functions and commented all code in the handle_db.py file. Updated it´s module version number to 0.0.2">
+      <created>1732123179208</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1732123179208</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -96,6 +119,7 @@
     <MESSAGE value="Initial commit - Project set up" />
     <MESSAGE value="Added the database.sqlite and the handle_db.py file. The database contains a users table and the handle_db file some basic user handling functions" />
     <MESSAGE value="Created the authors table in the database and the fetch_authors, does_author_exist and create_author functions in the handle_db.py file" />
-    <option name="LAST_COMMIT_MESSAGE" value="Created the authors table in the database and the fetch_authors, does_author_exist and create_author functions in the handle_db.py file" />
+    <MESSAGE value="Finished the author handling functions and commented all code in the handle_db.py file. Updated it´s module version number to 0.0.2" />
+    <option name="LAST_COMMIT_MESSAGE" value="Finished the author handling functions and commented all code in the handle_db.py file. Updated it´s module version number to 0.0.2" />
   </component>
 </project>
