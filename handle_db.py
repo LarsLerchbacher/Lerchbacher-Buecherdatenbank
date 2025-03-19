@@ -13,7 +13,7 @@
 # datetime datatype from the datetime module for timestamp handling
 #
 from sqlite3 import *
-from datetime import date
+from datetime import date, datetime
 #
 # Defines all constants for the project
 #
@@ -24,7 +24,7 @@ from datetime import date
 #
 DATABASE = "database.sqlite"
 SECURITY_KEY = "Alpha Delta Omicron 37 45 Blau"
-MODULE_VERSION = "0.0.3"
+MODULE_VERSION = "0.0.4"
 
 
 #
@@ -33,7 +33,7 @@ MODULE_VERSION = "0.0.3"
 # Is used for easier access of individual columns of a database row in the books table
 #
 class Book:
-    def __init__(self, id:int, title:str, author_ids:list, publisher:str, isbn:str, edition:int, year:int, types:list, tags:list, room:str, shelf:str, lend:bool):
+    def __init__(self, id:int, title:str, author_ids:list, publisher:str, isbn:str, edition:int, year:int, type:int, tags:list, room:str, shelf:str, lend:bool):
         self.id = id
         self.title = title
         self.author_ids = author_ids
@@ -41,12 +41,15 @@ class Book:
         self.isbn = isbn
         self.edition = edition
         self.year = year
-        self.types = types
+        self.type = type
         self.tags = tags
         self.room = room
         self.shelf = shelf
         self.lend = lend
 
+    def __str__(self):
+        authors = [fetch_author_by_id(id).name for id in self.author_ids]
+        return f"{self.id}, {self.title}, {authors}, {self.publisher}, {self.isbn}, {self.edition}, {self.year}, {self.type},  {self.tags}, {self.room}, {self.shelf}, {self.lend}"
 
 #
 # Class Author
@@ -61,6 +64,9 @@ class Author:
         self.country = country
         self.birthdate = birthdate
         self.date_of_death = date_of_death
+
+    def __str__(self):
+        return f"{self.name},{self.id}, {self.birthdate},{self.country}, {self.has_nobel_prize}, {self.date_of_death if self.date_of_death else ''}"
 
 
 #
@@ -111,7 +117,7 @@ def fetch_authors():
     for index in range(0, len(authors)):
         author = authors[index]
         # Updates the list element at the current index to a new Author object with all the data filled in
-        authors[index] = Author(id=author[0], name=author[1], has_nobel_prize=author[2], country=author[3], birthdate=author[4], date_of_death=author[5])
+        authors[index] = Author(id=author[0], name=author[1], has_nobel_prize=author[2], country=author[3], birthdate=datetime.strptime(author[4], '%Y-%m-%d').date(), date_of_death=datetime.strptime(author[5], '%Y-%m-%d').date() if author[5] else "")
 
     # Returns the fetched and converted authors
     return authors
@@ -237,10 +243,10 @@ def create_author(author:Author):
 
         if author.date_of_death:
             # The author is added to the db
-            cur.execute(f"INSERT INTO authors (author_name, has_nobel_prize, author_country, date_of_birth, date_of_death) VALUES ('{author.name}', {author.has_nobel_prize}, '{author.country}', '{author.birthdate}', '{author.date_of_death}');")
+            cur.execute(f"INSERT INTO authors (author_name, has_nobel_prize, author_country, date_of_birth, date_of_death) VALUES (?, ?, ?, ?, ?);", (author.name, author.has_nobel_prize, author.country, author.birthdate, author.date_of_death))
         else:
             # The author is added to the db
-            cur.execute(f"INSERT INTO authors (author_name, has_nobel_prize, author_country, date_of_birth) VALUES ('{author.name}', {author.has_nobel_prize}, '{author.country}', '{author.birthdate}');")
+            cur.execute(f"INSERT INTO authors (author_name, has_nobel_prize, author_country, date_of_birth) VALUES (?, ?, ?, ?);", (author.name, author.has_nobel_prize, author.country, author.birthdate))
 
         # Commits the changes to the db
         db.commit()
@@ -272,24 +278,27 @@ def create_author(author:Author):
 #   id - the id of the author to edit
 #   new - an Author object with the updated data
 #
-def edit_author(id, new:Author):
+def edit_author(author_id:int, new:Author):
 
     # If the author exists
-    if fetch_author_by_id(id):
+    if fetch_author_by_id(author_id):
 
         # Initializes the db connection
         db, cur = prepare_db()
 
-        # Updates the author's details
-        cur.execute(f"""
-UPDATE authors
-SET author_name = '{new.name}', has_nobel_prize = {new.has_nobel_prize}, author_country = '{new.country}', date_of_birth = {new.birthdate}, date_of_death = {new.date_of_death}
-WHERE author_id == {id};
-""" if new.date_of_death else f"""
-UPDATE authors
-SET author_name = '{new.name}', has_nobel_prize = {new.has_nobel_prize}, author_country = '{new.country}', date_of_birth = {new.birthdate}
-WHERE author_id == {id};
-                    """)
+        if new.date_of_death:
+            # Updates the author's details
+            cur.execute("""
+            UPDATE authors
+            SET author_name = ?, has_nobel_prize = ?, author_country = ?, date_of_birth = ?, date_of_death = ?
+            WHERE author_id == ?;
+            """, (new.name, new.has_nobel_prize, new.country, str(new.birthdate), str(new.date_of_death), author_id))
+        else:
+            cur.execute("""
+            UPDATE authors
+            SET author_name = ?, has_nobel_prize = ?, author_country = ?, date_of_birth = ?
+            WHERE author_id == ?;
+            """, (new.name, new.has_nobel_prize, new.country, str(new.birthdate), author_id))
 
         # Commits the changes to the db
         db.commit()
@@ -330,7 +339,7 @@ def fetch_author_by_id(author_id):
     author = cur.execute(f"SELECT * FROM authors WHERE author_id == {author_id};").fetchone()
 
     # Converts the fetched author into an Author object
-    author = Author(id=author[0], name=author[1], has_nobel_prize=author[2], country=author[3], birthdate=author[4], date_of_death=author[5])
+    author = Author(id=author[0], name=author[1], has_nobel_prize=author[2], country=author[3], birthdate=datetime.strptime(author[4], '%Y-%m-%d').date(), date_of_death=datetime.strptime(author[5], '%Y-%m-%d').date() if author[5] else "")
 
     return author
 
@@ -342,7 +351,7 @@ def fetch_author_by_name(name):
 
     author = cur.execute(f"SELECT * FROM authors WHERE author_name == '{name}';").fetchone()
 
-    author = Author(id=author[0], name=author[1], has_nobel_prize=author[2], country=author[3], birthdate=author[4], date_of_death=author[5])
+    author = Author(id=author[0], name=author[1], has_nobel_prize=author[2], country=author[3], birthdate=datetime.strptime(author[4], '%Y-%m-%d').date(), date_of_death=datetime.strptime(author[5], '%Y-%m-%d').date() if author[5] else "")
 
     return author
 
@@ -373,7 +382,7 @@ def fetch_books():
     # Converts each book into a Book object
     for index in range(0, len(books)):
         book = books[index]
-        books[index] = Book(id=book[0], title=book[1], author_ids=eval(book[2]), publisher=book[3], isbn=book[4], edition=book[5], year=book[6], types=eval(book[7]), tags=eval(book[8]), room=book[9], shelf=book[10], lend=book[11])
+        books[index] = Book(id=book[0], title=book[1], author_ids=eval(book[2]), publisher=book[3], isbn=book[4], edition=book[5], year=book[6], type=book[7], tags=eval(book[8]), room=book[9], shelf=book[10], lend=book[11])
 
     # Returns all found books
     return books
@@ -405,7 +414,7 @@ def create_book(book:Book):
     if authors_existing:
 
         # Creates the book with the provided parameters
-        cur.execute(f"INSERT INTO books (book_title, author_ids, book_publisher, book_isbn, book_edition, book_year, book_types, book_tags, book_room, book_shelf, book_lend) VALUES ('{book.title}', '{book.author_ids}', '{book.publisher}', '{book.isbn}', {book.edition}, {book.year}, \"{book.types}\", \"{book.tags}\", '{book.room}', '{book.shelf}', {book.lend});")
+        cur.execute(f"INSERT INTO books (book_title, author_ids, book_publisher, book_isbn, book_edition, book_year, book_type, book_tags, book_room, book_shelf, book_lend) VALUES ('{book.title}', '{book.author_ids}', '{book.publisher}', '{book.isbn}', {book.edition}, {book.year}, '{book.type}', \"{book.tags}\", '{book.room}', '{book.shelf}', {book.lend});")
 
         # Commits the changes to the db
         db.commit()
@@ -496,7 +505,7 @@ def edit_book(book_id:int, new:Book):
         # Updates the book
         cur.execute(f"""
 UPDATE books
-SET book_title = '{new.title}', author_ids = '{new.author_ids}', book_publisher = '{new.publisher}', book_isbn = '{new.isbn}', book_edition = {new.edition}, book_year = {new.year}, book_types = \"{new.types}\", book_tags = \"{new.tags}\", book_room = '{new.room}', book_shelf = '{new.shelf}', book_lend = {new.lend}
+SET book_title = '{new.title}', author_ids = '{new.author_ids}', book_publisher = '{new.publisher}', book_isbn = '{new.isbn}', book_edition = {new.edition}, book_year = {new.year}, book_type = '{new.type}', book_tags = \"{new.tags}\", book_room = '{new.room}', book_shelf = '{new.shelf}', book_lend = {new.lend}
 WHERE book_id = {book_id};
         """)
 
@@ -540,7 +549,7 @@ def fetch_book_by_id(book_id:int):
 
     # Turns the fetched book into a Book object
     new_book = Book(id=book[0], title=book[1], author_ids=eval(book[2]), publisher=book[3], isbn=book[4], edition=book[5],
-                year=book[6], types=eval(book[7]), tags=eval(book[8]), room=book[9], shelf=book[10], lend=book[11])
+                year=book[6], type=book[7], tags=eval(book[8]), room=book[9], shelf=book[10], lend=book[11])
 
     # Returns the found book
     return new_book
@@ -556,7 +565,7 @@ def fetch_book_by_title(title:str):
 
     # Turns the fetched book into a Book object
     new_book = Book(id=book[0], title=book[1], author_ids=eval(book[2]), publisher=book[3], isbn=book[4], edition=book[5],
-                year=book[6], types=eval(book[7]), tags=eval(book[8]), room=book[9], shelf=book[10], lend=book[11])
+                year=book[6], type=book[7], tags=eval(book[8]), room=book[9], shelf=book[10], lend=book[11])
 
     # Returns the found book
     return new_book

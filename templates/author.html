@@ -1,0 +1,81 @@
+<!--
+(c) 2025 Lars Lerchbacher,
+Lerchbacher Bücherdatenbank templates/index.html
+This is the author details page of the project
+The following page was made using the flask templates system
+-->
+
+<!-- Uses base.html as a template for this page -->
+{% extends "base.html" %}
+
+<!-- Adds additional tags to the head tag -->
+{% block head %}
+
+	<!-- Links a stylesheet -->
+    <link rel="stylesheet" href="static/index.css">
+
+	<!-- Sets the title of this page -->
+	<title>{{author.name}} - Lerchbacher Bücherdatenbank</title>
+	
+{% endblock %}
+
+<!-- Adds content to the page -->
+{% block content %}
+
+	<h2>{{ author.name }}</h2>
+
+	<ul class="menu">
+
+		<li>
+			<a href="/authors/edit?id={{author.id}}">Bearbeiten</a>
+
+		</li>
+
+		<li>
+
+			<a href="/authors/delete?id={{author.id}}">Löschen</a>
+
+		</li>
+
+	</ul>
+	
+	<p>
+	Aus: {{author.country}}<br>
+	Geburtsdatum: {{author.birthdate}}<br>
+	{% if author.date_of_death != default_death %}
+		Sterbedatum: {{author.date_of_death}}<br>
+	{% endif %}
+	{% if author.has_nobel_prize %}
+		Ist ein Nobelpreisträger<br>
+	{% else %}
+		Hat keinen Nobel Preis<br>
+	{% endif %}
+	</p>
+
+	<p>Autor der folgenden Bücher:<br>
+		<ul>
+			{% for book in books %}
+
+				<li>
+
+					<div class="book">
+
+						<h2>{{book["title"]}}</h2>
+
+						<img src="{{covers[books.index(book)]}}">
+
+						<br>
+
+						<a href="/books/details?id={{book.id}}">Weiterlesen...</a>
+
+					</div>
+
+				</li>
+
+			{% endfor %}
+		</ul>
+
+	</p>
+	
+
+{% endblock %}

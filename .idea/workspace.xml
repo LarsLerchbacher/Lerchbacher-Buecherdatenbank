@@ -4,12 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8030cf15-be42-448b-b24a-3dd128dbaf28" name="Changes" comment="Finished the author handling functions and commented all code in the handle_db.py file. Updated it´s module version number to 0.0.2">
-      <change beforePath="$PROJECT_DIR$/.idea/Buecherdatenbank.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Buecherdatenbank.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+    <list default="true" id="8030cf15-be42-448b-b24a-3dd128dbaf28" name="Changes" comment="000-27-02-2025">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Changelog.md" beforeDir="false" afterPath="$PROJECT_DIR$/Changelog.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/database.sqlite" beforeDir="false" afterPath="$PROJECT_DIR$/database.sqlite" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/forms.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/handle_db.py" beforeDir="false" afterPath="$PROJECT_DIR$/handle_db.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/book.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/book.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/index.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -37,6 +40,7 @@
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
     &quot;Python.app.executor&quot;: &quot;Run&quot;,
+    &quot;Python.forms.executor&quot;: &quot;Run&quot;,
     &quot;Python.handle_db.executor&quot;: &quot;Run&quot;,
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
@@ -60,7 +64,7 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-python-sdk-495700d161d3-aa17d162503b-com.jetbrains.pycharm.community.sharedIndexes.bundled-PC-243.22562.220" />
+        <option value="bundled-python-sdk-14705d77f0bb-aa17d162503b-com.jetbrains.pycharm.community.sharedIndexes.bundled-PC-243.25659.43" />
       </set>
     </attachedChunks>
   </component>
@@ -101,7 +105,15 @@
       <option name="project" value="LOCAL" />
       <updated>1732123179208</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="000-27-02-2025">
+      <option name="closed" value="true" />
+      <created>1740677280578</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1740677280578</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -117,9 +129,17 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Initial commit - Project set up" />
-    <MESSAGE value="Added the database.sqlite and the handle_db.py file. The database contains a users table and the handle_db file some basic user handling functions" />
-    <MESSAGE value="Created the authors table in the database and the fetch_authors, does_author_exist and create_author functions in the handle_db.py file" />
-    <MESSAGE value="Finished the author handling functions and commented all code in the handle_db.py file. Updated it´s module version number to 0.0.2" />
-    <option name="LAST_COMMIT_MESSAGE" value="Finished the author handling functions and commented all code in the handle_db.py file. Updated it´s module version number to 0.0.2" />
+    <MESSAGE value="000-06-11-2024 &#10;Added the database.sqlite and the handle_db.py file. The database contains a users table and the handle_db file some basic user handling functions" />
+    <MESSAGE value="001-20-11-2024&#10;Created the authors table in the database and the fetch_authors, does_author_exist and create_author functions in the handle_db.py file" />
+    <MESSAGE value="002-20-11-2024&#10;&#10;Finished the author handling functions and commented all code in the handle_db.py file. Updated it´s module version number to 0.0.2" />
+    <MESSAGE value="003-27-02-2025&#10;For changes see Changelog.md" />
+    <MESSAGE value="000-27-02-2025&#10;For changes see Changelog.md" />
+    <MESSAGE value="000-06-11-2024 &#10;Added the database.sqlite and the handle_db.py file. The database contains a users table and the handle_db file some basic user handling functions" />
+    <MESSAGE value="001-20-11-2024&#10;Created the authors table in the database and the fetch_authors, does_author_exist and create_author functions in the handle_db.py file" />
+    <MESSAGE value="002-20-11-2024&#10;&#10;Finished the author handling functions and commented all code in the handle_db.py file. Updated it´s module version number to 0.0.2" />
+    <MESSAGE value="002-20-11-2024&#10;Finished the author handling functions and commented all code in the handle_db.py file. Updated it´s module version number to 0.0.2" />
+    <MESSAGE value="002-20-11-2024&#10;Finished the author handling functions and commented all code in the handle_db.py file. Updated it´s module version number to 0.0.2" />
+    <MESSAGE value="003-27-02-2025&#10;For changes see Changelog.md" />
+    <option name="LAST_COMMIT_MESSAGE" value="003-27-02-2025&#10;For changes see Changelog.md" />
   </component>
 </project>

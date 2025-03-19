@@ -54,7 +54,7 @@ The following page was made using the flask templates system
 		<br>
 		{{book.edition}}. Auflage, {{book.year}}
 		<br>
-		Buchtypen: {% for type in types %} {{type}}, {% endfor %}
+		Buchtypen: {{ types[book.type] }}
 		<br>
 		Kategorien: {% for tag in tags %} {{tag}}, {% endfor %}
 		<br>

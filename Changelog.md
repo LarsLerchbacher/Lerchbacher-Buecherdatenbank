@@ -1,7 +1,7 @@
 # Lerchbacher Bücherdatenbank Project Änderungsliste
 Lerchbacher book database project changelog
 
-## Commit 000-27-02-2025
+## Commit 003-27-02-2025
 ### General
 - Removed everything concerning users
 - Added this Changelog.md file
@@ -9,7 +9,7 @@ Lerchbacher book database project changelog
 - Changed the way I comment git commits (now they are COMMITNR-DD-MM-YYYY)
 - Added some TODOs in the files for commenting or reorganizing functions
 - Removed all print statements that were used for debugging
-- I think the initial development of the website is 40% done (other 40% ==> authors functionality, other 20% ==> search functions)
+- I think the initial development of the website is 40% done (remaining: 20% ==> authors functions, 20% ==> search function, 20% ==> Styling)
 - The project now includes a README.md file with a overview of the project
 
 ### app.py
@@ -77,3 +77,14 @@ Lerchbacher book database project changelog
 
 ### CSS and Image Files (/static)
 - This folder now contains the noCover.png file, which is used, when Google Books has no cover for a book
+
+## Commit 004-19-03-2025
+### General
+- Version 0.0.4 Alpha
+- Added support for all author operations
+- Added search functions (only tag search does not work yet)
+- The project is now 70% complete(remaining: 20% ==> User functions, 10% ==> Styling)
+- I chose to add users and logins, etc. to the project, but I haven't started that yet
+- The main functions are now usable, the database is ready to be filled
+- Changed the book types to be selected from a predefined list (It was very complex to change that, dad!)
+- I'm too lazy to document the rest of the changes. Future me(or someone else), go look at the change history of git!
