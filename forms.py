@@ -24,7 +24,7 @@ class BookForm(FlaskForm):
     tags = StringField("Kategorie/n (mit ; trennen): ")
     room = SelectField("Zimmer: ", choices=["Lars Zimmer", "Linos Zimmer", "Lilos Zimmer", "Schlafzimmer", "Bibliothek", "Wohnzimmer", "Arbeitszimmer", "Sonst irgendwo"])
     shelf = StringField("Regal und/oder Fach: ")
-    lend = BooleanField("Ausgeborgt? ", default=False)
+    lend = HiddenField()
     id = HiddenField()
     submit = SubmitField()
 
@@ -61,7 +61,7 @@ class BookSearchForm(FlaskForm):
     tags = StringField("Kategorie/n (mit ; trennen): ")
     room = SelectField("Zimmer: ", choices=["Bitte auswählen", "Lars Zimmer", "Linos Zimmer", "Lilos Zimmer", "Schlafzimmer", "Bibliothek", "Wohnzimmer", "Arbeitszimmer", "Sonst irgendwo"])
     shelf = StringField("Regal und/oder Fach: ")
-    lend = SelectField("Ausgeborgt? ", choices=["Bitte auswählen", "Ja", "Nein"])
+    lend = SelectField("Ausgeborgt von: ")
     id = IntegerField("Id: ")
     submit = SubmitField("Suche")
 

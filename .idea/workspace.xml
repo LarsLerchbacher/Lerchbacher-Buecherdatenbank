@@ -4,15 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8030cf15-be42-448b-b24a-3dd128dbaf28" name="Changes" comment="000-27-02-2025">
+    <list default="true" id="8030cf15-be42-448b-b24a-3dd128dbaf28" name="Changes" comment="004-19-03-2025 Version 0.0.4 Alpha">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Changelog.md" beforeDir="false" afterPath="$PROJECT_DIR$/Changelog.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/database.sqlite" beforeDir="false" afterPath="$PROJECT_DIR$/database.sqlite" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/forms.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/handle_db.py" beforeDir="false" afterPath="$PROJECT_DIR$/handle_db.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/book.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/book.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/search.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/search.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -47,7 +45,7 @@
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;master&quot;,
     &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/Lars/OneDrive - HTL Leoben/Dokumente/Privat/Python/Aktiv/Punchcard_Reader&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Lars/OneDrive - HTL Leoben/Dokumente/Privat/Python/Aktiv/StarTrek-Computer&quot;,
     &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;
   }
 }</component>
@@ -113,7 +111,15 @@
       <option name="project" value="LOCAL" />
       <updated>1740677280578</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="004-19-03-2025 Version 0.0.4 Alpha">
+      <option name="closed" value="true" />
+      <created>1742404909987</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1742404909987</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -140,6 +146,8 @@
     <MESSAGE value="002-20-11-2024&#10;Finished the author handling functions and commented all code in the handle_db.py file. Updated it´s module version number to 0.0.2" />
     <MESSAGE value="002-20-11-2024&#10;Finished the author handling functions and commented all code in the handle_db.py file. Updated it´s module version number to 0.0.2" />
     <MESSAGE value="003-27-02-2025&#10;For changes see Changelog.md" />
-    <option name="LAST_COMMIT_MESSAGE" value="003-27-02-2025&#10;For changes see Changelog.md" />
+    <MESSAGE value="004-19-03-2025 Version 0.0.4 Alpha&#10;For Changes see Changelog.md" />
+    <MESSAGE value="004-19-03-2025 Version 0.0.4 Alpha&#10;For Changes see Changelog.md" />
+    <option name="LAST_COMMIT_MESSAGE" value="004-19-03-2025 Version 0.0.4 Alpha&#10;For Changes see Changelog.md" />
   </component>
 </project>

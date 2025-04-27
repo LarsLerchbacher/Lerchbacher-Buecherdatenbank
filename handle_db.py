@@ -14,6 +14,8 @@
 #
 from sqlite3 import *
 from datetime import date, datetime
+
+
 #
 # Defines all constants for the project
 #
@@ -24,16 +26,31 @@ from datetime import date, datetime
 #
 DATABASE = "database.sqlite"
 SECURITY_KEY = "Alpha Delta Omicron 37 45 Blau"
-MODULE_VERSION = "0.0.4"
+MODULE_VERSION = "0.0.5"
 
 
-#
-# Class Book
-#
-# Is used for easier access of individual columns of a database row in the books table
-#
+
 class Book:
-    def __init__(self, id:int, title:str, author_ids:list, publisher:str, isbn:str, edition:int, year:int, type:int, tags:list, room:str, shelf:str, lend:bool):
+    """
+    ### Class Book
+
+    **Use:** Is used for easier access of individual columns of a database row in the books table
+
+    **Fields:**
+        id - int
+        title - str
+        author_ids - list
+        publisher - str
+        isbn - str
+        edition - int
+        year - int
+        type - int
+        tags - list
+        room - str
+        shelf - str
+        lend - int
+    """
+    def __init__(self, id:int, title:str, author_ids:list[int], publisher:str, isbn:str, edition:int, year:int, type:int, tags:list, room:str, shelf:str, lend:int=-1):
         self.id = id
         self.title = title
         self.author_ids = author_ids
@@ -49,14 +66,23 @@ class Book:
 
     def __str__(self):
         authors = [fetch_author_by_id(id).name for id in self.author_ids]
-        return f"{self.id}, {self.title}, {authors}, {self.publisher}, {self.isbn}, {self.edition}, {self.year}, {self.type},  {self.tags}, {self.room}, {self.shelf}, {self.lend}"
+        return f"{self.id} {self.title} {authors} {self.publisher} {self.isbn} {self.edition} {self.year} {self.type} {self.tags} {self.room} {self.shelf} {self.lend}"
 
-#
-# Class Author
-#
-# Is used for easier access of individual columns of a database row in the authors table
-#
+
 class Author:
+    """
+    **Class Author**
+
+    **Use:** Is used for easier access of individual columns of a database row in the authors table
+
+    **Fields:**
+        id - int
+        name - str
+        has_nobel_prize - bool
+        country - str
+        birthdate - date
+        date_of_death - date, default = 2200-01-01 ==> still alive
+    """
     def __init__(self, id:int, name:str, has_nobel_prize:bool, country:str, birthdate:date, date_of_death:date="2200-01-01"):
         self.id = id
         self.name = name
@@ -65,20 +91,46 @@ class Author:
         self.birthdate = birthdate
         self.date_of_death = date_of_death
 
+    def __str__(self) -> str:
+        return f"{self.name} {self.id} {self.birthdate} {self.country} {self.has_nobel_prize} {self.date_of_death if self.date_of_death else ''}"
+
+
+class User:
+    """
+    ### Class User
+
+    **Use:** Is used for easier access of individual columns of a database row in the users table
+
+    **Fields:**
+        - id - int
+        - name - sr
+        - pw_hash - str
+        - favourite_authors - list of ints
+        - favourite_books - list of ints
+
+    """
+
+    def __init__(self, id:int, name:str, pw_hash:str, favourite_authors:list[int], favorite_books:list[int]):
+        self.id = id
+        self.name = name
+        self.pw_hash = pw_hash
+        self.favourite_authors = favourite_authors
+        self.favourite_books = favorite_books
+
     def __str__(self):
-        return f"{self.name},{self.id}, {self.birthdate},{self.country}, {self.has_nobel_prize}, {self.date_of_death if self.date_of_death else ''}"
+        return f"{self.id} {self.name} {self.favourite_authors} {self.favourite_books}"
 
 
-#
-# Function prepare_db
-#
-# Use: Establishes a connection with the Database and creates a Cursor
-#
-# Returns: The db Object which is the Database Connection and the cur Object which is the Cursor
-#
-# Parameters: None
-#
-def prepare_db():
+def prepare_db() -> tuple[Connection, Cursor]:
+    """
+    ### Function prepare_db
+
+    **Use:** Establishes a connection with the Database and creates a Cursor
+
+    **Returns:** The Database Connection db and the Cursor cur
+
+    **Parameters:** None
+    """
 
     # Stores the new connection to the database in the db variable
     db = connect(DATABASE)
@@ -90,16 +142,16 @@ def prepare_db():
     return db, cur
 
 
-#
-# Function fetch_authors
-#
-# Use: Gets all authors stored in the database
-#
-# Returns: A list of all authors stored in the database file
-#
-# Parameters: None
-#
-def fetch_authors():
+def fetch_authors() -> list[Author]:
+    """
+    ### Function fetch_authors
+
+    **Use:** Gets all authors stored in the database
+
+    **Returns:** A list of all authors stored in the database file
+
+    **Parameters:** None
+    """
 
     # The db connections is initialized
     db, cur = prepare_db()
@@ -123,42 +175,17 @@ def fetch_authors():
     return authors
 
 
-# TODO: Comment fetch_author_ids function
-def fetch_author_ids():
-
-    authors = fetch_authors()
-
-    ids = []
-
-    for author in authors:
-        ids.append(author.id)
+def does_author_exist(name) -> bool:
+    """
+    ### Function does_author_exist
     
-    return ids
-
-
-# TODO: Comment fetch_author_ids function
-def fetch_author_names():
-
-    authors = fetch_authors()
-
-    names = []
-
-    for author in authors:
-        names.append(author.name)
+    **Use:** Checks if there is already an existing author with the provided name
     
-    return names
-
-
-#
-# Function does_author_exist
-#
-# Use: Checks if there is already an existing author with the provided name
-#
-# Returns: A boolean that indicates if there is already an author with the provided name
-#
-# Parameters: name - The name that should be checked
-#
-def does_author_exist(name):
+    **Returns:** A boolean that indicates if there is already an author with the provided name
+    
+    **Parameters:** name - The name that should be checked
+    
+    """
 
     # Fetches all authors from the db
     authors = fetch_authors()
@@ -182,18 +209,18 @@ def does_author_exist(name):
     return is_existent
 
 
-#
-# Function delete_author
-#
-# Use: deletes the author with the given name if the security key is correct
-#
-# Returns: True if it deleted the user, else False
-#
-# Parameters:
-#   name - The name of the author to be deleted
-#   security_key - the key which is checked with the saved one to authorize the action
-#
-def delete_author(name, security_key):
+def delete_author(name, security_key) -> bool:
+    """
+    ### Function delete_author
+
+    **Use:** deletes the author with the given name if the security key is correct
+
+    **Returns:** True if it deleted the user, else False
+
+    **Parameters:**
+        name - The name of the author to be deleted
+        security_key - the key which is checked with the saved one to authorize the action
+    """
 
     # If the security key parameter and the predefined one match
     if security_key == SECURITY_KEY:
@@ -202,7 +229,7 @@ def delete_author(name, security_key):
         db, cur = prepare_db()
 
         # Deletes the author from the db
-        cur.execute(f"DELETE FROM authors WHERE author_name == '{name}';")
+        cur.execute(f"DELETE FROM authors WHERE author_name == ?;", (name))
 
         # Commits the changes to the db
         db.commit()
@@ -223,17 +250,17 @@ def delete_author(name, security_key):
         return False
 
 
-#
-# Function create_author
-#
-# Use: Creates a new author with the give parameters
-#
-# Returns: True if the author was created, otherwise False
-#
-# Parameters:
-#   author - an Author object containing the data of the new author
-#
-def create_author(author:Author):
+def create_author(author:Author) -> bool:
+    """"
+    ### Function create_author
+
+    **Use:** Creates a new author with the give parameters
+
+    **Returns:** True if the author was created, otherwise False
+
+    **Parameters:**
+    author - an Author object containing the data of the new author
+    """
 
     # If the author doesn't exist
     if not does_author_exist(author.name):
@@ -267,18 +294,18 @@ def create_author(author:Author):
         return False
 
 
-#
-# Function edit_author
-#
-# Use: Edits the details of the author with the provided name
-#
-# Returns: True if the author was updated or Else if he/she wasn't updated
-#
-# Parameters:
-#   id - the id of the author to edit
-#   new - an Author object with the updated data
-#
-def edit_author(author_id:int, new:Author):
+def edit_author(author_id:int, new:Author) -> bool:
+    """"
+    ### Function edit_author
+
+    **Use:** Edits the details of the author with the provided name
+
+    **Returns:** True if the author was updated or Else if he/she wasn't updated
+
+    **Parameters:**
+    id - the id of the author to edit
+    new - an Author object with the updated data
+    """
 
     # If the author exists
     if fetch_author_by_id(author_id):
@@ -319,53 +346,82 @@ def edit_author(author_id:int, new:Author):
         return False
 
 
-#
-# Function fetch_author_by_id
-#
-# Use: Checks if there is an author with the provided id and returns it
-#
-# Returns:
-#   author - the data from the found author
-#   False if there isn't an author with the provided id
-#
-# Parameters:
-#   author_id - the id which should be searched for
 # TODO: Finish commenting fetch_author_by_id function
-def fetch_author_by_id(author_id):
+def fetch_author_by_id(author_id:int) -> Author | bool:
+    """
+    ### Function fetch_author_by_id
 
+    **Use:** Checks if there is an author with the provided id and returns it
+
+    **Returns:**
+    author - the data from the found author
+    False if there isn't an author with the provided id
+
+    **Parameters:**
+    author_id - the id which should be searched for
+    """
+
+    # Creates a connection with the database
     db, cur = prepare_db()
 
-    # Fetches all authors from the db
-    author = cur.execute(f"SELECT * FROM authors WHERE author_id == {author_id};").fetchone()
+    # Tries to get the author with the id specified in author_id
+    author = cur.execute(f"SELECT * FROM authors WHERE author_id = {author_id};").fetchone()
 
-    # Converts the fetched author into an Author object
+    if author:
+
+        author = Author(id=author[0], name=author[1], has_nobel_prize=author[2], country=author[3], birthdate=datetime.strptime(author[4], '%Y-%m-%d').date(), date_of_death=datetime.strptime(author[5], '%Y-%m-%d').date() if author[5] else "")
+
+        # If there is one that has the same id as passed to the function as parameter, author is an author object
+        # else it is false
+        return author
+    else:
+
+        return False
+
+
+def fetch_author_by_name(name:str) -> Author:
+    """
+    ### Function fetch_author_by_name
+
+    **Use:** gets an author with the specified name
+
+    **Returns:** author - the Author that was found
+
+    **Parameters:** name - the name of the Author to get
+    """
+
+    # Creates a connection with the database
+    db, cur = prepare_db()
+
+    # Tries to get the author with the author_name specified in name
+    author = cur.execute(f"SELECT * FROM authors WHERE author_name == ?;", (name)).fetchone()
+
+    # Converts it to an author object
     author = Author(id=author[0], name=author[1], has_nobel_prize=author[2], country=author[3], birthdate=datetime.strptime(author[4], '%Y-%m-%d').date(), date_of_death=datetime.strptime(author[5], '%Y-%m-%d').date() if author[5] else "")
 
+    # Returns the author as an Author object
     return author
 
 
-# TODO: Comment fetch_author_by_name function
-def fetch_author_by_name(name):
+def fetch_author_names() -> list[str]:
 
-    db, cur = prepare_db()
+    authors = fetch_authors()
 
-    author = cur.execute(f"SELECT * FROM authors WHERE author_name == '{name}';").fetchone()
+    names = [author.name for author in authors]
 
-    author = Author(id=author[0], name=author[1], has_nobel_prize=author[2], country=author[3], birthdate=datetime.strptime(author[4], '%Y-%m-%d').date(), date_of_death=datetime.strptime(author[5], '%Y-%m-%d').date() if author[5] else "")
-
-    return author
+    return names
 
 
-#
-# Function fetch_books
-#
-# Use: Gets all books stored in the db
-#
-# Returns: All found books
-#
-# Parameters: None
-#
-def fetch_books():
+def fetch_books() -> list[Book]:
+    """
+    ### Function fetch_books
+
+    **Use:** Gets all books stored in the db
+
+    **Returns:** All found books
+
+    **Parameters:** None
+    """
 
     # Initializes the db connection
     db, cur = prepare_db()
@@ -388,19 +444,19 @@ def fetch_books():
     return books
 
 
-#
-# Function create_book
-#
-# Use: Creates a new book with the given parameters
-#
-# Returns:
-#   True if the book was created
-#   False if it wasn't created
-#
-# Parameters:
-#   book - a Book object containing the data for the new book
-#
-def create_book(book:Book):
+def create_book(book:Book) -> bool:
+    """
+    ### Function create_book
+
+    **Use:** Creates a new book with the given parameters
+
+    **Returns:**
+    - True if the book was created
+    - False if it wasn't created
+
+    **Parameters:**
+    - book - a Book object containing the data for the new book
+    """
 
     # Initializes the db connection
     db, cur = prepare_db()
@@ -414,7 +470,7 @@ def create_book(book:Book):
     if authors_existing:
 
         # Creates the book with the provided parameters
-        cur.execute(f"INSERT INTO books (book_title, author_ids, book_publisher, book_isbn, book_edition, book_year, book_type, book_tags, book_room, book_shelf, book_lend) VALUES ('{book.title}', '{book.author_ids}', '{book.publisher}', '{book.isbn}', {book.edition}, {book.year}, '{book.type}', \"{book.tags}\", '{book.room}', '{book.shelf}', {book.lend});")
+        cur.execute(f"INSERT INTO books (book_title, author_ids, book_publisher, book_isbn, book_edition, book_year, book_type, book_tags, book_room, book_shelf, book_lend) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);", (book.title, str(book.author_ids), book.publisher, book.isbn, book.edition, book.year, book.type, str(book.tags), book.room, book.room, book.shelf, book.lend))
 
         # Commits the changes to the db
         db.commit()
@@ -433,29 +489,29 @@ def create_book(book:Book):
         return False
 
 
-#
-# Function delete_book
-#
-# Use: Deletes the book with the provided name if the security key is correct
-#
-# Returns:
-#   True if the book was deleted
-#   False if the book couldn't be deleted
-#
-# Parameters:
-#   name - The name of the book to be deleted
-#   security_key - The security key to check if the user performing the action is an admin
-#
-def delete_book(id, security_key):
+def delete_book(book_id:int, security_key:str) -> bool:
+    """"
+    ### Function delete_book
+
+    **Use:** Deletes the book with the provided name if the security key is correct
+
+    **Returns:**
+    -   True if the book was deleted
+    -   False if the book couldn't be deleted
+
+    **Parameters:**
+    -   name - The name of the book to be deleted
+    -   security_key - The security key to check if the user performing the action is an admin
+    """
 
     # If the security key matches the predefined one and the book with the provided name does exist
-    if security_key == SECURITY_KEY and fetch_book_by_id(id):
+    if security_key == SECURITY_KEY and fetch_book_by_id(book_id):
 
         # Initializes db connection
         db, cur = prepare_db()
 
         # Deletes the book from the db
-        cur.execute(f"DELETE FROM books WHERE book_id = {id};")
+        cur.execute(f"DELETE FROM books WHERE book_id = ?;", (book_id))
 
         # Commits the changes to the db
         db.commit()
@@ -476,20 +532,20 @@ def delete_book(id, security_key):
         return False
 
 
-#
-# Function edit_book
-#
-# Use: Edits the book with the provided title
-#
-# Returns:
-#   True if the book was edited
-#   False if it wasn't edited
-#
-# Parameters:
-#   id - the id of the book to edit
-#   new - a Book object containing the new data for the book
-#
-def edit_book(book_id:int, new:Book):
+def edit_book(book_id:int, new:Book) -> bool:
+    """
+    ### Function edit_book
+
+    **Use:** Edits the book with the provided title
+
+    **Returns:**
+    -   True if the book was edited
+    -   False if it wasn't edited
+
+    **Parameters:**
+    -   id - the id of the book to edit
+    -   new - a Book object containing the new data for the book
+    """
 
     authors_existing = True
     for id in new.author_ids:
@@ -505,9 +561,9 @@ def edit_book(book_id:int, new:Book):
         # Updates the book
         cur.execute(f"""
 UPDATE books
-SET book_title = '{new.title}', author_ids = '{new.author_ids}', book_publisher = '{new.publisher}', book_isbn = '{new.isbn}', book_edition = {new.edition}, book_year = {new.year}, book_type = '{new.type}', book_tags = \"{new.tags}\", book_room = '{new.room}', book_shelf = '{new.shelf}', book_lend = {new.lend}
-WHERE book_id = {book_id};
-        """)
+SET book_title = ?, author_ids = ?, book_publisher = ?, book_isbn = ?, book_edition = ?, book_year = ?, book_type = ?, book_tags = ?, book_room = ?, book_shelf = ?, book_lend = ?
+WHERE book_id = ?;
+        """, (new.title, str(new.author_ids), new.publisher, new.isbn, new.edition, new.year, new.type, str(new.tags), new.room, new.shelf, new.lend, book_id))
 
         # Commits the changes to the db
         db.commit()
@@ -527,25 +583,25 @@ WHERE book_id = {book_id};
         return
 
 
-#
-# Function fetch_book_by_id
-#
-# Use: Checks if there is a book with the provided id and returns it
-#
-# Returns:
-#   book - the data of the book if one was found
-#   False - if no book with the provided id was found
-#
-# Parameters:
-#   book_id - the id to search for
-#
-def fetch_book_by_id(book_id:int):
+def fetch_book_by_id(book_id:int) -> tuple[Book, bool]:
+    """
+    ### Function fetch_book_by_id
+
+    **Use:** Checks if there is a book with the provided id and returns it
+
+    **Returns:**
+    -   book - the data of the book if one was found
+    -   False - if no book with the provided id was found
+
+    **Parameters:**
+    -   book_id - the id to search for
+    """
 
     # Initializes the db connection
     db, cur = prepare_db()
 
     # Fetches one book from the db where the id is equals to the book_id parameter
-    book = cur.execute(f"SELECT * FROM books WHERE book_id = {book_id};").fetchone()
+    book = cur.execute(f"SELECT * FROM books WHERE book_id = ?;", book_id).fetchone()
 
     # Turns the fetched book into a Book object
     new_book = Book(id=book[0], title=book[1], author_ids=eval(book[2]), publisher=book[3], isbn=book[4], edition=book[5],
@@ -555,40 +611,104 @@ def fetch_book_by_id(book_id:int):
     return new_book
 
 
-def fetch_book_by_title(title:str):
+def fetch_book_by_title(title:str) -> Book:
+    """
+    ### Function fetch_book_by_title
+
+    **Use:** gets a book with the title provided as an argument
+
+    **Returns:**
+    - book - the found book as a Book object
+
+    **Parameters:**
+    - title - the title to search for
+    """
 
     # Initializes the db connection
     db, cur = prepare_db()
 
     # Fetches one book from the db where the title is equals to the name parameter
-    book = cur.execute(f"SELECT * FROM books WHERE book_title = '{title}';").fetchone()
+    book = cur.execute(f"SELECT * FROM books WHERE book_title = ?;", (title)).fetchone()
 
     # Turns the fetched book into a Book object
-    new_book = Book(id=book[0], title=book[1], author_ids=eval(book[2]), publisher=book[3], isbn=book[4], edition=book[5],
+    book = Book(id=book[0], title=book[1], author_ids=eval(book[2]), publisher=book[3], isbn=book[4], edition=book[5],
                 year=book[6], type=book[7], tags=eval(book[8]), room=book[9], shelf=book[10], lend=book[11])
 
     # Returns the found book
-    return new_book
+    return book
 
 
-def change_lend_state(id:int, state:bool):
+def change_lend_state(book_id:int, user_id:int) -> bool:
+    """
+    ### Function change_lend_state
 
-    if fetch_book_by_id(id):
+    **Use:** changes the lend state of a book
 
+    **Returns:**
+    - True if the lend state could be changed
+    - False if it could not be changed
+
+    **Parameters:**
+    - book_id - the id of the book to process
+    - user_id - the id of the user trying to change the lend state
+    """
+
+    # Prevents the program from crashing on error
+    try:
+
+        # Creates a database connection
         db, cur = prepare_db()
 
-        cur.execute(f"""UPDATE books
-    SET book_lend = {state}
-    WHERE book_id = {id};
-    """)
+        # If the book is already lend
+        if fetch_book_by_id(book_id).lend != -1:
+            # Sets it new state to not lend (-1)
+            newState = -1
+        
+        # If the book is not lend
+        else:
+            # Set it to be lend by the user with user_id
+            newState = user_id
+
+        # Changes the book in the database
+        cur.execute(f"""UPDATE books SET book_lend = ? WHERE book_id = ?;""", (newState, book_id))
+
+        # Closes the cursor
         cur.close()
 
+        # commits the changes to the database
         db.commit()
 
+        # Returns True because the operation was successful
         return True
 
-    else:
+    # If something went wrong
+    except:
+        # Return false, because the book could not be changed
         return False
+
+
+def fetch_users() -> list[User]:
+
+    db, cur = prepare_db()
+
+    users = cur.execute("SELECT * FROM users;").fetchall()
+
+    new_users = []
+
+    for user in users:
+        print(user)
+        new_users.append(User(user[0], user[1], user[2], eval(user[3]), eval(user[4])))
+
+    return new_users
+
+
+def fetch_user_names():
+
+    users = fetch_users()
+
+    names = [user.name for user in users]
+
+    return names
 
 
 #

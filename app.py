@@ -83,7 +83,7 @@ def all_books():
     books = fetch_books()
 
     # Creates a new empty list to store all the covers for those books
-    covers = fetch_covers()
+    covers = fetch_covers(books)
 
     return render_template("books.html", books=books, covers=covers)
 
@@ -124,8 +124,7 @@ def book_edit():
 
     if request.method == 'GET':
         form.authors.choices = [(str(author.id), author.name) for author in fetch_authors()]
-        form.type.choices = [(index, type) for index, type in enumerate(BOOK_TYPES)]
-
+        form.type.choices = [(index -2, type) for index, type in enumerate(BOOK_TYPES)]
         if request.args.get('id'):
             book_id = request.args.get('id')
             book = fetch_book_by_id(book_id)
@@ -380,11 +379,13 @@ def search():
     else:
         type = "Alles"
 
-    bookForm.authors.choices = [(author.id, author.name) for author in fetch_authors()]
+    bookForm.authors.choices = [(index, author) for index, author in enumerate(["Bitte auswählen", "Niemand"] + fetch_author_names())]
     bookForm.type.choices = [(index, type) for index, type in enumerate(["Bitte auswählen"] + BOOK_TYPES)]
+    bookForm.lend.choices = [(index, user) for index, user in enumerate(["Bitte auswählen", "Niemandem"] + fetch_user_names())]
 
     books = fetch_books()
     authors = fetch_authors()
+    users = fetch_users()
 
     if request.method == "GET":
         return render_template("search.html", authorForm=authorForm, bookForm=bookForm, searchForm=searchForm, books=[], authors=[], type=type)
@@ -393,8 +394,9 @@ def search():
         if type == "Alles":
             results_books = [book for book in books if searchForm.searchBar.data.lower() in str(book).lower() if searchForm.searchBar.data]
             results_authors = [author for author in authors if searchForm.searchBar.data.lower() in str(author).lower() if searchForm.searchBar.data]
+            result_users = [user for user in users if searchForm.searchBar.data.lower() in str(user).lower() if searchForm.searchBar.data]
             covers = fetch_covers(results_books)
-            return render_template("search.html", authorForm=authorForm, bookForm=bookForm, searchForm=searchForm, books=results_books, authors=results_authors, type=type, covers=covers)
+            return render_template("search.html", authorForm=authorForm, bookForm=bookForm, searchForm=searchForm, books=results_books, authors=results_authors, users=result_users, type=type, covers=covers)
         elif type == "Buch":
             results_books = []
             for book in books:
@@ -410,11 +412,8 @@ def search():
                 elif bookForm.year.data and bookForm.year.data == book.year:
                     results_books.append(book)
                     continue
-                elif bookForm.lend.data != 0:
-                    if bookForm.lend.data == "Ja" and book.lend:
-                        results_books.append(book)
-                        continue
-                    elif bookForm.lend.data == "Nein" and not book.lend:
+                elif bookForm.lend.data != -2:
+                    if bookForm.lend.data == book.lend:
                         results_books.append(book)
                         continue
                 elif bookForm.type.data != 0 and int(bookForm.type.data) == int(book.type)+1:
@@ -432,15 +431,14 @@ def search():
                 elif bookForm.shelf.data and bookForm.shelf.data.lower() in book.shelf.lower():
                     results_books.append(book)
                     continue
-                for searchTag in bookForm.tags.data.lower().split(";"):
-                    if searchTag.lower() in [tag.lower() for tag in book.tags]:
-                        print(bookForm.tags.data.lower().split(";"), searchTag)
-                        results_books.append(book)
-                        continue
-                for author in bookForm.authors.data:
-                    if author in book.author_ids:
-                        results_books.append(book)
-                        continue
+                if bookForm.tags.data:
+                    for searchTag in bookForm.tags.data.lower().split(";"):
+                        if searchTag.lower() in str(book.tags):
+                            results_books.append(book)
+                if bookForm.authors.data and bookForm.authors.data != -2:
+                    for author in bookForm.authors.data:
+                        if author - 1 in book.author_ids:
+                            results_books.append(book)
 
             covers = fetch_covers(results_books)
             return render_template("search.html", authorForm=authorForm, bookForm=bookForm, searchForm=searchForm, books=results_books, authors=[], type=type, covers=covers)
@@ -477,20 +475,3 @@ def search():
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=2025, debug=True)
-
-
-# Book table columns:
-"""
-Book ID INTEGER PRIMARY KEY
-Book title STRING NOT NULL
-Author ID INTEGER
-book publisher STRING NOT NULL
-book isbn STRING
-book edition INTEGER DEFAULT 1
-book year INTEGER
-book type INTEGER
-book tags BLOB
-book room STRING
-book shelf STRING
-book lend BOOLEAN
-"""
