@@ -1,0 +1,46 @@
+<!--
+(c) 2025 Lars Lerchbacher,
+Lerchbacher Bücherdatenbank templates/user_details.html
+This is the user details page of the project
+The following page was made using the flask templates system
+-->
+
+<!-- Uses base.html as a template for this page -->
+{% extends "base.html" %}
+
+<!-- Adds additional tags to the head tag -->
+{% block head %}
+
+	<!-- Links a stylesheet -->
+    <link rel="stylesheet" href="static/index.css">
+
+	<!-- Sets the title of this page -->
+	<title>{{user.name}} - Lerchbacher Bücherdatenbank</title>
+	
+{% endblock %}
+
+<!-- Adds content to the page -->
+{% block content %}
+
+	<h1>{{user.name}}</h1>
+
+	<h2>Lieblingsbücher:</h2>
+	<!-- TODO: Add favourite books -->
+
+	<h2>Lieblingsautor*innen:</h2>
+	<!-- TODO: Add favourite authors -->
+
+	<h2>Ausgeborgte Bücher:</h2>
+
+	<ul>
+
+		{% for book in books %}
+			
+			<h3>{{book.title}}</h3>
+			<img src=""> <!-- TODO: Add book cover display on this page -->
+			<a href="/book/details?id={{book.id}}">Weiterlesen...</a>
+
+		{% endfor %}
+	<ul>
+
+{% endblock %}

@@ -688,37 +688,93 @@ def change_lend_state(book_id:int, user_id:int) -> bool:
 
 
 def fetch_users() -> list[User]:
+    """
+    ### Function fetch_users
 
+    **Use:** Retrieves a list of all users in the database
+
+    **Returns:**
+    - users - a list of the users in the database
+    """
+
+    # Creates a connection to the database
     db, cur = prepare_db()
 
-    users = cur.execute("SELECT * FROM users;").fetchall()
+    # Retrieves all users in raw form from the database
+    raw_users = cur.execute("SELECT * FROM users;").fetchall()
 
-    new_users = []
+    # Creates a list for the processed users
+    users = []
 
-    for user in users:
-        print(user)
-        new_users.append(User(user[0], user[1], user[2], eval(user[3]), eval(user[4])))
+    # Converts the raw users (lists) into instances of the User class
+    for user in raw_users:
+        users.append(User(user[0], user[1], user[2], eval(user[3]), eval(user[4])))
 
-    return new_users
+    # Returns the converted users
+    return users
 
 
 def fetch_user_names():
+    """
+    ### Function fetch_user_names
 
+    **Use:** Retrieves a list with the names of all the users in the database
+
+    **Returns:**
+    - names - the list of all the users in the database
+    """
+
+    # Gets all the users in the database
     users = fetch_users()
 
+    # Stores their names in a list
     names = [user.name for user in users]
 
+    # And returns the list
     return names
 
 
-#
-# Main program loop
-# Is executed when the module is run as a standalone python script
-# Contains some information to be printed and is used for testing functions
-#
+def fetch_user_by_id(user_id:int) -> User|None:
+    """
+    ### Function fetch_user_by_id
+
+    **Use**: tries to fetch a user with the provided id from the database
+
+    **Returns:**
+    - False if no user with the provided id was found
+    - result - the user with the provided id
+
+    **Parameters:**
+    - user_id - the id that should be searched for
+    """
+
+    # Fetches all users from the database
+    users = fetch_users()
+
+    # The result will be false if no user with the user_id parameter was found
+    result = False
+
+    # Searches the users for the id
+    for user in users:
+        if user.id == user_id:
+            # Updates the result to the found user and exits the loop
+            result = user
+            break
+
+    
+    # Returns the result of the operation    
+    return result
+
+
+"""
+Main program loop
+Is executed when the module is run as a standalone python script
+Contains some information to be printed and is used for testing functions
+"""
 if __name__ == "__main__":
     print("-------------------------------------------")
     print("Executing file 'handle_db.py'")
     print("This file is executed as the main process")
+    print("To start the webserver, please rub 'python app.py'!")
     print(f"Module version {MODULE_VERSION}")
     print("-------------------------------------------")

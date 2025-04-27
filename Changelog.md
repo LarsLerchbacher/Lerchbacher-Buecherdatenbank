@@ -88,3 +88,11 @@ Lerchbacher book database project changelog
 - The main functions are now usable, the database is ready to be filled
 - Changed the book types to be selected from a predefined list (It was very complex to change that, dad!)
 - I'm too lazy to document the rest of the changes. Future me(or someone else), go look at the change history of git!
+
+## Commit 005-27-04-2025
+### General
+- The repo is now hosted on GitHub (private at the moment)
+- I will discontinue this file and use git commit messages instead, because that's what they were made for
+- Project status: 70 - 75 % complete (remaining: 20-15% ==> User functions, 10% ==> Styling)
+- Added a users list page
+- Added a user details page (incomplete, only name is displayed)

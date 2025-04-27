@@ -7,8 +7,6 @@
 
 
 from flask_wtf import FlaskForm
-from requests_toolbelt.multipart.encoder import coerce_data
-from scipy.spatial.transform import Slerp
 from wtforms import StringField, SubmitField, SelectField, SelectMultipleField, IntegerField, BooleanField, HiddenField, PasswordField, DateField, SearchField
 from wtforms.validators import DataRequired
 
