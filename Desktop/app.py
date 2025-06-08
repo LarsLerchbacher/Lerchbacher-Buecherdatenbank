@@ -8,6 +8,7 @@ import sys
 from handle_db import *
 from tkinter import *
 from tkinter.ttk import *
+from UIClasses import *
 
 root = Tk()
 root.title("Lerchbacher Buecherdatenbank")
@@ -26,21 +27,16 @@ tabControl.add(authorsTab, text = 'Autoren')
 tabControl.add(searchTab, text = 'Suche')
 
 
+
 #
 # Menu Tab
 #
-header_label = Label(mainTab,text='Lerchbacher Buecherdatenbank')
-
-tabControl.grid_columnconfigure(0, weight=1)
-tabControl.grid_columnconfigure(1, weight=1)
-tabControl.grid_columnconfigure(2, weight=1)
-tabControl.grid_rowconfigure(0, weight=1)
-tabControl.grid_rowconfigure(1, weight=1)
-tabControl.grid_rowconfigure(2, weight=1)
-
-header_label.grid(row=0, column=1, columnspan=3, sticky = 'WE', pady = 2)
-
+header_label = Label(mainTab,text='Lerchbacher Buecherdatenbank', font="Arial 25 bold")
+header_label.pack(padx = 0, pady = 10)
+test_book = BookDisplay(mainTab, "Hello World", "../Web/static/noCover.png", 1)
+test_book.pack(pady = 10, padx = 20)
 
 
 root.mainloop()
+
 

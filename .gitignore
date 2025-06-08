@@ -1,5 +1,4 @@
-__pychache__/*
 venv/*
 .git/*
 .idea/*
-
+*/__pycache__/*
