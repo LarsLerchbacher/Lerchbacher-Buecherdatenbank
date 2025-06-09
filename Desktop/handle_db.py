@@ -14,6 +14,7 @@
 #
 from sqlite3 import *
 from datetime import date, datetime
+import requests
 
 
 #
@@ -119,6 +120,42 @@ class User:
 
     def __str__(self):
         return f"{self.id} {self.name} {self.favourite_authors} {self.favourite_books}"
+
+
+def fetch_covers(books:list) -> list:
+    covers = []
+    # Iterates through all books in the books list
+    for book in books:
+
+        # Tries to get a cover for the book using the Google books request API
+        try:
+
+            # Querries the API
+            req = requests.get("https://www.googleapis.com/books/v1/volumes?q=isbn:"+str(book.isbn))
+
+            # Reads all available images for the book
+            imageEntries = req.json()["items"][0]["volumeInfo"]["imageLinks"]
+
+            # Creates a new empty list to store all the book cover links
+            imageLinks = []
+
+            # Iterates through all entries in the imageEntries dict
+            for key, value in imageEntries.items():
+                # Adds the link of the current entry to the imageLinks list
+                imageLinks.append(value)
+
+            # Tries to get the smallest cover
+            cover = imageLinks[0]
+
+        # If there is an error with the api or no book cover available
+        except Exception:
+            # Sets the cover to the noCover file
+            cover = "/static/noCover.png"
+
+        # Adds the current cover to the covers list
+        covers.append(cover)
+
+    return covers
 
 
 def prepare_db() -> tuple[Connection, Cursor]:
@@ -601,7 +638,7 @@ def fetch_book_by_id(book_id:int) -> tuple[Book, bool]:
     db, cur = prepare_db()
 
     # Fetches one book from the db where the id is equals to the book_id parameter
-    book = cur.execute(f"SELECT * FROM books WHERE book_id = ?;", book_id).fetchone()
+    book = cur.execute(f"SELECT * FROM books WHERE book_id = ?;", (book_id, )).fetchone()
 
     # Turns the fetched book into a Book object
     new_book = Book(id=book[0], title=book[1], author_ids=eval(book[2]), publisher=book[3], isbn=book[4], edition=book[5],

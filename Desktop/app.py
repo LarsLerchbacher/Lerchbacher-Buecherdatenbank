@@ -33,8 +33,19 @@ tabControl.add(searchTab, text = 'Suche')
 #
 header_label = Label(mainTab,text='Lerchbacher Buecherdatenbank', font="Arial 25 bold")
 header_label.pack(padx = 0, pady = 10)
-test_book = BookDisplay(mainTab, "Hello World", "../Web/static/noCover.png", 1)
-test_book.pack(pady = 10, padx = 20)
+
+recentBooks = RecentBooksWidget(mainTab)
+recentBooks.pack(padx = 0, pady = 10)
+
+
+#
+# Books Tab
+#
+booksHeaderLabel = Label(booksTab, text = "Buecher", font = "Arial 25 bold")
+booksHeaderLabel.pack(pady = 10)
+
+allBooks = AllBooksWidget(booksTab)
+allBooks.pack(pady = 10)
 
 
 root.mainloop()
