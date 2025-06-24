@@ -406,7 +406,7 @@ def fetch_author_by_id(author_id:int) -> Author | bool:
 
     if author:
 
-        author = Author(id=author[0], name=author[1], has_nobel_prize=author[2], country=author[3], birthdate=datetime.strptime(author[4], '%Y-%m-%d').date(), date_of_death=datetime.strptime(author[5], '%Y-%m-%d').date() if author[5] else "")
+        author = Author(id=author[0], name=author[1], has_nobel_prize=author[2], country=author[3], birthdate=datetime.strptime(author[4], '%Y-%m-%d').date(), date_of_death=datetime.strptime(author[5], '%Y-%m-%d').date() if not author[5] else "")
 
         # If there is one that has the same id as passed to the function as parameter, author is an author object
         # else it is false
@@ -431,13 +431,13 @@ def fetch_author_by_name(name:str) -> Author:
     db, cur = prepare_db()
 
     # Tries to get the author with the author_name specified in name
-    author = cur.execute(f"SELECT * FROM authors WHERE author_name == ?;", (name)).fetchone()
+    author = cur.execute(f"SELECT * FROM authors WHERE author_name == \"{name}\";").fetchone()
 
     # Converts it to an author object
-    author = Author(id=author[0], name=author[1], has_nobel_prize=author[2], country=author[3], birthdate=datetime.strptime(author[4], '%Y-%m-%d').date(), date_of_death=datetime.strptime(author[5], '%Y-%m-%d').date() if author[5] else "")
+    new_author = Author(id=author[0], name=author[1], has_nobel_prize=author[2], country=author[3], birthdate=datetime.strptime(author[4], '%Y-%m-%d').date(), date_of_death=datetime.strptime(author[5], '%Y-%m-%d').date() if author[5] else "")
 
     # Returns the author as an Author object
-    return author
+    return new_author
 
 
 def fetch_author_names() -> list[str]:
@@ -620,7 +620,7 @@ WHERE book_id = ?;
         return
 
 
-def fetch_book_by_id(book_id:int) -> tuple[Book, bool]:
+def fetch_book_by_id(book_id:int) -> Book|bool:
     """
     ### Function fetch_book_by_id
 

@@ -4,13 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8030cf15-be42-448b-b24a-3dd128dbaf28" name="Changes" comment="004-19-03-2025 Version 0.0.4 Alpha">
+    <list default="true" id="8030cf15-be42-448b-b24a-3dd128dbaf28" name="Changes" comment="Added more features to the Book Edit Dialog, but it is still WIP">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database.sqlite" beforeDir="false" afterPath="$PROJECT_DIR$/database.sqlite" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/forms.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/handle_db.py" beforeDir="false" afterPath="$PROJECT_DIR$/handle_db.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/search.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/search.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -20,6 +15,18 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;LarsLerchbacher&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/LarsLerchbacher/Lerchbacher-Buecherdatenbank&quot;,
+    &quot;accountId&quot;: &quot;7f6c40c8-24b7-45df-8be7-cc9f417c2063&quot;
+  }
+}</component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
@@ -30,25 +37,27 @@
   &quot;associatedIndex&quot;: 3
 }</component>
   <component name="ProjectId" id="2oNcTfNtXHvOCNjZ5QLr04Vaj1h" />
-  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Python.app.executor&quot;: &quot;Run&quot;,
-    &quot;Python.forms.executor&quot;: &quot;Run&quot;,
-    &quot;Python.handle_db.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/Lars/OneDrive - HTL Leoben/Dokumente/Privat/Python/Aktiv/StarTrek-Computer&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Python.Desktop.executor": "Run",
+    "Python.UIClasses.executor": "Run",
+    "Python.app.executor": "Run",
+    "Python.forms.executor": "Run",
+    "Python.handle_db.executor": "Run",
+    "Python.python app.py.executor": "Run",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "master",
+    "ignore.virus.scanning.warn.message": "true",
+    "last_opened_file_path": "C:/Users/Lars/OneDrive - HTL Leoben/Dokumente/Privat/Python/Aktiv/Lerchbacher-Buecherdatenbank",
+    "settings.editor.selected.configurable": "vcs.Git"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\Lars\OneDrive - HTL Leoben\Dokumente\Privat\Python\Buecherdatenbank\templates" />
@@ -59,10 +68,18 @@
       <recent name="C:\Users\Lars\OneDrive - HTL Leoben\Dokumente\Privat\Python\Buecherdatenbank" />
     </key>
   </component>
+  <component name="RunAnythingCache">
+    <option name="myCommands">
+      <command value="conda clean" />
+      <command value="pip install conda" />
+      <command value="pip install miniconda" />
+      <command value="python app.py" />
+    </option>
+  </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-python-sdk-14705d77f0bb-aa17d162503b-com.jetbrains.pycharm.community.sharedIndexes.bundled-PC-243.25659.43" />
+        <option value="bundled-python-sdk-53e2683a6804-9cdd278e9d02-com.jetbrains.pycharm.community.sharedIndexes.bundled-PC-251.26094.141" />
       </set>
     </attachedChunks>
   </component>
@@ -119,7 +136,15 @@
       <option name="project" value="LOCAL" />
       <updated>1742404909987</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="Added more features to the Book Edit Dialog, but it is still WIP">
+      <option name="closed" value="true" />
+      <created>1750773560003</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1750773560003</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -148,6 +173,7 @@
     <MESSAGE value="003-27-02-2025&#10;For changes see Changelog.md" />
     <MESSAGE value="004-19-03-2025 Version 0.0.4 Alpha&#10;For Changes see Changelog.md" />
     <MESSAGE value="004-19-03-2025 Version 0.0.4 Alpha&#10;For Changes see Changelog.md" />
-    <option name="LAST_COMMIT_MESSAGE" value="004-19-03-2025 Version 0.0.4 Alpha&#10;For Changes see Changelog.md" />
+    <MESSAGE value="Added more features to the Book Edit Dialog, but it is still WIP" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added more features to the Book Edit Dialog, but it is still WIP" />
   </component>
 </project>
