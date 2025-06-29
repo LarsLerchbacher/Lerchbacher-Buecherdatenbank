@@ -1,0 +1,122 @@
+
+----------
+[2025-06-29 15:59:04.231339] Lerchbacher book database desktop v0.0.1
+[2025-06-29 15:59:04.231411] Starting application
+[2025-06-29 15:59:04.255771] Initializing main window
+[2025-06-29 15:59:04.255827] Creating tab control widget
+[2025-06-29 15:59:04.255935] Populating tab control widget
+[2025-06-29 15:59:04.284349] Successfully initialized main window
+[2025-06-29 15:59:05.804962] Peacefully terminating application
+[2025-06-29 15:59:05.805075] Goodbye!
+----------
+[2025-06-29 16:01:08.947616] Lerchbacher book database desktop v0.0.1
+[2025-06-29 16:01:08.947679] Starting application
+[2025-06-29 16:01:08.971991] Initializing main window
+[2025-06-29 16:01:08.972048] Creating tab control widget
+[2025-06-29 16:01:08.972156] Populating tab control widget
+[2025-06-29 16:01:08.999448] Successfully initialized main window
+[2025-06-29 16:01:11.247218] Peacefully terminating application
+[2025-06-29 16:01:11.247303] Goodbye!
+----------
+[2025-06-29 16:01:33.313399] Lerchbacher book database desktop v0.0.1
+[2025-06-29 16:01:33.313460] Starting application
+[2025-06-29 16:01:33.337654] Initializing main window
+[2025-06-29 16:01:33.337711] Creating tab control widget
+[2025-06-29 16:01:33.337818] Populating tab control widget
+[2025-06-29 16:01:33.366222] Successfully initialized main window
+[2025-06-29 16:01:35.115556] Peacefully terminating application
+[2025-06-29 16:01:35.115666] Goodbye!
+----------
+[2025-06-29 16:02:53.097016] Lerchbacher book database desktop v0.0.1
+[2025-06-29 16:02:53.097055] Starting application
+[2025-06-29 16:02:53.120821] Initializing main window
+[2025-06-29 16:02:53.120873] Creating tab control widget
+[2025-06-29 16:02:53.120979] Populating tab control widget
+[2025-06-29 16:02:53.148185] Successfully initialized main window
+[2025-06-29 16:02:57.151726] Peacefully terminating application
+[2025-06-29 16:02:57.151818] Goodbye!
+----------
+[2025-06-29 16:07:01.064679] Lerchbacher book database desktop v0.0.1
+[2025-06-29 16:07:01.064753] Starting application
+[2025-06-29 16:07:01.089428] Initializing main window
+[2025-06-29 16:07:01.089497] Creating tab control widget
+[2025-06-29 16:07:01.089613] Populating tab control widget
+[2025-06-29 16:07:01.116954] Successfully initialized main window
+[2025-06-29 16:07:04.488844] Peacefully terminating application
+[2025-06-29 16:07:04.488953] Goodbye!
+----------
+[2025-06-29 16:07:10.510465] Lerchbacher book database desktop v0.0.1
+[2025-06-29 16:07:10.510515] Starting application
+[2025-06-29 16:07:10.534686] Initializing main window
+[2025-06-29 16:07:10.534752] Creating tab control widget
+[2025-06-29 16:07:10.534865] Populating tab control widget
+[2025-06-29 16:07:10.562823] Successfully initialized main window
+[2025-06-29 16:07:13.990721] Peacefully terminating application
+[2025-06-29 16:07:13.990822] Goodbye!
+----------
+[2025-06-29 17:13:09.806488] Lerchbacher book database desktop v0.0.1
+[2025-06-29 17:13:09.806548] Starting application
+[2025-06-29 17:13:09.829910] Initializing main window
+[2025-06-29 17:13:09.829974] Creating tab control widget
+[2025-06-29 17:13:09.830090] Populating tab control widget
+[2025-06-29 17:13:09.857259] Successfully initialized main window
+[2025-06-29 17:14:15.678556] Peacefully terminating application
+[2025-06-29 17:14:15.678652] Goodbye!
+----------
+[2025-06-29 17:14:54.902354] Lerchbacher book database desktop v0.0.1
+[2025-06-29 17:14:54.902433] Starting application
+[2025-06-29 17:14:54.930443] Initializing main window
+[2025-06-29 17:14:54.930506] Creating tab control widget
+[2025-06-29 17:14:54.930622] Populating tab control widget
+[2025-06-29 17:14:54.957830] Successfully initialized main window
+[2025-06-29 17:14:59.552061] Peacefully terminating application
+[2025-06-29 17:14:59.552188] Goodbye!
+----------
+[2025-06-29 17:15:06.903300] Lerchbacher book database desktop v0.0.1
+[2025-06-29 17:15:06.903370] Starting application
+[2025-06-29 17:15:06.927947] Initializing main window
+[2025-06-29 17:15:06.928013] Creating tab control widget
+[2025-06-29 17:15:06.928125] Populating tab control widget
+[2025-06-29 17:15:06.955412] Successfully initialized main window
+[2025-06-29 17:15:09.666898] Peacefully terminating application
+[2025-06-29 17:15:09.666992] Goodbye!
+----------
+[2025-06-29 17:36:19.254006] Lerchbacher book database desktop v0.0.1
+[2025-06-29 17:36:19.254067] Starting application
+[2025-06-29 17:36:19.277831] Initializing main window
+[2025-06-29 17:36:19.277896] Creating tab control widget
+[2025-06-29 17:36:19.278037] Populating tab control widget
+[2025-06-29 17:36:19.305551] Successfully initialized main window
+----------
+[2025-06-29 17:50:55.442431] Lerchbacher book database desktop v0.0.1
+[2025-06-29 17:50:55.442494] Starting application
+[2025-06-29 17:50:55.466378] Initializing main window
+[2025-06-29 17:50:55.466443] Creating tab control widget
+[2025-06-29 17:50:55.466555] Populating tab control widget
+----------
+[2025-06-29 17:51:12.652100] Lerchbacher book database desktop v0.0.1
+[2025-06-29 17:51:12.652163] Starting application
+[2025-06-29 17:51:12.675962] Initializing main window
+[2025-06-29 17:51:12.676027] Creating tab control widget
+[2025-06-29 17:51:12.676145] Populating tab control widget
+[2025-06-29 17:51:12.703519] Successfully initialized main window
+[2025-06-29 17:51:26.565020] Peacefully terminating application
+[2025-06-29 17:51:26.565138] Goodbye!
+----------
+[2025-06-29 17:51:38.408989] Lerchbacher book database desktop v0.0.1
+[2025-06-29 17:51:38.409051] Starting application
+[2025-06-29 17:51:38.433701] Initializing main window
+[2025-06-29 17:51:38.433765] Creating tab control widget
+[2025-06-29 17:51:38.433877] Populating tab control widget
+[2025-06-29 17:51:38.463346] Successfully initialized main window
+[2025-06-29 17:52:49.357504] Peacefully terminating application
+[2025-06-29 17:52:49.357617] Goodbye!
+----------
+[2025-06-29 17:54:47.309196] Lerchbacher book database desktop v0.0.1
+[2025-06-29 17:54:47.309261] Starting application
+[2025-06-29 17:54:47.333817] Initializing main window
+[2025-06-29 17:54:47.333882] Creating tab control widget
+[2025-06-29 17:54:47.333997] Populating tab control widget
+[2025-06-29 17:54:47.361501] Successfully initialized main window
+[2025-06-29 17:54:58.182006] Peacefully terminating application
+[2025-06-29 17:54:58.182132] Goodbye!

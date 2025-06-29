@@ -126,12 +126,15 @@ def fetch_covers(books:list) -> list:
     covers = []
     # Iterates through all books in the books list
     for book in books:
+        print(book.isbn)
 
         # Tries to get a cover for the book using the Google books request API
         try:
 
             # Querries the API
-            req = requests.get("https://www.googleapis.com/books/v1/volumes?q=isbn:"+str(book.isbn))
+            url = f"https://www.googleapis.com/books/v1/volumes?q=isbn:{str(book.isbn)}" 
+            print(url)
+            req = requests.get(url)
 
             # Reads all available images for the book
             imageEntries = req.json()["items"][0]["volumeInfo"]["imageLinks"]
@@ -150,7 +153,7 @@ def fetch_covers(books:list) -> list:
         # If there is an error with the api or no book cover available
         except Exception:
             # Sets the cover to the noCover file
-            cover = "/static/noCover.png"
+            cover = "./static/noCover.png"
 
         # Adds the current cover to the covers list
         covers.append(cover)
@@ -472,13 +475,15 @@ def fetch_books() -> list[Book]:
     # Closes the database connection
     db.close()
 
+    new_books = []
+
     # Converts each book into a Book object
     for index in range(0, len(books)):
         book = books[index]
-        books[index] = Book(id=book[0], title=book[1], author_ids=eval(book[2]), publisher=book[3], isbn=book[4], edition=book[5], year=book[6], type=book[7], tags=eval(book[8]), room=book[9], shelf=book[10], lend=book[11])
+        new_books.append(Book(id=book[0], title=book[1], author_ids=eval(book[2]), publisher=book[3], isbn=book[4], edition=book[5], year=book[6], type=book[7], tags=eval(book[8]), room=book[9], shelf=book[10], lend=book[11]))
 
     # Returns all found books
-    return books
+    return new_books
 
 
 def create_book(book:Book) -> bool:

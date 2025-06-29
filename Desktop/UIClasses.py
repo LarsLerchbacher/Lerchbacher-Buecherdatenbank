@@ -14,14 +14,13 @@ from pathlib import Path
 from helperfunctions import *
 
 
-
 IMAGE_SIZE = 175
 
 
 class BookWidget(Frame):
     def __init__(self, parent, id: int, *args, **kwargs):
-        super().__init__(parent, relief=SUNKEN, width = 600, height = 350, *args, **kwargs)
-        self.title = Label(self, text = "", font="Arial 16 bold")
+        super().__init__(parent, relief=SUNKEN, width = 600, height = 400, *args, **kwargs)
+        self.title = Label(self, text = "", font="Arial 16 bold", wraplength=500, justify='center')
         self.author = Label(self, text = "", font = "Arial 12")
 
         image = Image.open("../Web/static/noCover.png")
@@ -156,6 +155,14 @@ class BookEdit(Toplevel):
         self.title_label.grid(row=0, column=0)
         self.title.grid(row=0, column=1, columnspan=4)
 
+        self.authors_frame = Frame(self)
+        self.authors_frame.pack(padx=20, pady=5)
+
+        self.authors_label = Label(self.authors_frame, text="Autoren: ")
+        self.authors = AuthorSelectWidget(self.authors_frame, [])
+        self.authors_label.grid(row=0, column=0)
+        self.authors.grid(row=1, column=0, pady=20)
+
         self.publisher_frame = Frame(self)
         self.publisher_frame.pack(padx=20, pady=5)
 
@@ -197,13 +204,47 @@ class BookEdit(Toplevel):
         self.type_label.grid(row=0, column=0)
         self.type.grid(row=0, column=1)
 
-        self.authors_frame = Frame(self)
-        self.authors_frame.pack(padx=20, pady=5)
+        self.tags_frame = Frame(self)
+        self.tags_frame.pack(padx=20, pady=5)
 
-        self.authors_label = Label(self.authors_frame, text="Autoren: ")
-        self.authors = AuthorSelectWidget(self.authors_frame, [])
-        self.authors_label.grid(row=0, column=0)
-        self.authors.grid(row=1, column=0, pady=20)
+        self.tags_label = Label(self.tags_frame, text="Kategorien (durch ';' getrennt): ")
+        self.tags = Entry(self.tags_frame, width=50)
+        self.tags_label.grid(row=0, column=0)
+        self.tags.grid(row=0, column=1)
+
+        self.room_frame = Frame(self)
+        self.room_frame.pack(padx=20, pady=5)
+
+        self.all_rooms = read_rooms()
+        self.room_label = Label(self.room_frame, text='Raum: ')
+        self.room = Combobox(self.room_frame, values=self.all_rooms, width=25)
+        self.room_label.grid(row=0, column=0)
+        self.room.grid(row=0, column=1)
+
+        self.shelf_frame = Frame(self)
+        self.shelf_frame.pack(padx=20, pady=5)
+        
+        self.shelf_label = Label(self.shelf_frame, text='Regal: ')
+        self.shelf = Entry(self.shelf_frame, width=25)
+        self.shelf_label.grid(row=0, column=0)
+        self.shelf.grid(row=0, column=1)
+
+        self.lend_frame = Frame(self)
+        self.lend_frame.pack(padx=20, pady=5)
+
+        self.lend_label = Label(self.lend_frame, text='Ausgeborgt: ')
+        self.lend_var = IntVar()
+        self.lend = Checkbutton(self.lend_frame, variable=self.lend_var)
+        self.lend_label.grid(row=0, column=0)
+        self.lend.grid(row=0, column=1)
+
+        self.button_frame = Frame(self)
+        self.button_frame.pack(padx=20, pady=5)
+
+        self.save_button = Button(self.button_frame, text='Speichern', command=self.save)
+        self.cancel_button = Button(self.button_frame, text='Abbrechen', command=self.cancel)
+        self.save_button.grid(row=0, column=0)
+        self.cancel_button.grid(row=0, column=1, padx=10)
 
         if self.id != -1:
             self.update()
@@ -232,10 +273,32 @@ class BookEdit(Toplevel):
             set_book_types(["Kinderbuch", "Jugendbuch", "Roman", "Sachbuch"])
         self.type['values'] = self.all_types
 
-        if book.type in range(0, len(self.all_types) - 1):
+        if book.type in range(0, len(self.all_types)):
             self.type.set(self.all_types[book.type])
         else:
             self.type.set("Unbekannt")
+
+        if book.room in range(0, len(self.all_rooms)):
+            self.room.set(self.all_rooms[book.room])
+        else:
+            self.room.set("Unbekannt")
+
+        self.tags.delete(0, END)
+        self.tags.insert(0, "; ".join(book.tags))
+
+        self.shelf.delete(0, END)
+        self.shelf.insert(0, book.shelf)
+
+        if book.lend == 0:
+            self.lend_var.set(0)
+        else:
+            self.lend_var.set(1)
+
+    def save(self):
+        pass
+
+    def cancel(self):
+        self.destroy()
 
 
 class AuthorSelectWidget(Frame):
@@ -418,10 +481,14 @@ def open_book_edit(id):
 class App(Tk):
     def __init__(self):
         super().__init__()
+        log("Initializing main window")
         self.title("Lerchbacher Bücherdatenbank")
+
+        log("Creating tab control widget")
         self.tabControl = Notebook(self)
         self.tabControl.pack(fill="both", expand=True)
 
+        log("Populating tab control widget")
         self.mainTab = MainTab(self.tabControl)
         self.booksTab = BooksTab(self.tabControl)
         self.authorsTab = AuthorsTab(self.tabControl)
@@ -433,5 +500,7 @@ class App(Tk):
         self.tabControl.add(self.authorsTab, text='Autoren')
         self.tabControl.add(self.searchTab, text='Suche')
         self.tabControl.add(self.searchTab, text='Einstellungen')
+
+        log("Successfully initialized main window")
 
 
