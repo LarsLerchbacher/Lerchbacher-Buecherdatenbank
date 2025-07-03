@@ -19,9 +19,14 @@ IMAGE_SIZE = 175
 
 class BookWidget(Frame):
     def __init__(self, parent, id: int, *args, **kwargs):
-        super().__init__(parent, relief=SUNKEN, width = 600, height = 400, *args, **kwargs)
-        self.title = Label(self, text = "", font="Arial 16 bold", wraplength=500, justify='center')
-        self.author = Label(self, text = "", font = "Arial 12")
+        super().__init__(parent, *args, **kwargs)
+
+        self.preview = Frame(self, relief = SUNKEN)
+        self.details = Frame(self.preview)
+        self.preview.pack()
+
+        self.title = Label(self.preview, text = "", font="Arial 16 bold", wraplength=500, justify='center')
+        self.author = Label(self.preview, text = "", font = "Arial 12")
 
         image = Image.open("../Web/static/noCover.png")
 
@@ -33,18 +38,47 @@ class BookWidget(Frame):
 
         self.image_data = ImageTk.PhotoImage(image)
 
-        self.image = Label(self, image = self.image_data)
+        self.image = Label(self.details, image = self.image_data)
 
         self.id = id
+
+        self.publisher = Label(self.details, text = 'Verlag: ')
+        self.publisher.pack(pady = 5, padx = 50)
+
+        self.isbn = Label(self.details, text = 'ISBN: ')
+        self.isbn.pack(pady = 5, padx = 50)
+
+        self.edition = Label(self.details, text = 'Auflage Nr.:')
+        self.edition.pack(pady = 5, padx = 50)        
+
+        self.year = Label(self.details, text = 'Jahr: ')
+        self.year.pack(pady = 5, padx = 50)
+
+        self.type = Label(self.details, text = 'Buchtyp: ')
+        self.type.pack(pady = 5, padx = 50)
+
+        self.tags = Label(self.details, text = 'Kategorie(n): ')
+        self.tags.pack(pady = 5, padx = 50)
+
+        self.room = Label(self.details, text = 'Raum: ')
+        self.room.pack(pady = 5, padx = 50)
+
+        self.shelf = Label(self.details, text = 'Regal: ')
+        self.shelf.pack(pady = 5, padx = 50)
+
+        self.lend = Label(self.details, text = 'Verliehen?: ')
+        self.lend.pack(pady = 5, padx = 50)
+
+        self.button_frame = Frame(self.preview)
         
-        self.button = Button(self, text='Weiterlesen...', command=lambda: open_book_edit(self.id))
+        self.button = Button(self.button_frame, text='Mehr anzeigen', command = self.expand)
+        self.edit = Button(self.button_frame, text = 'Bearbeiten', command = lambda: open_book_edit(self.id))
 
         self.title.pack(pady = 10, padx = 50)
         self.author.pack(pady = 10, padx = 50)
         self.image.pack(pady = 10, padx = 50)
-        self.button.pack(pady = 10, padx = 50)
-
-        self.pack_propagate(0)
+        self.button_frame.pack(pady = 10, padx = 250)
+        self.button.grid(padx = 10, row = 0, column = 0)
 
         self.update()
 
@@ -65,6 +99,53 @@ class BookWidget(Frame):
 
         self.image_data = ImageTk.PhotoImage(image)
         self.image.config(image = self.image_data)
+
+        self.publisher.config(text = f'Verlag: {book.publisher}')
+
+        self.isbn.config(text = 'ISBN: {}')
+        isbn_value = str(book.isbn)
+        self.isbn.config(text = f"ISBN: {isbn_value[0:3]}-{isbn_value[3]}-{isbn_value[4:7]}-{isbn_value[7:12]}-{isbn_value[12]}")
+
+        self.edition.config(text = f'Auflage: {book.edition}')
+
+        self.year.config(text = f'Jahr: {book.year}')
+
+        all_types = read_book_types()
+        self.type.config(text = f'Buchtyp: {all_types[book.type] if book.type in range(0, len(all_types)) else "Unbekannt"}')
+
+        tag_string = ""
+        tag_loop = book.tags
+        while len(tag_loop) > 1:
+            tag_string += f" {tag_loop.pop()};"
+        tag_string += f" {tag_loop.pop()}"
+        self.tags.config(text = f'Kategorie(n): {tag_string}')
+
+        all_rooms = read_rooms()
+        self.room.config(text = f'Raum: {all_rooms[book.room] if book.room in range(0, len(all_rooms)) else "Unbekannt"}')
+
+        self.shelf.config(text = f'Regal: {book.shelf}')
+
+        self.lend.config(text = f'Verliehen?: {"Ja" if book.lend else "Nein"}')
+    
+
+    def expand(self):
+
+        # Code to expand to details
+        self.button_frame.pack_forget()
+        self.details.pack()
+        self.button.configure(text = 'Weniger anzeigen', command = self.shrink)
+        self.edit.grid(row = 0, column = 1)
+        self.button_frame.pack(pady = 10, padx = 250)
+
+
+    def shrink(self):
+
+        # Code to shrink to overview
+        self.button_frame.pack_forget()
+        self.details.pack_forget()
+        self.button.configure(text = 'Mehr anzeigen', command = self.expand)
+        self.edit.grid_forget()
+        self.button_frame.pack(pady = 10, padx = 250)
 
 
 class RecentBooksWidget(Frame):
@@ -295,6 +376,7 @@ class BookEdit(Toplevel):
             self.lend_var.set(1)
 
     def save(self):
+        # Code to save changes / create new book
         pass
 
     def cancel(self):
