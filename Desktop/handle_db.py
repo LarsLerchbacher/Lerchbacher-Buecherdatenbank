@@ -486,14 +486,14 @@ def fetch_books() -> list[Book]:
     return new_books
 
 
-def create_book(book:Book) -> bool:
+def create_book(book:Book) -> bool | int:
     """
     ### Function create_book
 
     **Use:** Creates a new book with the given parameters
 
     **Returns:**
-    - True if the book was created
+    - the id of the new book, if it was created
     - False if it wasn't created
 
     **Parameters:**
@@ -523,8 +523,10 @@ def create_book(book:Book) -> bool:
         # Closes the db connection
         db.close()
 
+        id = fetch_book_by_isbn(book.isbn).id
+
         # Returns True, because the book was successfully created
-        return True
+        return id
 
     # If there is no author with the provided author id
     else:
@@ -653,24 +655,24 @@ def fetch_book_by_id(book_id:int) -> Book|bool:
     return new_book
 
 
-def fetch_book_by_title(title:str) -> Book:
+def fetch_book_by_isbn(isbn:str) -> Book:
     """
-    ### Function fetch_book_by_title
+    ### Function fetch_book_by_isbn 
 
-    **Use:** gets a book with the title provided as an argument
+    **Use:** gets a book with the isbn provided as an argument
 
     **Returns:**
     - book - the found book as a Book object
 
     **Parameters:**
-    - title - the title to search for
+    - isbn - the isbn to search for
     """
 
     # Initializes the db connection
     db, cur = prepare_db()
 
     # Fetches one book from the db where the title is equals to the name parameter
-    book = cur.execute(f"SELECT * FROM books WHERE book_title = ?;", (title)).fetchone()
+    book = cur.execute(f"SELECT * FROM books WHERE book_isbn = ?;", (isbn)).fetchone()
 
     # Turns the fetched book into a Book object
     book = Book(id=book[0], title=book[1], author_ids=eval(book[2]), publisher=book[3], isbn=book[4], edition=book[5],

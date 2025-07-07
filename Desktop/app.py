@@ -24,8 +24,11 @@ def main() -> None:
 
 if __name__ == "__main__":
     args = sys.argv
-    del args[0]
-    write_args(args)
+    if len(args) > 1:
+        del args[0]
+        write_args(args)
+    else:
+        write_args([])
     main()
 
     log("Peacefully terminating application")

@@ -141,7 +141,7 @@ def book_edit():
                     return render_template("edit_book.html", form=form, message=message)
             else:
                 if create_book(new_book):
-                    created_book = fetch_book_by_title(new_book.title)
+                    created_book = fetch_book_by_isbn(new_book.isbn)
                     return redirect(f"/books/details?id={created_book.id}")
 
                 else:
