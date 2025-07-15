@@ -4,17 +4,22 @@
 #
 
 
+import app_context
 from UIClasses import *
 import sys
 
 
-
-def write_args(args: list) -> None:
-    with open("flags.txt", mode="w") as file:
-        file.writelines(args)
+class ErrorHandler(object):
+    def write(self, data):
+        verbose = check_flags()[0]
+        with open("log.txt", mode="a") as file:
+            file.write(data)
+        if verbose:
+            print(data, end="")
 
 
 def main() -> None:
+    global mainWindow
     log_line()
     log("Lerchbacher book database desktop v0.0.1")
     log("Starting application")
@@ -23,12 +28,18 @@ def main() -> None:
 
 
 if __name__ == "__main__":
+    # Proces the arguments
     args = sys.argv
     if len(args) > 1:
         del args[0]
-        write_args(args)
+        app_context.flags = args
     else:
-        write_args([])
+        app_context.flags = []
+
+    check_flags()
+
+    errorHandler = ErrorHandler()
+    sys.stderr = errorHandler
     main()
 
     log("Peacefully terminating application")

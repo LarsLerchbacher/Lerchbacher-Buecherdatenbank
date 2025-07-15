@@ -51,7 +51,7 @@ class Book:
         shelf - str
         lend - int
     """
-    def __init__(self, id:int, title:str, author_ids:list[int], publisher:str, isbn:str, edition:int, year:int, type:int, tags:list, room:str, shelf:str, lend:int=-1):
+    def __init__(self, title:str, author_ids:list[int], publisher:str, isbn:str, edition:int, year:int, type:int, tags:list, room:str, shelf:str, lend:int=-1, id:int=-1):
         self.id = id
         self.title = title
         self.author_ids = author_ids
@@ -126,12 +126,15 @@ def fetch_covers(books:list) -> list:
     covers = []
     # Iterates through all books in the books list
     for book in books:
+        print(book.isbn)
 
         # Tries to get a cover for the book using the Google books request API
         try:
 
             # Querries the API
-            req = requests.get("https://www.googleapis.com/books/v1/volumes?q=isbn:"+str(book.isbn))
+            url = f"https://www.googleapis.com/books/v1/volumes?q=isbn:{str(book.isbn)}" 
+            print(url)
+            req = requests.get(url)
 
             # Reads all available images for the book
             imageEntries = req.json()["items"][0]["volumeInfo"]["imageLinks"]
@@ -150,7 +153,7 @@ def fetch_covers(books:list) -> list:
         # If there is an error with the api or no book cover available
         except Exception:
             # Sets the cover to the noCover file
-            cover = "/static/noCover.png"
+            cover = "./static/noCover.png"
 
         # Adds the current cover to the covers list
         covers.append(cover)
@@ -406,7 +409,7 @@ def fetch_author_by_id(author_id:int) -> Author | bool:
 
     if author:
 
-        author = Author(id=author[0], name=author[1], has_nobel_prize=author[2], country=author[3], birthdate=datetime.strptime(author[4], '%Y-%m-%d').date(), date_of_death=datetime.strptime(author[5], '%Y-%m-%d').date() if author[5] else "")
+        author = Author(id=author[0], name=author[1], has_nobel_prize=author[2], country=author[3], birthdate=datetime.strptime(author[4], '%Y-%m-%d').date(), date_of_death=datetime.strptime(author[5], '%Y-%m-%d').date() if not author[5] else "")
 
         # If there is one that has the same id as passed to the function as parameter, author is an author object
         # else it is false
@@ -431,13 +434,13 @@ def fetch_author_by_name(name:str) -> Author:
     db, cur = prepare_db()
 
     # Tries to get the author with the author_name specified in name
-    author = cur.execute(f"SELECT * FROM authors WHERE author_name == ?;", (name)).fetchone()
+    author = cur.execute(f"SELECT * FROM authors WHERE author_name == \"{name}\";").fetchone()
 
     # Converts it to an author object
-    author = Author(id=author[0], name=author[1], has_nobel_prize=author[2], country=author[3], birthdate=datetime.strptime(author[4], '%Y-%m-%d').date(), date_of_death=datetime.strptime(author[5], '%Y-%m-%d').date() if author[5] else "")
+    new_author = Author(id=author[0], name=author[1], has_nobel_prize=author[2], country=author[3], birthdate=datetime.strptime(author[4], '%Y-%m-%d').date(), date_of_death=datetime.strptime(author[5], '%Y-%m-%d').date() if author[5] else "")
 
     # Returns the author as an Author object
-    return author
+    return new_author
 
 
 def fetch_author_names() -> list[str]:
@@ -472,24 +475,26 @@ def fetch_books() -> list[Book]:
     # Closes the database connection
     db.close()
 
+    new_books = []
+
     # Converts each book into a Book object
     for index in range(0, len(books)):
         book = books[index]
-        books[index] = Book(id=book[0], title=book[1], author_ids=eval(book[2]), publisher=book[3], isbn=book[4], edition=book[5], year=book[6], type=book[7], tags=eval(book[8]), room=book[9], shelf=book[10], lend=book[11])
+        new_books.append(Book(id=book[0], title=book[1], author_ids=eval(book[2]), publisher=book[3], isbn=book[4], edition=book[5], year=book[6], type=book[7], tags=eval(book[8]), room=book[9], shelf=book[10], lend=book[11]))
 
     # Returns all found books
-    return books
+    return new_books
 
 
-def create_book(book:Book) -> bool:
+def create_book(book:Book) -> str | int:
     """
     ### Function create_book
 
     **Use:** Creates a new book with the given parameters
 
     **Returns:**
-    - True if the book was created
-    - False if it wasn't created
+    - the id of the new book, if it was created
+    - otherwise an error message
 
     **Parameters:**
     - book - a Book object containing the data for the new book
@@ -501,29 +506,25 @@ def create_book(book:Book) -> bool:
     authors_existing = True
     for id in book.author_ids:
         if not fetch_author_by_id(id):
-            authors_existing = False
+            return f"Autor mit der ID {id} existier nicht!"
 
-    # If there is an author with the selected author_id
-    if authors_existing:
 
-        # Creates the book with the provided parameters
-        cur.execute(f"INSERT INTO books (book_title, author_ids, book_publisher, book_isbn, book_edition, book_year, book_type, book_tags, book_room, book_shelf, book_lend) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);", (book.title, str(book.author_ids), book.publisher, book.isbn, book.edition, book.year, book.type, str(book.tags), book.room, book.room, book.shelf, book.lend))
+    # Creates the book with the provided parameters
+    cur.execute(f"INSERT INTO books (book_title, author_ids, book_publisher, book_isbn, book_edition, book_year, book_type, book_tags, book_room, book_shelf, book_lend) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);", (book.title, str(book.author_ids), book.publisher, book.isbn, book.edition, book.year, book.type, str(book.tags), book.room, book.room, book.shelf, book.lend))
 
-        # Commits the changes to the db
-        db.commit()
+    # Commits the changes to the db
+    db.commit()
+ 
+    # Closes the cursor
+    cur.close()
 
-        # Closes the cursor
-        cur.close()
+    # Closes the db connection
+    db.close()
 
-        # Closes the db connection
-        db.close()
+    id = fetch_book_by_isbn(book.isbn).id
 
-        # Returns True, because the book was successfully created
-        return True
-
-    # If there is no author with the provided author id
-    else:
-        return False
+    # Returns True, because the book was successfully created
+    return id
 
 
 def delete_book(book_id:int, security_key:str) -> bool:
@@ -569,15 +570,15 @@ def delete_book(book_id:int, security_key:str) -> bool:
         return False
 
 
-def edit_book(book_id:int, new:Book) -> bool:
+def edit_book(book_id:int, new:Book) -> str:
     """
     ### Function edit_book
 
     **Use:** Edits the book with the provided title
 
     **Returns:**
-    -   True if the book was edited
-    -   False if it wasn't edited
+    - "OK" if the book was edited successfully
+    - otherwise an error message
 
     **Parameters:**
     -   id - the id of the book to edit
@@ -587,40 +588,35 @@ def edit_book(book_id:int, new:Book) -> bool:
     authors_existing = True
     for id in new.author_ids:
         if not fetch_author_by_id(id):
-            authors_existing = False
+            return f"Autor mit der ID {id} existiert nicht!"
 
-    # If the book exists and there is an author with the new id
-    if fetch_book_by_id(book_id) and authors_existing:
+    if not fetch_book_by_id(book_id):
+        return f"Das Buch mit der ID {book_id} existier nicht!"
 
-        # Initializes the db connection
-        db, cur = prepare_db()
+    # Initializes the db connection
+    db, cur = prepare_db()
 
-        # Updates the book
-        cur.execute(f"""
+    # Updates the book
+    cur.execute(f"""
 UPDATE books
 SET book_title = ?, author_ids = ?, book_publisher = ?, book_isbn = ?, book_edition = ?, book_year = ?, book_type = ?, book_tags = ?, book_room = ?, book_shelf = ?, book_lend = ?
 WHERE book_id = ?;
-        """, (new.title, str(new.author_ids), new.publisher, new.isbn, new.edition, new.year, new.type, str(new.tags), new.room, new.shelf, new.lend, book_id))
+    """, (new.title, str(new.author_ids), new.publisher, new.isbn, new.edition, new.year, new.type, str(new.tags), new.room, new.shelf, new.lend, book_id))
 
-        # Commits the changes to the db
-        db.commit()
+    # Commits the changes to the db
+    db.commit()
 
-        # Closes the cursor
-        cur.close()
+    # Closes the cursor
+    cur.close()
 
-        # Closes the db connection
-        db.close()
+    # Closes the db connection
+    db.close()
 
-        # Returns True because the book was edited successfully
-        return True
-
-    # If the book doesn't exist or there is no author with the new id
-    else:
-        # Returns False because the book wasn't updated
-        return
+    # Returns True because the book was edited successfully
+    return "OK"
 
 
-def fetch_book_by_id(book_id:int) -> tuple[Book, bool]:
+def fetch_book_by_id(book_id:int) -> Book|bool:
     """
     ### Function fetch_book_by_id
 
@@ -648,24 +644,24 @@ def fetch_book_by_id(book_id:int) -> tuple[Book, bool]:
     return new_book
 
 
-def fetch_book_by_title(title:str) -> Book:
+def fetch_book_by_isbn(isbn:str) -> Book:
     """
-    ### Function fetch_book_by_title
+    ### Function fetch_book_by_isbn 
 
-    **Use:** gets a book with the title provided as an argument
+    **Use:** gets a book with the isbn provided as an argument
 
     **Returns:**
     - book - the found book as a Book object
 
     **Parameters:**
-    - title - the title to search for
+    - isbn - the isbn to search for
     """
 
     # Initializes the db connection
     db, cur = prepare_db()
 
     # Fetches one book from the db where the title is equals to the name parameter
-    book = cur.execute(f"SELECT * FROM books WHERE book_title = ?;", (title)).fetchone()
+    book = cur.execute(f"SELECT * FROM books WHERE book_isbn = ?;", (isbn)).fetchone()
 
     # Turns the fetched book into a Book object
     book = Book(id=book[0], title=book[1], author_ids=eval(book[2]), publisher=book[3], isbn=book[4], edition=book[5],

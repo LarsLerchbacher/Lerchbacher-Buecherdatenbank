@@ -4,6 +4,7 @@
 #
 
 
+import app_context
 import requests
 import sqlite3
 from handle_db import *
@@ -17,37 +18,40 @@ IMAGE_SIZE = 175
 
 def check_flags() -> bool:
     verbose = False
-    with open("flags.txt", mode="r") as file:
-        flags = file.readlines()
-        for flag in flags:
-            if flag == "":
-                continue
-            elif flag == "-v" or flag == "--verbose":
-                if not verbose:
-                    verbose = True
-                else:
-                    raise Exception(f"Duplicate flag {flag}")
-            elif flag in ["-h", "--help"]:
-                print("""Lerchbacher book database v0.0.1
-                      Arguments:
-                        -h --help       Show this help
-                        -v --verbose    Show log output in console 
-                    """)
-                quit()
+    for flag in app_context.flags:
+        if flag == "":
+            continue
+        elif flag == "-v" or flag == "--verbose":
+            if not verbose:
+                verbose = True
             else:
-                raise Exception(f"Unknown Flag {flag}")
+                raise Exception(f"Duplicate flag {flag}")
+        elif flag in ["-h", "--help"]:
+            print("""Lerchbacher book database v0.0.1
+                  Arguments:
+                    -h --help       Show this help
+                    -v --verbose    Show log output in console 
+                """)
+            quit()
+        else:
+            raise Exception(f"Unknown Flag {flag}")
 
-    return verbose
+    return (verbose,)
 
 
-def log(log_text: str) -> None:
+def log(log_text: str, *args) -> None:
+    if len(args) == 1:
+        type = args[0]
+    else:
+        type = "INFO "
+
     with open("log.txt", mode="a") as file:
-        file.write(f"\n[{datetime.now()}] {log_text}")
+        file.write(f"\n[{datetime.now()}] [{type}] {log_text}")
 
-    verbose = check_flags()
+    verbose = check_flags()[0]
 
     if verbose:
-        print(f"[{datetime.now()}] {log_text}")
+        print(f"[{datetime.now()}] [{type}] {log_text}")
 
 
 def log_line() -> None:

@@ -5,8 +5,10 @@
 
 
 from array import array
+import app_context
 from tkinter import *
 from tkinter.ttk import *
+from tkinter.messagebox import *
 from handle_db import *
 from PIL import Image, ImageTk
 import requests
@@ -66,13 +68,13 @@ class BookWidget(Frame):
         self.shelf = Label(self.details, text = 'Regal: ')
         self.shelf.pack(pady = 5, padx = 50)
 
-        self.lend = Label(self.details, text = 'Verliehen?: ')
+        self.lend = Label(self.details, text = 'Verliehen: ')
         self.lend.pack(pady = 5, padx = 50)
 
         self.button_frame = Frame(self.preview)
         
         self.button = Button(self.button_frame, text='Mehr anzeigen', command = self.expand)
-        self.edit = Button(self.button_frame, text = 'Bearbeiten', command = lambda: open_book_edit(self.id))
+        self.edit = Button(self.button_frame, text = 'Bearbeiten', command = self.open_edit)
 
         self.title.pack(pady = 10, padx = 50)
         self.author.pack(pady = 10, padx = 50)
@@ -80,9 +82,17 @@ class BookWidget(Frame):
         self.button_frame.pack(pady = 10, padx = 250)
         self.button.grid(padx = 10, row = 0, column = 0)
 
+        log(f"Successfully created a book widget for the book with id {self.id}")
+
         self.update()
 
+
+    def open_edit(self):
+        edit = BookEdit(self.id)
+
+
     def update(self):
+        log(f"Updating book widget with id {self.id}")
         book = fetch_book_by_id(self.id)
         self.title.config(text=book.title)
         authors = [fetch_author_by_id(id) for id in book.author_ids] 
@@ -125,7 +135,7 @@ class BookWidget(Frame):
 
         self.shelf.config(text = f'Regal: {book.shelf}')
 
-        self.lend.config(text = f'Verliehen?: {"Ja" if book.lend else "Nein"}')
+        self.lend.config(text = f'Verliehen: {"Ja" if book.lend else "Nein"}')
     
 
     def expand(self):
@@ -162,10 +172,16 @@ class RecentBooksWidget(Frame):
         self.update()
 
     def update(self):
-        self.books = fetch_books()[-12:]
+        log("Updating 'recent books widget'")
+        all_books = fetch_books()
+        self.books = all_books[-12:]
         
         for bookWidget in self.bookWidgets:
+            for child in bookWidget.winfo_children():
+                child.destroy()
             bookWidget.destroy()
+
+        self.bookWidgets = []
 
         for book in self.books:
             self.bookWidgets.append(BookWidget(self, book.id))
@@ -184,10 +200,15 @@ class AllBooksWidget(Frame):
         self.update()
 
     def update(self):
+        log("Updating 'all books widget'")
         self.books = fetch_books()
         
         for bookWidget in self.bookWidgets:
+            for child in bookWidget.winfo_children():
+                child.destroy()
             bookWidget.destroy()
+        
+        self.bookWidgets = []
 
         for book in self.books:
             self.bookWidgets.append(BookWidget(self, book.id))
@@ -225,8 +246,10 @@ class BookEdit(Toplevel):
         super().__init__()
         if id != None:
             self.id = id
+            log(f"Opening book editing dialog for book with id {id}")
         else:
             self.id = -1
+            log("Opening empty book editing dialog")
 
         self.title_frame = Frame(self)
         self.title_frame.pack(padx=20, pady=20)
@@ -313,7 +336,7 @@ class BookEdit(Toplevel):
         self.lend_frame = Frame(self)
         self.lend_frame.pack(padx=20, pady=5)
 
-        self.lend_label = Label(self.lend_frame, text='Ausgeborgt: ')
+        self.lend_label = Label(self.lend_frame, text='Verliehen : ')
         self.lend_var = IntVar()
         self.lend = Checkbutton(self.lend_frame, variable=self.lend_var)
         self.lend_label.grid(row=0, column=0)
@@ -377,7 +400,69 @@ class BookEdit(Toplevel):
 
     def save(self):
         # Code to save changes / create new book
-        pass
+        log("Saving book: ")
+
+        title = self.title.get()
+        log(f"\tTitle: {title}")
+
+        author_ids = self.authors.get()
+        authors = []
+        all_authors = fetch_authors()
+        for author in fetch_authors():
+            if author.id in author_ids:
+                authors.append(author.name)
+        log(f"\tAutoren: {authors} (Ids: {author_ids})")
+
+        publisher = self.publisher.get()
+        log(f"\tVerlag: {publisher}")
+
+        isbn = self.isbn.get()
+        isbn_value = str(isbn)
+        log(f"\tISBN: {isbn_value[0:3]}-{isbn_value[3]}-{isbn_value[4:7]}-{isbn_value[7:12]}-{isbn_value[12]}")
+
+        edition = self.edition.get()
+        log(f"\tAuflage: {edition}")
+
+        year = self.year.get()
+        log(f"\tJahr: {year}")
+
+        book_type = self.type.get()
+        type_nr = self.all_types.index(book_type)
+        log(f"\tBuchtyp: {book_type} (Typ Nr. {type_nr})")
+
+        tags = self.tags.get().replace("; ", ";").split(";")
+        log(f"\tKategorien: {tags}")
+
+        book_room = self.room.get()
+        room_nr = self.all_rooms.index(book_room)
+        log(f"\tRaum: {book_room} (Raum Nr. {room_nr})")
+
+        shelf = self.shelf.get()
+        log(f"\tRegal: {shelf}")
+
+        lend = self.lend_var.get()
+        log(f"\tVerliehen: {"ja" if lend else "nein"} (lend_var: {lend})")
+
+        book = Book(title=title, author_ids=author_ids, publisher=publisher, isbn=isbn, edition=edition, year=year, type=type_nr, tags=tags, room=room_nr, shelf=shelf, lend=lend)
+
+        if self.id != -1:
+            response = edit_book(self.id, book)
+            if response != "OK":
+                showerror(title="Speichern nicht moeglich!", message="Response")
+            else:
+                log("Erfolgreich gespeichert!")
+                app_context.mainWindow.update()
+                self.destroy()
+        else:
+            response = create_book(book)
+            if type(response) == str:
+                showerror(title="Speichern nicht moeglich!", message="Response")
+            else:
+                self.id = response
+                log("Erfolgreich gespeichert!")
+                app_context.mainWindow.update()
+                self.destroy()
+
 
     def cancel(self):
         self.destroy()
@@ -529,6 +614,9 @@ class MainTab(Tab):
         self.recentBooks = RecentBooksWidget(self.inner_frame)
         self.recentBooks.pack(padx=0, pady=10)
 
+    def update(self):
+        self.recentBooks.update()
+
 
 class BooksTab(Tab):
     def __init__(self, *args, **kwargs):
@@ -540,24 +628,32 @@ class BooksTab(Tab):
         self.books = AllBooksWidget(self.inner_frame)
         self.books.pack()
 
+    def update(self):
+        self.books.update()
+
 
 class AuthorsTab(Tab):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+    def update(self):
+        pass
+
 
 class SearchTab(Tab):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+    
+    def update(self):
+        pass
 
 
 class SettingsTab(Tab):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-
-def open_book_edit(id):
-    BookEdit(id)
+    def update(self):
+        pass
 
 
 class App(Tk):
@@ -565,6 +661,8 @@ class App(Tk):
         super().__init__()
         log("Initializing main window")
         self.title("Lerchbacher Bücherdatenbank")
+
+        app_context.mainWindow = self
 
         log("Creating tab control widget")
         self.tabControl = Notebook(self)
@@ -584,5 +682,13 @@ class App(Tk):
         self.tabControl.add(self.searchTab, text='Einstellungen')
 
         log("Successfully initialized main window")
+
+    def update(self):
+
+        self.mainTab.update()
+        self.booksTab.update()
+        self.authorsTab.update()
+        self.searchTab.update()
+        self.settingsTab.update()
 
 

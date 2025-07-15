@@ -49,7 +49,7 @@ def home():
     return render_template("index.html", books=books, covers=covers, authors=authors)
 
 
-@app.route("/books")
+@app.route("/books/")
 def all_books():
     books = fetch_books()
 
@@ -93,27 +93,40 @@ def book_detail():
 def book_edit():
     form = BookForm()
 
+    # The page with the form is requested
     if request.method == 'GET':
+        # Fill in the choices for the dropdown menus
         form.authors.choices = [(str(author.id), author.name) for author in fetch_authors()]
         form.type.choices = [(index -2, type) for index, type in enumerate(BOOK_TYPES)]
+
+        # If an id was specified, load the data for that book
         if request.args.get('id'):
             book_id = request.args.get('id')
             book = fetch_book_by_id(book_id)
+
+            # If there is no book with the requested id
+            if not book:
+                return redirect("/books/")
+
             form.title.data = book.title
-            form.authors.data = book.author_ids
+            form.authors.default = book.author_ids
             form.publisher.data = book.publisher
             form.isbn.data = book.isbn
             form.edition.data = book.edition
             form.year.data = book.year
-            form.type.data = book.type
+            form.type.default = book.type
             form.tags.data = str(book.tags).replace('[', '').replace(']', '').replace("'", '').replace(',', ';')
             form.room.data = book.room
             form.shelf.data = book.shelf
             form.lend.data = book.lend
             form.id.data = book.id
 
+            form.authors.process([])
+            form.type.process([])
+
         return render_template("edit_book.html", form=form)
     
+    # The form was submitted
     else:
         book_id = form.id.data
         book_title = form.title.data
@@ -133,25 +146,33 @@ def book_edit():
 
         if form.validate_on_submit():
             if form.id.data:
-                if edit_book(book_id, new_book):
+                response = edit_book(book_id, new_book)
+                if response == "OK":
                     return redirect(f"/books/details?id={book_id}")
                 else:
-                    message = "Buch konnte nicht geändert/erstellt werden. Bitte prüfen Sie ob die ID korrekt ist/ein Buch mit diesem Namen bereits existiert."
+                    # Fill in the choices for the dropdown menus
+                    form.authors.choices = [(str(author.id), author.name) for author in fetch_authors()]
+                    form.type.choices = [(index -2, type) for index, type in enumerate(BOOK_TYPES)]
 
-                    return render_template("edit_book.html", form=form, message=message)
+                    return render_template("edit_book.html", form=form, message=response)
             else:
-                if create_book(new_book):
+                response = create_book(new_book)
+                if type(response) == int:
                     created_book = fetch_book_by_isbn(new_book.isbn)
                     return redirect(f"/books/details?id={created_book.id}")
-
                 else:
-                    message = "Buch konnte nicht geändert/erstellt werden. Bitte prüfen Sie ob die ID korrekt ist/ein Buch mit diesem Namen bereits existiert."
+                    # Fill in the choices for the dropdown menus
+                    form.authors.choices = [(str(author.id), author.name) for author in fetch_authors()]
+                    form.type.choices = [(index -2, type) for index, type in enumerate(BOOK_TYPES)]
 
-                    return render_template("edit_book.html", form=form, message=message)
+                    return render_template("edit_book.html", form=form, message=response)
 
         else:
 
             message = "Buch konnte nicht geändert/erstellt werden. Bitte prüfen Sie ihre Eingabe!"
+            # Fill in the choices for the dropdown menus
+            form.authors.choices = [(str(author.id), author.name) for author in fetch_authors()]
+            form.type.choices = [(index -2, type) for index, type in enumerate(BOOK_TYPES)]
 
             return render_template("edit_book.html", form=form, message=message)
 
@@ -249,6 +270,11 @@ def author_editing():
         if request.args.get("id"):
             # Fetches the authors data and fills it in the form
             author = fetch_author_by_id(request.args.get("id"))
+
+            # If there is no author with the specified id
+            if not author:
+                return redirect("/authors")
+
             form.name.data = author.name
             form.country.data = author.country
             form.birthdate.process_data(author.birthdate)
@@ -280,26 +306,24 @@ def author_editing():
             # If an existing author should be edited
             if form.id.data:
                 # Tries to edit the author
-                if edit_author(form.id.data, new_author):
+                response = edit_author(form.id.data, new_author)
+                if response == "OK":
                     return redirect(f"/authors/details?id={form.id.data}")
 
-                # Messages the user, that the editing failed
+                # The editing failed
                 else:
-                    message = ("Autor konnte nicht geändert werden. "
-                               "Bitte prüfen Sie ob die ID korrekt ist/ein Autor mit diesem Namen bereits existiert.")
-                    return render_template("edit_author.html", form=form, message=message, default_death=date(2200, 1, 1))
+                    return render_template("edit_author.html", form=form, message=response, default_death=date(2200, 1, 1))
 
             # If a new author should be created
             else:
                 # Tries to create a new author
-                if create_author(new_author):
+                response = create_author(new_author)
+                if type(response) == int:
                     return redirect(f"/authors/details?id={fetch_author_by_name(form.name.data).id}")
 
-                # Messages the user, that the editing failed
+                # The creating failed 
                 else:
-                    message = ("Autor konnte nicht erstellt werden. "
-                               "Bitte prüfen Sie ob die ID korrekt ist/ein Autor mit diesem Namen bereits existiert.")
-                    return render_template("edit_author.html", form=form, message=message, default_death=date(2200, 1, 1))
+                    return render_template("edit_author.html", form=form, message=response, default_death=date(2200, 1, 1))
 
         # If the form is not valid
         else:
@@ -377,7 +401,7 @@ def search():
                 elif bookForm.id.data != None and bookForm.id.data == book.id:
                     results_books.append(book)
                     continue
-                elif bookForm.isbn.data and str(bookForm.isbn.data) in str(book.isbn):
+                elif bookForm.isbn.data and str(bookForm.isbn.data) in str(book.isbn): 
                     results_books.append(book)
                     continue
                 elif bookForm.year.data and bookForm.year.data == book.year:
