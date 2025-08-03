@@ -510,7 +510,7 @@ def create_book(book:Book) -> str | int:
 
 
     # Creates the book with the provided parameters
-    cur.execute(f"INSERT INTO books (book_title, author_ids, book_publisher, book_isbn, book_edition, book_year, book_type, book_tags, book_room, book_shelf, book_lend) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);", (book.title, str(book.author_ids), book.publisher, book.isbn, book.edition, book.year, book.type, str(book.tags), book.room, book.room, book.shelf, book.lend))
+    cur.execute(f"INSERT INTO books (book_title, author_ids, book_publisher, book_isbn, book_edition, book_year, book_type, book_tags, book_room, book_shelf, book_lend) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);", (book.title, str(book.author_ids), book.publisher, book.isbn, book.edition, book.year, book.type, str(book.tags), book.room, book.shelf, book.lend))
 
     # Commits the changes to the db
     db.commit()
@@ -549,7 +549,7 @@ def delete_book(book_id:int, security_key:str) -> bool:
         db, cur = prepare_db()
 
         # Deletes the book from the db
-        cur.execute(f"DELETE FROM books WHERE book_id = ?;", (book_id))
+        cur.execute(f"DELETE FROM books WHERE book_id = {book_id};")
 
         # Commits the changes to the db
         db.commit()
@@ -661,7 +661,7 @@ def fetch_book_by_isbn(isbn:str) -> Book:
     db, cur = prepare_db()
 
     # Fetches one book from the db where the title is equals to the name parameter
-    book = cur.execute(f"SELECT * FROM books WHERE book_isbn = ?;", (isbn)).fetchone()
+    book = cur.execute(f"SELECT * FROM books WHERE book_isbn = ?;", (isbn,)).fetchone()
 
     # Turns the fetched book into a Book object
     book = Book(id=book[0], title=book[1], author_ids=eval(book[2]), publisher=book[3], isbn=book[4], edition=book[5],

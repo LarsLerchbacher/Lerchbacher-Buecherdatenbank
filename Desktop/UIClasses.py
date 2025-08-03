@@ -7,6 +7,7 @@
 from array import array
 import app_context
 from tkinter import *
+from tkinter import messagebox
 from tkinter.ttk import *
 from tkinter.messagebox import *
 from handle_db import *
@@ -75,6 +76,7 @@ class BookWidget(Frame):
         
         self.button = Button(self.button_frame, text='Mehr anzeigen', command = self.expand)
         self.edit = Button(self.button_frame, text = 'Bearbeiten', command = self.open_edit)
+        self.delete = Button(self.button_frame, text = 'Loeschen', command = self.delete_book)
 
         self.title.pack(pady = 10, padx = 50)
         self.author.pack(pady = 10, padx = 50)
@@ -145,6 +147,7 @@ class BookWidget(Frame):
         self.details.pack()
         self.button.configure(text = 'Weniger anzeigen', command = self.shrink)
         self.edit.grid(row = 0, column = 1)
+        self.delete.grid(row = 0, column = 2, padx = 10)
         self.button_frame.pack(pady = 10, padx = 250)
 
 
@@ -156,6 +159,18 @@ class BookWidget(Frame):
         self.button.configure(text = 'Mehr anzeigen', command = self.expand)
         self.edit.grid_forget()
         self.button_frame.pack(pady = 10, padx = 250)
+
+
+    def delete_book(self):
+        book = fetch_book_by_id(self.id)
+        decision = messagebox.askquestion("Bestaetigen", f"Moechten Sie das Buch {book.title} wirklich loeschen?\n Diese Aktion kann NICHT rueckgaengig gemacht werde!")
+        if decision == "yes":
+            log(f"Deleting book with id {self.id}...")
+            delete_book(self.id, SECURITY_KEY)
+            log(f"Successfully deleted book with id {self.id}")
+            app_context.mainWindow.update()
+        
+        
 
 
 class RecentBooksWidget(Frame):
@@ -196,7 +211,7 @@ class AllBooksWidget(Frame):
         self.books = fetch_books()
 
         self.bookWidgets = []
-
+        
         self.update()
 
     def update(self):
@@ -624,6 +639,9 @@ class BooksTab(Tab):
 
         self.header_label = Label(self.inner_frame, text='Bücher', font="Arial 25 bold")
         self.header_label.pack(padx=0, pady=10)
+
+        self.create_button = Button(self.inner_frame, text='Neues Buch hinzufuegen', command=lambda: BookEdit(-1))
+        self.create_button.pack(padx=0, pady=5)
 
         self.books = AllBooksWidget(self.inner_frame)
         self.books.pack()
