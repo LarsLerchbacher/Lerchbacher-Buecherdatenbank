@@ -82,7 +82,7 @@ def update_images():
                 file.close()
 
 
-def get_cover(book: Book):
+def get_cover(book):
         cacheName = f"./cache/{book.id}.jpg"
         cachePath = Path(cacheName)
         staticName = f"./static/{book.id}.jpg"
@@ -108,69 +108,50 @@ def get_cover(book: Book):
         return image
 
 
-def read_book_types() -> list[str]:
-    db, cur = prepare_db()
-    raw_types = cur.execute("SELECT * FROM types;").fetchall()
-    book_types = []
+def get_image(book):
+        cacheName = f"./cache/{book.id}.jpg"
+        cachePath = Path(cacheName)
+        staticName = f"./static/{book.id}.jpg"
+        staticPath = Path(staticName)
 
-    for raw_type in raw_types:
-        book_types.append(raw_type[1])
+        if staticPath.is_file():
+            filename = staticName
 
-    cur.close()
-    db.close()
+        elif cachePath.is_file():
+            filename = cacheName
 
-    return book_types
+        else:
+            filename = "./static/noCover.png"
 
-
-def set_book_types(types: list[str]) -> None:
-    db, cur = prepare_db()
-
-    cur.execute("DROP TABLE types;")
-
-    db.commit()
-
-    cur.execute("CREATE TABLE types (type_id INTEGER PRIMARY KEY AUTOINCREMENT, type_name STRING NOT NULL);")
-
-    db.commit()
-
-    for book_type in types:
-        cur.execute(f"INSERT INTO types (type_name) VALUES ('{book_type}');")
-
-    db.commit()
-
-    cur.close()
-    db.close()
+        return filename
 
 
-def read_rooms() -> list[str]:
-    db, cur = prepare_db()
-    raw_rooms = cur.execute("SELECT * FROM rooms;").fetchall()
-    book_rooms = []
+def fetch_images(books: list) -> list: 
 
-    for raw_room in raw_rooms:
-        book_rooms.append(raw_room[1])
+    covers = []
 
-    cur.close()
-    db.close()
+    # Iterates through all books in the books list
+    for book in books:
 
-    return book_rooms
+        # Gets the filename of the image to be displayed for the book
+        cover = get_image(book)
+
+        # Adds the current cover to the covers list
+        covers.append(cover)
+
+    return covers
 
 
-def set_rooms(rooms: list[str]) -> None:
-    db, cur = prepare_db()
+def fetch_covers(books:list) -> list:
+    covers = []
+    # Iterates through all books in the books list
+    for book in books:
 
-    cur.execute("DROP TABLE rooms;")
+        # Tries to get the smallest cover
+        cover = get_cover(book)
 
-    db.commit()
+        # Adds the current cover to the covers list
+        covers.append(cover)
 
-    cur.execute("CREATE TABLE rooms (room_id INTEGER PRIMARY KEY AUTOINCREMENT, room_name STRING NOT NULL);")
+    return covers
 
-    db.commit()
-
-    for room in rooms:
-        cur.execute(f"INSERT INTO rooms (room_name) VALUES ('{room}');")
-
-    db.commit()
-
-    cur.close()
-    db.close()

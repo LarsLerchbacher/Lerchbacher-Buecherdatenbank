@@ -15,6 +15,7 @@
 from sqlite3 import *
 from datetime import date, datetime
 import requests
+from helperfunctions import get_cover
 
 
 #
@@ -23,11 +24,9 @@ import requests
 # Constants:
 #   DATABASE - is used to store the filename for the database file
 #   SECURITY_KEY - stores the security key that is used to authenticate an admin when deleting something
-#   MODULE_VERSION - indicates the current version of the file
 #
 DATABASE = "database.sqlite"
 SECURITY_KEY = "Alpha Delta Omicron 37 45 Blau"
-MODULE_VERSION = "0.0.5"
 
 
 
@@ -93,72 +92,7 @@ class Author:
         self.date_of_death = date_of_death
 
     def __str__(self) -> str:
-        return f"{self.name} {self.id} {self.birthdate} {self.country} {self.has_nobel_prize} {self.date_of_death if self.date_of_death else ''}"
-
-
-class User:
-    """
-    ### Class User
-
-    **Use:** Is used for easier access of individual columns of a database row in the users table
-
-    **Fields:**
-        - id - int
-        - name - sr
-        - pw_hash - str
-        - favourite_authors - list of ints
-        - favourite_books - list of ints
-
-    """
-
-    def __init__(self, id:int, name:str, pw_hash:str, favourite_authors:list[int], favorite_books:list[int]):
-        self.id = id
-        self.name = name
-        self.pw_hash = pw_hash
-        self.favourite_authors = favourite_authors
-        self.favourite_books = favorite_books
-
-    def __str__(self):
-        return f"{self.id} {self.name} {self.favourite_authors} {self.favourite_books}"
-
-
-def fetch_covers(books:list) -> list:
-    covers = []
-    # Iterates through all books in the books list
-    for book in books:
-        print(book.isbn)
-
-        # Tries to get a cover for the book using the Google books request API
-        try:
-
-            # Querries the API
-            url = f"https://www.googleapis.com/books/v1/volumes?q=isbn:{str(book.isbn)}" 
-            print(url)
-            req = requests.get(url)
-
-            # Reads all available images for the book
-            imageEntries = req.json()["items"][0]["volumeInfo"]["imageLinks"]
-
-            # Creates a new empty list to store all the book cover links
-            imageLinks = []
-
-            # Iterates through all entries in the imageEntries dict
-            for key, value in imageEntries.items():
-                # Adds the link of the current entry to the imageLinks list
-                imageLinks.append(value)
-
-            # Tries to get the smallest cover
-            cover = imageLinks[0]
-
-        # If there is an error with the api or no book cover available
-        except Exception:
-            # Sets the cover to the noCover file
-            cover = "./static/noCover.png"
-
-        # Adds the current cover to the covers list
-        covers.append(cover)
-
-    return covers
+        return f"{self.name} {self.id} {self.birthdate} {self.country} {self.has_nobel_prize} {self.date_of_death}"
 
 
 def prepare_db() -> tuple[Connection, Cursor]:
@@ -255,7 +189,7 @@ def delete_author(name, security_key) -> bool:
 
     **Use:** deletes the author with the given name if the security key is correct
 
-    **Returns:** True if it deleted the user, else False
+    **Returns:** True if it deleted the author, else False
 
     **Parameters:**
         name - The name of the author to be deleted
@@ -308,12 +242,8 @@ def create_author(author:Author) -> bool:
         # Initializes the db connection
         db, cur = prepare_db()
 
-        if author.date_of_death:
-            # The author is added to the db
-            cur.execute(f"INSERT INTO authors (author_name, has_nobel_prize, author_country, date_of_birth, date_of_death) VALUES (?, ?, ?, ?, ?);", (author.name, author.has_nobel_prize, author.country, author.birthdate, author.date_of_death))
-        else:
-            # The author is added to the db
-            cur.execute(f"INSERT INTO authors (author_name, has_nobel_prize, author_country, date_of_birth) VALUES (?, ?, ?, ?);", (author.name, author.has_nobel_prize, author.country, author.birthdate))
+        # The author is added to the db
+        cur.execute(f"INSERT INTO authors (author_name, has_nobel_prize, author_country, date_of_birth, date_of_death) VALUES (?, ?, ?, ?, ?);", (author.name, author.has_nobel_prize, author.country, author.birthdate, author.date_of_death))
 
         # Commits the changes to the db
         db.commit()
@@ -353,20 +283,13 @@ def edit_author(author_id:int, new:Author) -> bool:
         # Initializes the db connection
         db, cur = prepare_db()
 
-        if new.date_of_death:
-            # Updates the author's details
-            cur.execute("""
-            UPDATE authors
-            SET author_name = ?, has_nobel_prize = ?, author_country = ?, date_of_birth = ?, date_of_death = ?
-            WHERE author_id == ?;
-            """, (new.name, new.has_nobel_prize, new.country, str(new.birthdate), str(new.date_of_death), author_id))
-        else:
-            cur.execute("""
-            UPDATE authors
-            SET author_name = ?, has_nobel_prize = ?, author_country = ?, date_of_birth = ?
-            WHERE author_id == ?;
-            """, (new.name, new.has_nobel_prize, new.country, str(new.birthdate), author_id))
-
+        # Updates the author's details
+        cur.execute("""
+        UPDATE authors
+        SET author_name = ?, has_nobel_prize = ?, author_country = ?, date_of_birth = ?, date_of_death = ?
+        WHERE author_id == ?;
+        """, (new.name, new.has_nobel_prize, new.country, str(new.birthdate), str(new.date_of_death), author_id))
+        
         # Commits the changes to the db
         db.commit()
 
@@ -409,7 +332,7 @@ def fetch_author_by_id(author_id:int) -> Author | bool:
 
     if author:
 
-        author = Author(id=author[0], name=author[1], has_nobel_prize=author[2], country=author[3], birthdate=datetime.strptime(author[4], '%Y-%m-%d').date(), date_of_death=datetime.strptime(author[5], '%Y-%m-%d').date() if not author[5] else "")
+        author = Author(id=author[0], name=author[1], has_nobel_prize=author[2], country=author[3], birthdate=datetime.strptime(author[4], '%Y-%m-%d').date(), date_of_death=datetime.strptime(author[5], '%Y-%m-%d').date())
 
         # If there is one that has the same id as passed to the function as parameter, author is an author object
         # else it is false
@@ -437,7 +360,7 @@ def fetch_author_by_name(name:str) -> Author:
     author = cur.execute(f"SELECT * FROM authors WHERE author_name == \"{name}\";").fetchone()
 
     # Converts it to an author object
-    new_author = Author(id=author[0], name=author[1], has_nobel_prize=author[2], country=author[3], birthdate=datetime.strptime(author[4], '%Y-%m-%d').date(), date_of_death=datetime.strptime(author[5], '%Y-%m-%d').date() if author[5] else "")
+    new_author = Author(id=author[0], name=author[1], has_nobel_prize=author[2], country=author[3], birthdate=datetime.strptime(author[4], '%Y-%m-%d').date(), date_of_death=datetime.strptime(author[5], '%Y-%m-%d').date())
 
     # Returns the author as an Author object
     return new_author
@@ -670,133 +593,130 @@ def fetch_book_by_isbn(isbn:str) -> Book:
     # Returns the found book
     return book
 
+def read_book_types() -> list[str]:
+    db, cur = prepare_db()
+    raw_types = cur.execute("SELECT * FROM types;").fetchall()
+    book_types = []
 
-def change_lend_state(book_id:int, user_id:int) -> bool:
-    """
-    ### Function change_lend_state
+    for raw_type in raw_types:
+        book_types.append(raw_type[1])
 
-    **Use:** changes the lend state of a book
+    cur.close()
+    db.close()
 
-    **Returns:**
-    - True if the lend state could be changed
-    - False if it could not be changed
-
-    **Parameters:**
-    - book_id - the id of the book to process
-    - user_id - the id of the user trying to change the lend state
-    """
-
-    # Prevents the program from crashing on error
-    try:
-
-        # Creates a database connection
-        db, cur = prepare_db()
-
-        # If the book is already lend
-        if fetch_book_by_id(book_id).lend != -1:
-            # Sets it new state to not lend (-1)
-            newState = -1
-        
-        # If the book is not lend
-        else:
-            # Set it to be lend by the user with user_id
-            newState = user_id
-
-        # Changes the book in the database
-        cur.execute(f"""UPDATE books SET book_lend = ? WHERE book_id = ?;""", (newState, book_id))
-
-        # Closes the cursor
-        cur.close()
-
-        # commits the changes to the database
-        db.commit()
-
-        # Returns True because the operation was successful
-        return True
-
-    # If something went wrong
-    except:
-        # Return false, because the book could not be changed
-        return False
+    return book_types
 
 
-def fetch_users() -> list[User]:
-    """
-    ### Function fetch_users
-
-    **Use:** Retrieves a list of all users in the database
-
-    **Returns:**
-    - users - a list of the users in the database
-    """
-
-    # Creates a connection to the database
+def set_book_types(types: list[str]) -> None:
     db, cur = prepare_db()
 
-    # Retrieves all users in raw form from the database
-    raw_users = cur.execute("SELECT * FROM users;").fetchall()
+    cur.execute("DROP TABLE types;")
 
-    # Creates a list for the processed users
-    users = []
+    db.commit()
 
-    # Converts the raw users (lists) into instances of the User class
-    for user in raw_users:
-        users.append(User(user[0], user[1], user[2], eval(user[3]), eval(user[4])))
+    cur.execute("CREATE TABLE types (type_id INTEGER PRIMARY KEY AUTOINCREMENT, type_name STRING NOT NULL);")
 
-    # Returns the converted users
-    return users
+    db.commit()
 
+    for book_type in types:
+        cur.execute(f"INSERT INTO types (type_name) VALUES ('{book_type}');")
 
-def fetch_user_names():
-    """
-    ### Function fetch_user_names
+    db.commit()
 
-    **Use:** Retrieves a list with the names of all the users in the database
-
-    **Returns:**
-    - names - the list of all the users in the database
-    """
-
-    # Gets all the users in the database
-    users = fetch_users()
-
-    # Stores their names in a list
-    names = [user.name for user in users]
-
-    # And returns the list
-    return names
+    cur.close()
+    db.close()
 
 
-def fetch_user_by_id(user_id:int) -> User|None:
-    """
-    ### Function fetch_user_by_id
+def update_book_type(type_id: int, new_type_name: str) -> None | str:
+    db, cur = prepare_db
 
-    **Use**: tries to fetch a user with the provided id from the database
+    try:
+        cur.execute(f"UPDATE types SET type_name = {new_type_name} WHERE type_id == {type_id};")
+        db.commit()
+        cur.close()
+        db.close()
 
-    **Returns:**
-    - False if no user with the provided id was found
-    - result - the user with the provided id
-
-    **Parameters:**
-    - user_id - the id that should be searched for
-    """
-
-    # Fetches all users from the database
-    users = fetch_users()
-
-    # The result will be false if no user with the user_id parameter was found
-    result = False
-
-    # Searches the users for the id
-    for user in users:
-        if user.id == user_id:
-            # Updates the result to the found user and exits the loop
-            result = user
-            break
-
+    except Exception as e:
+        return e
     
-    # Returns the result of the operation    
-    return result
+    return None
+
+
+def add_book_type(type_name: str) -> None | str:
+    db, cur = prepare_db()
+
+    try:
+        cur.executer(f"INSERT INTO types (type_name) VALUES ({type_name});")
+        db.commit()
+        cur.close()
+        db.close()
+    except Exception as e:
+        return e
+
+    return None
+
+
+def read_rooms() -> list[str]:
+    db, cur = prepare_db()
+    raw_rooms = cur.execute("SELECT * FROM rooms;").fetchall()
+    book_rooms = []
+
+    for raw_room in raw_rooms:
+        book_rooms.append(raw_room[1])
+
+    cur.close()
+    db.close()
+
+    return book_rooms
+
+
+def set_rooms(rooms: list[str]) -> None:
+    db, cur = prepare_db()
+
+    cur.execute("DROP TABLE rooms;")
+
+    db.commit()
+
+    cur.execute("CREATE TABLE rooms (room_id INTEGER PRIMARY KEY AUTOINCREMENT, room_name STRING NOT NULL);")
+
+    db.commit()
+
+    for room in rooms:
+        cur.execute(f"INSERT INTO rooms (room_name) VALUES ('{room}');")
+
+    db.commit()
+
+    cur.close()
+    db.close()
+
+
+def update_room(room_id: int, new_room_name: str) -> None | str:
+    db, cur = prepare_db
+
+    try:
+        cur.execute(f"UPDATE rooms SET room_name = {new_room_name} WHERE room_id == {room_id};")
+        db.commit()
+        cur.close()
+        db.close()
+
+    except Exception as e:
+        return e
+    
+    return None
+
+
+def add_room(room_name: str) -> None | str:
+    db, cur = prepare_db()
+
+    try:
+        cur.executer(f"INSERT INTO rooms (room_name) VALUES ({room_name});")
+        db.commit()
+        cur.close()
+        db.close()
+    except Exception as e:
+        return e
+
+    return None
 
 
 """
@@ -809,5 +729,4 @@ if __name__ == "__main__":
     print("Executing file 'handle_db.py'")
     print("This file is executed as the main process")
     print("To start the webserver, please rub 'python app.py'!")
-    print(f"Module version {MODULE_VERSION}")
     print("-------------------------------------------")

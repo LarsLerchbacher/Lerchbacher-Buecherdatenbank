@@ -6,6 +6,7 @@
 
 from array import array
 import app_context
+from datetime import date
 from tkinter import *
 from tkinter import messagebox
 from tkinter.ttk import *
@@ -23,6 +24,8 @@ IMAGE_SIZE = 175
 class BookWidget(Frame):
     def __init__(self, parent, id: int, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
+
+        self.id = id
 
         self.preview = Frame(self, relief = SUNKEN)
         self.details = Frame(self.preview)
@@ -42,9 +45,6 @@ class BookWidget(Frame):
         self.image_data = ImageTk.PhotoImage(image)
 
         self.image = Label(self.details, image = self.image_data)
-
-        self.id = id
-
         self.publisher = Label(self.details, text = 'Verlag: ')
         self.publisher.pack(pady = 5, padx = 50)
 
@@ -84,7 +84,6 @@ class BookWidget(Frame):
         self.button_frame.pack(pady = 10, padx = 250)
         self.button.grid(padx = 10, row = 0, column = 0)
 
-        log(f"Successfully created a book widget for the book with id {self.id}")
 
         self.update()
 
@@ -94,7 +93,6 @@ class BookWidget(Frame):
 
 
     def update(self):
-        log(f"Updating book widget with id {self.id}")
         book = fetch_book_by_id(self.id)
         self.title.config(text=book.title)
         authors = [fetch_author_by_id(id) for id in book.author_ids] 
@@ -138,11 +136,10 @@ class BookWidget(Frame):
         self.shelf.config(text = f'Regal: {book.shelf}')
 
         self.lend.config(text = f'Verliehen: {"Ja" if book.lend else "Nein"}')
+
     
 
     def expand(self):
-
-        # Code to expand to details
         self.button_frame.pack_forget()
         self.details.pack()
         self.button.configure(text = 'Weniger anzeigen', command = self.shrink)
@@ -152,12 +149,11 @@ class BookWidget(Frame):
 
 
     def shrink(self):
-
-        # Code to shrink to overview
         self.button_frame.pack_forget()
         self.details.pack_forget()
         self.button.configure(text = 'Mehr anzeigen', command = self.expand)
         self.edit.grid_forget()
+        self.delete.grid_forget()
         self.button_frame.pack(pady = 10, padx = 250)
 
 
@@ -176,6 +172,7 @@ class BookWidget(Frame):
 class RecentBooksWidget(Frame):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        log("Creating 'recent books widget'")
         all_books = fetch_books()
         self.books = all_books[-12:]
 
@@ -183,7 +180,9 @@ class RecentBooksWidget(Frame):
         self.bookWidgets = []
 
         self.header.pack()
-            
+
+        log("Successfully create 'recent books widget'")
+
         self.update()
 
     def update(self):
@@ -204,13 +203,18 @@ class RecentBooksWidget(Frame):
         for bookWidget in self.bookWidgets:
             bookWidget.pack(pady = 20)
 
+        log("Successfully updated 'recent books widgets'")
+
 
 class AllBooksWidget(Frame):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        log("Creating 'all books widget'")
         self.books = fetch_books()
 
         self.bookWidgets = []
+
+        log("Successfully created 'all books widget'")
         
         self.update()
 
@@ -230,6 +234,8 @@ class AllBooksWidget(Frame):
 
         for bookWidget in self.bookWidgets:
             bookWidget.pack(pady=20)
+
+        log("Successfully updated 'all books widget'")
 
 
 class ISBNWidget(Entry):
@@ -584,6 +590,140 @@ class AuthorSelectWidget(Frame):
                 self.used.append("Unbekannt")
 
 
+class AuthorWidget(Frame):
+    def __init__(self, parent, id, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
+
+        self.id = id
+
+        self.preview = Frame(self, relief=SUNKEN)
+        self.details = Frame(self.preview)
+        self.preview.pack()
+
+        self.name = Label(self.preview, font='Arial 16 bold', wraplength=500, justify='center')
+        self.name.pack(padx=50, pady=10)
+
+        self.country = Label(self.details, text='From: ')
+        self.country.pack(pady=5, padx=50)
+
+        self.nobel = Label(self.details)
+        self.nobel.pack(pady=5, padx=50)
+
+        self.dob = Label(self.details, text='Born on: ')
+        self.dob.pack(pady=5, padx=50)
+
+        self.dod = Label(self.details, text='Died on: ')
+        self.dod.pack(pady=5, padx=50)
+
+        self.button_frame = Frame(self.preview)
+        self.button_frame.pack(pady=10, padx=250)
+
+        self.toggle = Button(self.button_frame, text='Mehr anzeigen', command=self.expand)
+        self.toggle.grid(row=0, column=0, padx=10)
+
+        self.edit = Button(self.button_frame, text='Bearbeiten', command=lambda:AuthorEdit(self.id))
+
+        self.delete = Button(self.button_frame, text='Bearbeiten', command=self.delete_author)
+
+
+        if self.id != -1:
+            self.update()
+
+    
+    def update(self):
+
+        author = fetch_author_by_id(self.id)
+
+        self.name.config(text=author.name)
+
+        self.country.config(text=author.country)
+
+        if author.has_nobel_prize == 1:
+            nobel_text = "Ist ein Nobelpreistraeger"
+        else:
+            nobel_text = "Ist kein Nobelpreistraeger"
+
+        self.nobel.config(text=nobel_text)
+
+        if author.birthdate != date(2200, 12, 12):
+            birthdate_str = str(author.birthdate)[8:11] + "." + str(author.birthdate)[5:7] + "." + str(author.birthdate)[0:4]
+
+            self.dob.config(text=f'Geboren am {birthdate_str}')
+
+        else:
+            self.dob.config(text=f"Geburtsdatum unbekannt")
+
+        if author.date_of_death not in [date(2200, 1, 1), date(2200, 12, 12)]:
+            date_of_death_str = str(author.date_of_death)[8:11] + "." + str(author.date_of_death)[5:7] + "." + str(author.date_of_death)[0:4] 
+            self.dod.config(text=f'Gestorben am {date_of_death_str}')
+        elif author.date_of_death == date(2200, 1, 1):
+            self.dod.config(text='Ist noch am Leben')
+        else:
+            self.dod.config(text="Sterbedatum unbekannt")
+
+
+
+    def expand(self):
+        self.button_frame.pack_forget()
+        self.details.pack()
+        self.toggle.config(text='Weniger anzeigen', command=self.shrink)
+        self.edit.grid(row=0, column=1)
+        self.delete.grid(row=0, column=2, padx=10)
+        self.button_frame.pack(pady=10, padx=250)
+
+
+    def shrink(self):
+        self.button_frame.pack_forget()
+        self.details.pack_forget()
+        self.toggle.config(text='Mehr anzeigen', command=self.expand)
+        self.edit.grid_forget()
+        self.delete.grid_forget()
+        self.button_frame.pack(pady=10, padx=250)
+
+
+    def delete_author(self):
+        author = fetch_author_by_id(self.id)
+        decision = messagebox.askquestion("Bestaetigen", f"Moechten Sie den Autor {author.name} wirklich loeschen?\n Diese Aktion kann NICHT rueckgaengig gemacht werde!")
+        if decision == "yes":
+            log(f"Deleting author with id {self.id}...")
+            delete_author(self.id, SECURITY_KEY)
+            log(f"Successfully deleted author with id {self.id}")
+            app_context.mainWindow.update()
+
+
+class AllAuthorsWidget(Frame):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        log("Creating 'all authors widget'")
+        self.authors = fetch_authors()
+
+        self.authorWidgets = []
+
+        log("Successfully create 'all authors widget'")
+
+        self.update()
+
+
+    def update(self):
+        log("Updating 'all authors widget'")
+        self.authors = fetch_authors()
+
+        for authorWidget in self.authorWidgets:
+            for child in authorWidget.winfo_childs():
+                child.destroy()
+            authorWidget.destroy()
+
+        self.authorWidgets = []
+
+        for author in self.authors:
+            self.authorWidgets.append(AuthorWidget(self, author.id))
+
+        for authorWidget in self.authorWidgets:
+            authorWidget.pack(pady=20)
+
+        log("Successfully updated 'all authors widget'")
+
+
 class Tab(Frame):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -654,8 +794,14 @@ class AuthorsTab(Tab):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+        self.header_label = Label(self.inner_frame, text="Autoren", font="Arial 25 bold")
+        self.header_label.pack(padx=0, pady=10)
+
+        self.authors = AllAuthorsWidget(self.inner_frame)
+        self.authors.pack(padx=0, pady=5)
+
     def update(self):
-        pass
+        self.authors.update()
 
 
 class SearchTab(Tab):
@@ -697,7 +843,7 @@ class App(Tk):
         self.tabControl.add(self.booksTab, text='Bücher')
         self.tabControl.add(self.authorsTab, text='Autoren')
         self.tabControl.add(self.searchTab, text='Suche')
-        self.tabControl.add(self.searchTab, text='Einstellungen')
+        self.tabControl.add(self.settingsTab, text='Einstellungen')
 
         log("Successfully initialized main window")
 
