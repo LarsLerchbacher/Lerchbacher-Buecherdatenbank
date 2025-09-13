@@ -195,7 +195,7 @@ def does_author_exist(name) -> bool:
     return is_existent
 
 
-def delete_author(name, security_key) -> bool:
+def delete_author(id, security_key) -> bool:
     """
     ### Function delete_author
 
@@ -215,7 +215,7 @@ def delete_author(name, security_key) -> bool:
         db, cur = prepare_db()
 
         # Deletes the author from the db
-        cur.execute(f"DELETE FROM authors WHERE author_name == ?;", (name))
+        cur.execute(f"DELETE FROM authors WHERE author_id == {id};")
 
         # Commits the changes to the db
         db.commit()
@@ -251,29 +251,31 @@ def create_author(author:Author) -> bool:
     # If the author doesn't exist
     if not does_author_exist(author.name):
 
-        # Initializes the db connection
-        db, cur = prepare_db()
+        try:
 
-        # The author is added to the db
-        cur.execute(f"INSERT INTO authors (author_name, has_nobel_prize, author_country, date_of_birth, date_of_death) VALUES (?, ?, ?, ?, ?);", (author.name, author.has_nobel_prize, author.country, author.birthdate, author.date_of_death))
+            # Initializes the db connection
+            db, cur = prepare_db()
 
-        # Commits the changes to the db
-        db.commit()
+            # The author is added to the db
+            cur.execute(f"INSERT INTO authors (author_name, has_nobel_prize, author_country, date_of_birth, date_of_death) VALUES (?, ?, ?, ?, ?);", (author.name, author.has_nobel_prize, author.country, author.birthdate, author.date_of_death))
 
-        # Closes the cursor
-        cur.close()
+            # Commits the changes to the db
+            db.commit()
 
-        # Closes the db connection
-        db.close()
+            # Closes the cursor
+            cur.close()
 
-        # Returns True because the author was created successfully
-        return True
+            # Closes the db connection
+            db.close()
 
-    # If the author already exists
-    else:
+            # Returns True because the author was created successfully
+            return "OK"
 
-        # Returns False because you mustn't override an existing author to create a new one
-        return False
+        # If the author already exists
+        except Exception as e:
+
+            # Returns False because you mustn't override an existing author to create a new one
+            return e
 
 
 def edit_author(author_id:int, new:Author) -> bool:
@@ -292,33 +294,35 @@ def edit_author(author_id:int, new:Author) -> bool:
     # If the author exists
     if fetch_author_by_id(author_id):
 
-        # Initializes the db connection
-        db, cur = prepare_db()
+        try:
 
-        # Updates the author's details
-        cur.execute("""
-        UPDATE authors
-        SET author_name = ?, has_nobel_prize = ?, author_country = ?, date_of_birth = ?, date_of_death = ?
-        WHERE author_id == ?;
-        """, (new.name, new.has_nobel_prize, new.country, str(new.birthdate), str(new.date_of_death), author_id))
-        
-        # Commits the changes to the db
-        db.commit()
+            # Initializes the db connection
+            db, cur = prepare_db()
 
-        # Closes the cursor
-        cur.close()
+            # Updates the author's details
+            cur.execute("""
+            UPDATE authors
+            SET author_name = ?, has_nobel_prize = ?, author_country = ?, date_of_birth = ?, date_of_death = ?
+            WHERE author_id == ?;
+            """, (new.name, new.has_nobel_prize, new.country, str(new.birthdate), str(new.date_of_death), author_id))
+            
+            # Commits the changes to the db
+            db.commit()
 
-        # Closes the db connection
-        db.close()
+            # Closes the cursor
+            cur.close()
 
-        # Returns True because the author was successfully edited
-        return True
+            # Closes the db connection
+            db.close()
 
-    # If the author doesn't exist
-    else:
+            # Returns True because the author was successfully edited
+            return "OK"
 
-        # Returns False, because you can't alter the details of a not existing author
-        return False
+        # If the author doesn't exist
+        except exception as e:
+
+            # Returns False, because you can't alter the details of a not existing author
+            return e
 
 
 # TODO: Finish commenting fetch_author_by_id function

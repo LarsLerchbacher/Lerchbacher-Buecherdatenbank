@@ -176,7 +176,6 @@ class BookWidget(Frame):
         if decision == "yes":
             log(f"Deleting book with id {self.id}...")
             delete_book(self.id, SECURITY_KEY)
-            log(f"Successfully deleted book with id {self.id}")
             app_context.mainWindow.update()
         
         
@@ -193,8 +192,6 @@ class RecentBooksWidget(Frame):
         self.bookWidgets = []
 
         self.header.pack()
-
-        log("Successfully create 'recent books widget'")
 
         self.update()
 
@@ -216,7 +213,6 @@ class RecentBooksWidget(Frame):
         for bookWidget in self.bookWidgets:
             bookWidget.pack(pady = 20)
 
-        log("Successfully updated 'recent books widgets'")
 
 
 class AllBooksWidget(Frame):
@@ -227,7 +223,6 @@ class AllBooksWidget(Frame):
 
         self.bookWidgets = []
 
-        log("Successfully created 'all books widget'")
         
         self.update()
 
@@ -248,7 +243,6 @@ class AllBooksWidget(Frame):
         for bookWidget in self.bookWidgets:
             bookWidget.pack(pady=20)
 
-        log("Successfully updated 'all books widget'")
 
 
 class ISBNWidget(Entry):
@@ -278,11 +272,10 @@ class ISBNWidget(Entry):
 class BookEdit(Toplevel):
     def __init__(self, id):
         super().__init__()
-        if id != None:
-            self.id = id
-            log(f"Opening book editing dialog for book with id {id}")
+        self.id = id
+        if self.id != -1:
+            log(f"Opening book editing dialog for book with id {self.id}")
         else:
-            self.id = -1
             log("Opening empty book editing dialog")
 
         self.title_frame = Frame(self)
@@ -482,7 +475,8 @@ class BookEdit(Toplevel):
         if self.id != -1:
             response = edit_book(self.id, book)
             if response != "OK":
-                showerror(title="Speichern nicht moeglich!", message="Response")
+                log(f"Speichern nicht moeglich!\n{response}", "ERROR")
+                showerror(title="Speichern nicht moeglich!", message=response)
             else:
                 log("Erfolgreich gespeichert!")
                 app_context.mainWindow.update()
@@ -490,7 +484,8 @@ class BookEdit(Toplevel):
         else:
             response = create_book(book)
             if type(response) == str:
-                showerror(title="Speichern nicht moeglich!", message="Response")
+                log(f"Speichern nicht moeglich!\n{response}", "ERROR")
+                showerror(title="Speichern nicht moeglich!", message=response)
             else:
                 self.id = response
                 log("Erfolgreich gespeichert!")
@@ -636,7 +631,7 @@ class AuthorWidget(Frame):
 
         self.edit = Button(self.button_frame, text='Bearbeiten', command=lambda:AuthorEdit(self.id))
 
-        self.delete = Button(self.button_frame, text='Bearbeiten', command=self.delete_author)
+        self.delete = Button(self.button_frame, text='Loeschen', command=self.delete_author)
 
 
         if self.id != -1:
@@ -700,8 +695,200 @@ class AuthorWidget(Frame):
         if decision == "yes":
             log(f"Deleting author with id {self.id}...")
             delete_author(self.id, SECURITY_KEY)
-            log(f"Successfully deleted author with id {self.id}")
             app_context.mainWindow.update()
+
+
+class DateWidget(Frame):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.day = Spinbox(self, from_=1, to=31, width=10, wrap=True, command=self.update)
+        self.month = Spinbox(self, from_=1, to=12, width=10, wrap=True, command=self.update)
+        self.year = Spinbox(self, from_=0, to=2200, command=self.update)
+        self.firstDot = Label(self, text='.')
+        self.secondDot = Label(self, text='.')
+
+        self.day.grid(row=0, column=0)
+        self.firstDot.grid(row=0, column=1)
+        self.month.grid(row=0, column=2)
+        self.secondDot.grid(row=0, column=3)
+        self.year.grid(row=0, column=4)
+
+        self.day.set(1)
+        self.month.set(1)
+        self.year.set(2200)
+
+        self.update()
+
+    def update(self):
+        # Get the currently selected values
+        year = int(self.year.get())
+        month = int(self.month.get())
+        day = int(self.day.get())
+
+        # Check if the currently selected year is a leap year
+        isLeapYear = False
+        if year % 4 == 0:
+            isLeapYear = True
+        else:
+            isLeapYear = False
+
+        
+        # Stores the days each month has.
+        daysPerMonthList = [31, 'x', 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+
+        # Set the number of days that february has based on the currently selected year
+        if isLeapYear:
+            daysPerMonthList[1] = 29
+        else:
+            daysPerMonthList[1] = 28
+
+        # Gets the number of days in the currently selected month (lists are 0-based, months 1-based)
+        daysPerMonth = daysPerMonthList[month - 1]
+
+        # If the currently selected day is higher than the number of days in the currently selected month, set it back to 1
+        self.day.config(to=daysPerMonth)
+        if day > daysPerMonth:
+            self.day.set(1)
+
+    def get(self):
+        # Get the currently selected values
+        year = int(self.year.get())
+        month = int(self.month.get())
+        day = int(self.day.get())
+        
+        # Return a date object with these values
+        return Date(year, month, day)
+    
+
+    def set(self, date: Date):
+        self.year.set(date.year)
+        self.month.set(date.month)
+        self.day.set(date.day)
+        self.update()
+
+        
+class AuthorEdit(Toplevel):
+    def __init__(self, id: int, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.id = id
+        if self.id != -1:
+            log(f"Opening author editing dialog for author with id {self.id}")
+        else:
+            log("Opening empty author editing dialog")
+
+        self.nameFrame = Frame(self)
+        self.nameFrame.pack(padx=20, pady=20)
+
+        self.name = Entry(self.nameFrame, width=75)
+        self.nameLabel = Label(self.nameFrame, text='Name: ')
+        self.nameLabel.grid(row=0, column=0)
+        self.name.grid(row=0, column=1)
+
+        self.countryFrame = Frame(self)
+        self.countryFrame.pack(padx=20, pady=20)
+
+        self.country = Entry(self.countryFrame, width=75)
+        self.countryLabel = Label(self.countryFrame, text='Land: ')
+        self.countryLabel.grid(row=0, column=0)
+        self.country.grid(row=0, column=1)
+
+        # DOB = date of birth
+        self.dobFrame = Frame(self)
+        self.dobFrame.pack(padx=20, pady=20)
+
+        self.dob = DateWidget(self.dobFrame)
+        self.dobLabel = Label(self.dobFrame, text='Geburtsdatum (Unbekannt = 12.12.2200): ')
+        self.dobLabel.grid(row=0, column=0)
+        self.dob.grid(row=1, column=0)
+
+        # DOD = date of death
+        self.dodFrame = Frame(self)
+        self.dodFrame.pack(padx=20, pady=20)
+
+        self.dod = DateWidget(self.dodFrame)
+        self.dodLabel = Label(self.dodFrame, text='Sterbedatum (Noch am Leben = 1.1.2200, Unbekannt = 12.12.2200): ')
+        self.dodLabel.grid(row=0, column=0)
+        self.dod.grid(row=1, column=0)
+
+        # NPW = Nobel prize winner
+        self.npwFrame = Frame(self)
+        self.npwFrame.pack(padx=20, pady=20)
+
+        self.npwVar = IntVar(self.npwFrame)
+        self.npw = Checkbutton(self.npwFrame, var=self.npwVar)
+        self.npwLabel = Label(self.npwFrame, text='Ist ein Nobelpreistraeger?: ')
+        self.npwLabel.grid(row=0, column=0)
+        self.npw.grid(row=0, column=1)
+
+        self.buttonFrame = Frame(self)
+        self.buttonFrame.pack(padx=20, pady=20)
+
+        self.saveButton = Button(self.buttonFrame, text='Speichern', command=self.save)
+        self.cancelButton = Button(self.buttonFrame, text='Abbrechen', command=self.cancel)
+        self.saveButton.grid(row=0, column=0)
+        self.cancelButton.grid(row=0, column=1, padx=10)
+
+
+
+        if self.id != -1:
+            self.update()
+
+
+    def update(self):
+        author = fetch_author_by_id(self.id)
+
+        self.name.delete(0, END)
+        self.name.insert(0, author.name)
+
+        self.country.delete(0, END)
+        self.country.insert(0, author.country)
+
+        self.dob.set(author.birthdate)
+
+        self.dod.set(author.date_of_death)
+
+        self.npwVar.set(author.has_nobel_prize)
+
+
+
+    def save(self):
+        name = self.name.get()
+        country = self.country.get()
+        dob = str(self.dob.get())
+        dod = str(self.dod.get())
+        npw = self.npwVar.get()
+
+        if self.id != -1:
+            new_author = Author(id, name, npw, country, dob, dod)
+            response = edit_author(self.id, new_author)
+            if response != "OK":
+                log(f"Speichern nicht moeglich!\n{response}", "ERROR")
+                showerror(title="Speichern nicht moeglich!", message=response)
+            else:
+                log("Erfolgreich gespeichert!")
+                app_context.mainWindow.update()
+                self.destroy()
+        else:
+            new_author = Author(-1, name, npw, country, dob, dod)
+            response = create_author(new_author)
+            if response != "OK":
+                log(f"Speichern nicht moeglich!\n{response}", "ERROR")
+                showerror(title="Speichern nicht moeglich!", message=response)
+            else:
+                log("Erfolgreich gespeichert!")
+                app_context.mainWindow.update()
+                self.destroy()
+
+
+    def cancel(self):
+        if self.id == -1:
+            log("Closed empty author editing dialog wihtout saving")
+        else:
+            log(f"Closed author editing dialog for author with id {self.id} wihtout saving")
+
+        self.destroy()
+
 
 
 class AllAuthorsWidget(Frame):
@@ -712,8 +899,6 @@ class AllAuthorsWidget(Frame):
 
         self.authorWidgets = []
 
-        log("Successfully create 'all authors widget'")
-
         self.update()
 
 
@@ -722,7 +907,7 @@ class AllAuthorsWidget(Frame):
         self.authors = fetch_authors()
 
         for authorWidget in self.authorWidgets:
-            for child in authorWidget.winfo_childs():
+            for child in authorWidget.winfo_children():
                 child.destroy()
             authorWidget.destroy()
 
@@ -733,8 +918,6 @@ class AllAuthorsWidget(Frame):
 
         for authorWidget in self.authorWidgets:
             authorWidget.pack(pady=20)
-
-        log("Successfully updated 'all authors widget'")
 
 
 class Tab(Frame):
@@ -809,6 +992,9 @@ class AuthorsTab(Tab):
 
         self.header_label = Label(self.inner_frame, text="Autoren", font="Arial 25 bold")
         self.header_label.pack(padx=0, pady=10)
+
+        self.create_button = Button(self.inner_frame, text='Neuen Author hinzufuegen', command=lambda: AuthorEdit(-1))
+        self.create_button.pack(padx=0, pady=5)
 
         self.authors = AllAuthorsWidget(self.inner_frame)
         self.authors.pack(padx=0, pady=5)
