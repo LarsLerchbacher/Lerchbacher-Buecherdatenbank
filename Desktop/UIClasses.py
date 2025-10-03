@@ -18,24 +18,26 @@
 
 
 from array import array
+from app import get_image, get_image_src, update_image
 import app_context
+from database import *
 from datetime import date
 from tkinter import *
 from tkinter import messagebox
 from tkinter.ttk import *
 from tkinter.messagebox import *
-from handle_db import *
 from PIL import Image, ImageTk
 import requests
-from pathlib import Path
-from helperfunctions import *
 
 
 IMAGE_SIZE = 175
 
+global logger, formatter
+
 
 class BookWidget(Frame):
     def __init__(self, parent, id: int, *args, **kwargs):
+        global logger
         super().__init__(parent, *args, **kwargs)
 
         self.id = id
@@ -118,7 +120,7 @@ class BookWidget(Frame):
             self.author.config(text = self.author["text"] + " und ")
         self.author.config(text = self.author["text"] + authors.pop().name)
 
-        image = get_cover(book)
+        image = get_image(book)
 
         self.image_data = ImageTk.PhotoImage(image)
         self.image.config(image = self.image_data)
@@ -133,7 +135,7 @@ class BookWidget(Frame):
 
         self.year.config(text = f'Jahr: {book.year}')
 
-        all_types = read_book_types()
+        all_types = get_book_types()
         self.type.config(text = f'Buchtyp: {all_types[book.type] if book.type in range(0, len(all_types)) else "Unbekannt"}')
 
         tag_string = ""
@@ -143,7 +145,7 @@ class BookWidget(Frame):
         tag_string += f" {tag_loop.pop()}"
         self.tags.config(text = f'Kategorie(n): {tag_string}')
 
-        all_rooms = read_rooms()
+        all_rooms = get_rooms()
         self.room.config(text = f'Raum: {all_rooms[book.room] if book.room in range(0, len(all_rooms)) else "Unbekannt"}')
 
         self.shelf.config(text = f'Regal: {book.shelf}')
@@ -174,7 +176,7 @@ class BookWidget(Frame):
         book = fetch_book_by_id(self.id)
         decision = messagebox.askquestion("Bestaetigen", f"Moechten Sie das Buch {book.title} wirklich loeschen?\n Diese Aktion kann NICHT rueckgaengig gemacht werde!")
         if decision == "yes":
-            log(f"Deleting book with id {self.id}...")
+            logger.info(f"Deleting book with id {self.id}...")
             delete_book(self.id, SECURITY_KEY)
             app_context.mainWindow.update()
         
@@ -183,8 +185,9 @@ class BookWidget(Frame):
 
 class RecentBooksWidget(Frame):
     def __init__(self, *args, **kwargs):
+        global logger, formatter
         super().__init__(*args, **kwargs)
-        log("Creating 'recent books widget'")
+        logger.info("Creating 'recent books widget'")
         all_books = fetch_books()
         self.books = all_books[-12:]
 
@@ -196,7 +199,7 @@ class RecentBooksWidget(Frame):
         self.update()
 
     def update(self):
-        log("Updating 'recent books widget'")
+        logger.info("Updating 'recent books widget'")
         all_books = fetch_books()
         self.books = all_books[-12:]
         
@@ -218,7 +221,7 @@ class RecentBooksWidget(Frame):
 class AllBooksWidget(Frame):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        log("Creating 'all books widget'")
+        logger.info("Creating 'all books widget'")
         self.books = fetch_books()
 
         self.bookWidgets = []
@@ -227,7 +230,7 @@ class AllBooksWidget(Frame):
         self.update()
 
     def update(self):
-        log("Updating 'all books widget'")
+        logger.info("Updating 'all books widget'")
         self.books = fetch_books()
         
         for bookWidget in self.bookWidgets:
@@ -274,9 +277,9 @@ class BookEdit(Toplevel):
         super().__init__()
         self.id = id
         if self.id != -1:
-            log(f"Opening book editing dialog for book with id {self.id}")
+            logger.info(f"Opening book editing dialog for book with id {self.id}")
         else:
-            log("Opening empty book editing dialog")
+            logger.info("Opening empty book editing dialog")
 
         self.title_frame = Frame(self)
         self.title_frame.pack(padx=20, pady=20)
@@ -427,10 +430,10 @@ class BookEdit(Toplevel):
 
     def save(self):
         # Code to save changes / create new book
-        log("Saving book: ")
+        logger.info("Saving book: ")
 
         title = self.title.get()
-        log(f"\tTitle: {title}")
+        logger.info(f"\tTitle: {title}")
 
         author_ids = self.authors.get()
         authors = []
@@ -438,57 +441,64 @@ class BookEdit(Toplevel):
         for author in fetch_authors():
             if author.id in author_ids:
                 authors.append(author.name)
-        log(f"\tAutoren: {authors} (Ids: {author_ids})")
+        logger.info(f"\tAutoren: {authors} (Ids: {author_ids})")
 
         publisher = self.publisher.get()
-        log(f"\tVerlag: {publisher}")
+        logger.info(f"\tVerlag: {publisher}")
 
         isbn = self.isbn.get()
         isbn_value = str(isbn)
-        log(f"\tISBN: {isbn_value[0:3]}-{isbn_value[3]}-{isbn_value[4:7]}-{isbn_value[7:12]}-{isbn_value[12]}")
+        logger.info(f"\tISBN: {isbn_value[0:3]}-{isbn_value[3]}-{isbn_value[4:7]}-{isbn_value[7:12]}-{isbn_value[12]}")
 
         edition = self.edition.get()
-        log(f"\tAuflage: {edition}")
+        logger.info(f"\tAuflage: {edition}")
 
         year = self.year.get()
-        log(f"\tJahr: {year}")
+        logger.info(f"\tJahr: {year}")
 
         book_type = self.type.get()
         type_nr = self.all_types.index(book_type)
-        log(f"\tBuchtyp: {book_type} (Typ Nr. {type_nr})")
+        logger.info(f"\tBuchtyp: {book_type} (Typ Nr. {type_nr})")
 
         tags = self.tags.get().replace("; ", ";").split(";")
-        log(f"\tKategorien: {tags}")
+        logger.info(f"\tKategorien: {tags}")
 
         book_room = self.room.get()
         room_nr = self.all_rooms.index(book_room)
-        log(f"\tRaum: {book_room} (Raum Nr. {room_nr})")
+        logger.info(f"\tRaum: {book_room} (Raum Nr. {room_nr})")
 
         shelf = self.shelf.get()
-        log(f"\tRegal: {shelf}")
+        logger.info(f"\tRegal: {shelf}")
 
         lend = self.lend_var.get()
-        log(f"\tVerliehen: {"ja" if lend else "nein"} (lend_var: {lend})")
+        logger.info(f"\tVerliehen: {"ja" if lend else "nein"} (lend_var: {lend})")
 
-        book = Book(title=title, author_ids=author_ids, publisher=publisher, isbn=isbn, edition=edition, year=year, type=type_nr, tags=tags, room=room_nr, shelf=shelf, lend=lend)
+        book = Book(id=self.id, title=title, author_ids=author_ids, publisher=publisher, isbn=isbn, edition=edition, year=year, type=type_nr, tags=tags, room=room_nr, shelf=shelf, lend=lend)
 
         if self.id != -1:
             response = edit_book(self.id, book)
             if response != "OK":
-                log(f"Speichern nicht moeglich!\n{response}", "ERROR")
+                logger.info(f"Speichern nicht moeglich!\n{response}", "ERROR")
                 showerror(title="Speichern nicht moeglich!", message=response)
             else:
-                log("Erfolgreich gespeichert!")
+                logger.info("Erfolgreich gespeichert!")
+
+                update_image(book)
+
                 app_context.mainWindow.update()
                 self.destroy()
         else:
             response = create_book(book)
             if type(response) == str:
-                log(f"Speichern nicht moeglich!\n{response}", "ERROR")
+                logger.info(f"Speichern nicht moeglich!\n{response}", "ERROR")
                 showerror(title="Speichern nicht moeglich!", message=response)
             else:
                 self.id = response
-                log("Erfolgreich gespeichert!")
+                book.id = response
+                logger.info("Erfolgreich gespeichert!")
+
+                update_image(book)
+
                 app_context.mainWindow.update()
                 self.destroy()
 
@@ -693,7 +703,7 @@ class AuthorWidget(Frame):
         author = fetch_author_by_id(self.id)
         decision = messagebox.askquestion("Bestaetigen", f"Moechten Sie den Autor {author.name} wirklich loeschen?\n Diese Aktion kann NICHT rueckgaengig gemacht werde!")
         if decision == "yes":
-            log(f"Deleting author with id {self.id}...")
+            logger.info(f"Deleting author with id {self.id}...")
             delete_author(self.id, SECURITY_KEY)
             app_context.mainWindow.update()
 
@@ -773,9 +783,9 @@ class AuthorEdit(Toplevel):
         super().__init__(*args, **kwargs)
         self.id = id
         if self.id != -1:
-            log(f"Opening author editing dialog for author with id {self.id}")
+            logger.info(f"Opening author editing dialog for author with id {self.id}")
         else:
-            log("Opening empty author editing dialog")
+            logger.info("Opening empty author editing dialog")
 
         self.nameFrame = Frame(self)
         self.nameFrame.pack(padx=20, pady=20)
@@ -863,29 +873,29 @@ class AuthorEdit(Toplevel):
             new_author = Author(id, name, npw, country, dob, dod)
             response = edit_author(self.id, new_author)
             if response != "OK":
-                log(f"Speichern nicht moeglich!\n{response}", "ERROR")
+                logger.info(f"Speichern nicht moeglich!\n{response}", "ERROR")
                 showerror(title="Speichern nicht moeglich!", message=response)
             else:
-                log("Erfolgreich gespeichert!")
+                logger.info("Erfolgreich gespeichert!")
                 app_context.mainWindow.update()
                 self.destroy()
         else:
             new_author = Author(-1, name, npw, country, dob, dod)
             response = create_author(new_author)
             if response != "OK":
-                log(f"Speichern nicht moeglich!\n{response}", "ERROR")
+                logger.info(f"Speichern nicht moeglich!\n{response}", "ERROR")
                 showerror(title="Speichern nicht moeglich!", message=response)
             else:
-                log("Erfolgreich gespeichert!")
+                logger.info("Erfolgreich gespeichert!")
                 app_context.mainWindow.update()
                 self.destroy()
 
 
     def cancel(self):
         if self.id == -1:
-            log("Closed empty author editing dialog wihtout saving")
+            logger.info("Closed empty author editing dialog wihtout saving")
         else:
-            log(f"Closed author editing dialog for author with id {self.id} wihtout saving")
+            logger.info(f"Closed author editing dialog for author with id {self.id} wihtout saving")
 
         self.destroy()
 
@@ -894,7 +904,7 @@ class AuthorEdit(Toplevel):
 class AllAuthorsWidget(Frame):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        log("Creating 'all authors widget'")
+        logger.info("Creating 'all authors widget'")
         self.authors = fetch_authors()
 
         self.authorWidgets = []
@@ -903,7 +913,7 @@ class AllAuthorsWidget(Frame):
 
 
     def update(self):
-        log("Updating 'all authors widget'")
+        logger.info("Updating 'all authors widget'")
         self.authors = fetch_authors()
 
         for authorWidget in self.authorWidgets:
@@ -918,6 +928,39 @@ class AllAuthorsWidget(Frame):
 
         for authorWidget in self.authorWidgets:
             authorWidget.pack(pady=20)
+
+
+class RecentAuthorsWidget(Frame):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        logger.info("Creating 'recent authors widget'")
+        all_authors = fetch_authors()
+        self.authors = all_authors[-12:]
+
+        self.header = Label(self, text="Neueste Autoren", font="Arial 14 bold")
+        self.authorWidgets = []
+
+        self.header.pack()
+
+        self.update()
+
+    def update(self):
+        logger.info("Updating 'recent authors widget'")
+        all_authors = fetch_authors()
+        self.authors = all_authors[-12:]
+        
+        for authorWidget in self.authorWidgets:
+            for child in authorWidget.winfo_children():
+                child.destroy()
+            authorWidget.destroy()
+
+        self.authorWidgets = []
+
+        for author in self.authors:
+            self.authorWidgets.append(AuthorWidget(self, author.id))
+
+        for authorWidget in self.authorWidgets:
+            authorWidget.pack(pady = 20)
 
 
 class Tab(Frame):
@@ -965,8 +1008,12 @@ class MainTab(Tab):
         self.recentBooks = RecentBooksWidget(self.inner_frame)
         self.recentBooks.pack(padx=0, pady=10)
 
+        self.recentAuthors = RecentAuthorsWidget(self.inner_frame)
+        self.recentAuthors.pack(padx=0, pady=10)
+
     def update(self):
         self.recentBooks.update()
+        self.recentAuthors.update()
 
 
 class BooksTab(Tab):
@@ -1011,7 +1058,15 @@ class SearchTab(Tab):
         pass
 
 
-class SettingsTab(Tab):
+class RoomsTab(Tab):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def update(self):
+        pass
+
+
+class TypesTab(Tab):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -1021,30 +1076,38 @@ class SettingsTab(Tab):
 
 class App(Tk):
     def __init__(self):
+        global logger, formatter
+
         super().__init__()
-        log("Initializing main window")
+
+        logger = app_context.logger
+        formatter = app_context.formatter
+
+        logger.info("Initializing main window")
         self.title("Lerchbacher Bücherdatenbank")
 
         app_context.mainWindow = self
 
-        log("Creating tab control widget")
+        logger.info("Creating tab control widget")
         self.tabControl = Notebook(self)
         self.tabControl.pack(fill="both", expand=True)
 
-        log("Populating tab control widget")
+        logger.info("Populating tab control widget")
         self.mainTab = MainTab(self.tabControl)
         self.booksTab = BooksTab(self.tabControl)
         self.authorsTab = AuthorsTab(self.tabControl)
+        self.typesTab = TypesTab(self.tabControl)
+        self.roomsTab = RoomsTab(self.tabControl)
         self.searchTab = SearchTab(self.tabControl)
-        self.settingsTab = SettingsTab(self.tabControl)
 
         self.tabControl.add(self.mainTab, text='Hauptmenü')
         self.tabControl.add(self.booksTab, text='Bücher')
         self.tabControl.add(self.authorsTab, text='Autoren')
+        self.tabControl.add(self.typesTab, text='Buchtypen')
+        self.tabControl.add(self.roomsTab, text='Raeume')
         self.tabControl.add(self.searchTab, text='Suche')
-        self.tabControl.add(self.settingsTab, text='Einstellungen')
 
-        log("Successfully initialized main window")
+        logger.info("Successfully initialized main window")
 
     def update(self):
 
@@ -1052,6 +1115,7 @@ class App(Tk):
         self.booksTab.update()
         self.authorsTab.update()
         self.searchTab.update()
-        self.settingsTab.update()
+        self.typesTab.update()
+        self.roomsTab.update()
 
 

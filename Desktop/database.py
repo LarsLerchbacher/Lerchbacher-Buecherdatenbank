@@ -27,7 +27,7 @@
 from sqlite3 import *
 from datetime import date, datetime
 import requests
-from helperfunctions import get_cover
+from app import get_image
 
 
 #
@@ -609,7 +609,7 @@ def fetch_book_by_isbn(isbn:str) -> Book:
     # Returns the found book
     return book
 
-def read_book_types() -> list[str]:
+def get_book_types() -> list[str]:
     db, cur = prepare_db()
     raw_types = cur.execute("SELECT * FROM types;").fetchall()
     book_types = []
@@ -621,6 +621,17 @@ def read_book_types() -> list[str]:
     db.close()
 
     return book_types
+
+
+def get_book_type(type_id) -> str:
+    db, cur = prepare_db()
+
+    name = cur.execute("SELECT * FROM types WHERE id=?", type_id).fetchone()[1]
+
+    cur.close()
+    db.close()
+
+    return name
 
 
 def set_book_types(types: list[str]) -> None:
@@ -672,7 +683,7 @@ def add_book_type(type_name: str) -> None | str:
     return None
 
 
-def read_rooms() -> list[str]:
+def get_rooms() -> list[str]:
     db, cur = prepare_db()
     raw_rooms = cur.execute("SELECT * FROM rooms;").fetchall()
     book_rooms = []
@@ -686,24 +697,15 @@ def read_rooms() -> list[str]:
     return book_rooms
 
 
-def set_rooms(rooms: list[str]) -> None:
+def get_room(room_id) -> str:
     db, cur = prepare_db()
 
-    cur.execute("DROP TABLE rooms;")
-
-    db.commit()
-
-    cur.execute("CREATE TABLE rooms (room_id INTEGER PRIMARY KEY AUTOINCREMENT, room_name STRING NOT NULL);")
-
-    db.commit()
-
-    for room in rooms:
-        cur.execute(f"INSERT INTO rooms (room_name) VALUES ('{room}');")
-
-    db.commit()
+    name = cur.execute("SELECT * FROM rooms WHERE id=?;", room_id).fetchone()[1]
 
     cur.close()
     db.close()
+
+    return name
 
 
 def update_room(room_id: int, new_room_name: str) -> None | str:
