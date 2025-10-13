@@ -609,6 +609,7 @@ def fetch_book_by_isbn(isbn:str) -> Book:
     # Returns the found book
     return book
 
+
 def get_book_types() -> list[str]:
     db, cur = prepare_db()
     raw_types = cur.execute("SELECT * FROM types;").fetchall()
@@ -623,10 +624,24 @@ def get_book_types() -> list[str]:
     return book_types
 
 
+def get_book_type_ids() -> list[str]:
+    db, cur = prepare_db()
+    raw_types = cur.execute("SELECT * FROM types;").fetchall()
+    type_ids = []
+
+    for raw_type in raw_types:
+        type_ids.append(raw_type[0])
+
+    cur.close()
+    db.close()
+
+    return type_ids 
+
+
 def get_book_type(type_id) -> str:
     db, cur = prepare_db()
 
-    name = cur.execute("SELECT * FROM types WHERE id=?", type_id).fetchone()[1]
+    name = cur.execute(f"SELECT * FROM types WHERE type_id={type_id}").fetchone()[1]
 
     cur.close()
     db.close()
@@ -654,11 +669,11 @@ def set_book_types(types: list[str]) -> None:
     db.close()
 
 
-def update_book_type(type_id: int, new_type_name: str) -> None | str:
-    db, cur = prepare_db
+def update_book_type(type_id: int, new_type_name: str) -> str:
+    db, cur = prepare_db()
 
     try:
-        cur.execute(f"UPDATE types SET type_name = {new_type_name} WHERE type_id == {type_id};")
+        cur.execute(f"UPDATE types SET type_name = '{new_type_name}' WHERE type_id == {type_id};")
         db.commit()
         cur.close()
         db.close()
@@ -666,41 +681,70 @@ def update_book_type(type_id: int, new_type_name: str) -> None | str:
     except Exception as e:
         return e
     
-    return None
+    return "OK"
 
 
-def add_book_type(type_name: str) -> None | str:
+def add_book_type(type_name: str) -> str:
     db, cur = prepare_db()
 
     try:
-        cur.executer(f"INSERT INTO types (type_name) VALUES ({type_name});")
+        cur.execute(f"INSERT INTO types (type_name) VALUES ('{type_name}');")
         db.commit()
         cur.close()
         db.close()
     except Exception as e:
         return e
 
-    return None
+    return "OK"
+
+def delete_book_type(type_id: int):
+    db, cur = prepare_db()
+
+    try:
+        cur.execute(f"DELETE FROM types WHERE type_id == {type_id}")
+        db.commit()
+        cur.close()
+        db.close()
+
+    except Exception as e:
+        return e
+
+    return "OK"
 
 
 def get_rooms() -> list[str]:
     db, cur = prepare_db()
     raw_rooms = cur.execute("SELECT * FROM rooms;").fetchall()
-    book_rooms = []
+    rooms = []
 
     for raw_room in raw_rooms:
-        book_rooms.append(raw_room[1])
+        rooms.append(raw_room[1])
 
     cur.close()
     db.close()
 
-    return book_rooms
+    return rooms
+
+
+def get_room_ids() -> list[str]:
+    db, cur = prepare_db()
+    raw_rooms = cur.execute("SELECT * FROM rooms;").fetchall()
+    room_ids = []
+
+    for raw_room in raw_rooms:
+        room_ids.append(raw_room[0])
+
+    cur.close()
+    db.close()
+
+    return room_ids
+
 
 
 def get_room(room_id) -> str:
     db, cur = prepare_db()
 
-    name = cur.execute("SELECT * FROM rooms WHERE id=?;", room_id).fetchone()[1]
+    name = cur.execute(f"SELECT * FROM rooms WHERE room_id == {room_id};").fetchone()[1]
 
     cur.close()
     db.close()
@@ -708,11 +752,11 @@ def get_room(room_id) -> str:
     return name
 
 
-def update_room(room_id: int, new_room_name: str) -> None | str:
-    db, cur = prepare_db
+def update_room(room_id: int, new_room_name: str) -> str:
+    db, cur = prepare_db()
 
     try:
-        cur.execute(f"UPDATE rooms SET room_name = {new_room_name} WHERE room_id == {room_id};")
+        cur.execute(f"UPDATE rooms SET room_name = '{new_room_name}' WHERE room_id == {room_id};")
         db.commit()
         cur.close()
         db.close()
@@ -720,21 +764,36 @@ def update_room(room_id: int, new_room_name: str) -> None | str:
     except Exception as e:
         return e
     
-    return None
+    return "OK" 
 
 
-def add_room(room_name: str) -> None | str:
+def add_room(room_name: str) -> str:
     db, cur = prepare_db()
 
     try:
-        cur.executer(f"INSERT INTO rooms (room_name) VALUES ({room_name});")
+        cur.execute(f"INSERT INTO rooms (room_name) VALUES ('{room_name}');")
         db.commit()
         cur.close()
         db.close()
     except Exception as e:
         return e
 
-    return None
+    return "OK"
+
+
+def delete_room(room_id: int):
+    db, cur = prepare_db()
+
+    try:
+        cur.execute(f"DELETE FROM rooms WHERE room_id = {room_id}")
+        db.commit()
+        cur.close()
+        db.close()
+
+    except Exception as e:
+        return e
+
+    return "OK"
 
 
 """

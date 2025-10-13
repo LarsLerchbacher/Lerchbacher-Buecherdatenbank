@@ -332,7 +332,7 @@ class BookEdit(Toplevel):
         self.type_frame = Frame(self)
         self.type_frame.pack(padx=20, pady=5)
 
-        self.all_types = read_book_types()
+        self.all_types = get_book_types()
         self.type_label = Label(self.type_frame, text="Typ: ")
         self.type = Combobox(self.type_frame, values=self.all_types, state="readonly", width=25)
         self.type_label.grid(row=0, column=0)
@@ -349,7 +349,7 @@ class BookEdit(Toplevel):
         self.room_frame = Frame(self)
         self.room_frame.pack(padx=20, pady=5)
 
-        self.all_rooms = read_rooms()
+        self.all_rooms = get_rooms()
         self.room_label = Label(self.room_frame, text='Raum: ')
         self.room = Combobox(self.room_frame, values=self.all_rooms, width=25)
         self.room_label.grid(row=0, column=0)
@@ -402,7 +402,7 @@ class BookEdit(Toplevel):
 
         self.year.set(book.year)
 
-        self.all_types = read_book_types()
+        self.all_types = get_book_types()
         if self.all_types == []:
             set_book_types(["Kinderbuch", "Jugendbuch", "Roman", "Sachbuch"])
         self.type['values'] = self.all_types
@@ -478,7 +478,7 @@ class BookEdit(Toplevel):
         if self.id != -1:
             response = edit_book(self.id, book)
             if response != "OK":
-                logger.info(f"Speichern nicht moeglich!\n{response}", "ERROR")
+                logger.info(f"Speicher nicht moeglich\n{response}")
                 showerror(title="Speichern nicht moeglich!", message=response)
             else:
                 logger.info("Erfolgreich gespeichert!")
@@ -490,7 +490,7 @@ class BookEdit(Toplevel):
         else:
             response = create_book(book)
             if type(response) == str:
-                logger.info(f"Speichern nicht moeglich!\n{response}", "ERROR")
+                logger.info(f"Speicher nicht moeglich\n{response}")
                 showerror(title="Speichern nicht moeglich!", message=response)
             else:
                 self.id = response
@@ -873,7 +873,7 @@ class AuthorEdit(Toplevel):
             new_author = Author(id, name, npw, country, dob, dod)
             response = edit_author(self.id, new_author)
             if response != "OK":
-                logger.info(f"Speichern nicht moeglich!\n{response}", "ERROR")
+                logger.error(f"Speichern nicht moeglich!\n{response}")
                 showerror(title="Speichern nicht moeglich!", message=response)
             else:
                 logger.info("Erfolgreich gespeichert!")
@@ -883,7 +883,7 @@ class AuthorEdit(Toplevel):
             new_author = Author(-1, name, npw, country, dob, dod)
             response = create_author(new_author)
             if response != "OK":
-                logger.info(f"Speichern nicht moeglich!\n{response}", "ERROR")
+                logger.info(f"Speicher nicht moeglich\n{response}")
                 showerror(title="Speichern nicht moeglich!", message=response)
             else:
                 logger.info("Erfolgreich gespeichert!")
@@ -961,6 +961,261 @@ class RecentAuthorsWidget(Frame):
 
         for authorWidget in self.authorWidgets:
             authorWidget.pack(pady = 20)
+
+
+class RoomWidget(Frame):
+    def __init__(self, parent, id, *args, **kwargs):
+        super().__init__(parent, relief=SUNKEN, *args, **kwargs)
+
+        self.id = id
+        
+        self.label = Label(self, text="Name: ", width=30)
+        self.editButton = Button(self, text="Bearbeiten", command=lambda: RoomEdit(self.id))
+        self.deleteButton = Button(self, text="Loeschen", command=self.delete)
+
+        self.label.grid(row=0, column=0, padx=10, pady=30)
+        self.editButton.grid(row=0, column=1)
+        self.deleteButton.grid(row=0, column=2, padx=10)
+
+        self.update()
+
+    def update(self):
+        room = get_room(self.id)
+
+        self.label.configure(text="Name: "+room)
+
+    def delete(self):
+        room = get_room(self.id)
+        decision = messagebox.askquestion("Bestaetigen", f"Moechten Sie den Raum {room} wirklich loeschen?\n\n" + 
+                                          "Alle Buecher die diesen Raum in ihren Daten enthalten werden statdessen unbekannt anzeigen.\n\n" + 
+                                          "Diese Aktion kann NICHT rueckgaengig gemacht werde!"\
+                                         )
+        if decision == "yes":
+            logger.info(f"Deleting room with id {self.id}...")
+            delete_room(self.id)
+            app_context.mainWindow.update()
+
+
+class RoomEdit(Toplevel):
+    def __init__(self, id, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.id = id
+
+        self.label = Label(self, text="Name: ")
+        self.entry = Entry(self, width=30)
+
+        self.buttonFrame = Frame(self)
+
+        self.saveButton = Button(self.buttonFrame, text="Speichern", command=self.save)
+        self.cancelButton = Button(self.buttonFrame, text="Abbrechen", command=self.cancel)
+
+        self.label.grid(row=0, column=0, padx=10, pady=10)
+        self.entry.grid(row=0, column=1, padx=10)
+        self.buttonFrame.grid(row=1, columnspan=2, padx=10, pady=10)
+
+        self.saveButton.grid(row=0, column=0, padx=10)
+        self.cancelButton.grid(row=0, column=1)
+
+        if id != -1:
+            self.update()
+
+    def update(self):
+        room = get_room(self.id)
+
+        self.entry.delete(0, END)
+        self.entry.insert(0, room)
+
+    def save(self):
+        room = self.entry.get()
+        if self.id != -1:
+            response = update_room(self.id, room)
+            if response != "OK":
+                logger.error(f"Speichern nicht moeglich!\n{response}")
+                showerror(title="Speichern nicht moeglich!", message=response)
+            else:
+                logger.info("Erfolgreich gespeichert")
+                app_context.mainWindow.update()
+                self.destroy()
+
+        else:
+            response = add_room(room)
+            if response != "OK":
+                logger.error(f"Speichern nicht moeglich!\n{response}")
+                showerror(title="Speichern nicht moeglich!", message=response)
+            else:
+                logger.info(f"Created room with name {room}")
+                app_context.mainWindow.update()
+                self.destroy()
+
+
+    def cancel(self):
+        if self.id == -1:
+            logger.info("Closed empty room editing dialog wihtout saving")
+        else:
+            logger.info(f"Closed room editing dialog for room with id {self.id} wihtout saving")
+
+        self.destroy()
+
+
+class AllRoomsWidget(Frame):
+    def __init__(self, parent, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
+
+        logger.info("Creating 'all rooms widget'")
+
+        self.rooms = get_room_ids()
+
+        self.room_widgets = []
+
+        self.update()
+
+    def update(self):
+
+        logger.info("Updating 'all rooms widget'")
+
+        self.rooms = get_room_ids()
+
+        for widget in self.room_widgets:
+            for child in widget.winfo_children():
+                child.destroy()
+            widget.destroy()
+        
+        self.room_widgets = []
+
+        for room in self.rooms:
+            self.room_widgets.append(RoomWidget(self, room))
+
+        for widget in self.room_widgets:
+            widget.pack(pady=20)
+
+
+class TypeWidget(Frame):
+    def __init__(self, parent, id, *args, **kwargs):
+        super().__init__(parent, relief=SUNKEN, *args, **kwargs)
+
+        self.id = id
+        
+        self.label = Label(self, text="Name: ", width=30)
+        self.editButton = Button(self, text="Bearbeiten", command=lambda: TypeEdit(self.id))
+        self.deleteButton = Button(self, text="Loeschen", command=self.delete)
+
+        self.label.grid(row=0, column=0, padx=10, pady=30)
+        self.editButton.grid(row=0, column=1)
+        self.deleteButton.grid(row=0, column=2, padx=10)
+
+        self.update()
+
+    def update(self):
+        book_type = get_book_type(self.id)
+
+        self.label.configure(text="Name: "+book_type)
+
+    def delete(self):
+        book_type = get_book_type(self.id)
+        decision = messagebox.askquestion("Bestaetigen", f"Moechten Sie den Buchtypen {book_type} wirklich loeschen?\n\n" + 
+                                          "Alle Buecher die diesen Buchtypen in ihren Daten enthalten werden statdessen unbekannt anzeigen.\n\n" + 
+                                          "Diese Aktion kann NICHT rueckgaengig gemacht werde!"\
+                                         )
+        if decision == "yes":
+            logger.info(f"Deleting type with id {self.id}...")
+            delete_book_type(self.id)
+            app_context.mainWindow.update()
+
+
+class TypeEdit(Toplevel):
+    def __init__(self, id, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.id = id
+
+        self.label = Label(self, text="Name: ")
+        self.entry = Entry(self, width=30)
+
+        self.buttonFrame = Frame(self)
+
+        self.saveButton = Button(self.buttonFrame, text="Speichern", command=self.save)
+        self.cancelButton = Button(self.buttonFrame, text="Abbrechen", command=self.cancel)
+
+        self.label.grid(row=0, column=0, padx=10, pady=10)
+        self.entry.grid(row=0, column=1, padx=10)
+        self.buttonFrame.grid(row=1, columnspan=2, padx=10, pady=10)
+
+        self.saveButton.grid(row=0, column=0, padx=10)
+        self.cancelButton.grid(row=0, column=1)
+
+        if id != -1:
+            self.update()
+
+    def update(self):
+        book_type = get_book_type(self.id)
+
+        self.entry.delete(0, END)
+        self.entry.insert(0, book_type)
+
+    def save(self):
+        book_type = self.entry.get()
+        if self.id != -1:
+            response = update_book_type(self.id, book_type)
+            if response != "OK":
+                logger.error(f"Speichern nicht moeglich!\n{response}")
+                showerror(title="Speichern nicht moeglich!", message=response)
+            else:
+                logger.info("Erfolgreich gespeichert")
+                app_context.mainWindow.update()
+                self.destroy()
+
+        else:
+            response = add_book_type(book_type)
+            if response != "OK":
+                logger.error(f"Speichern nicht moeglich!\n{response}")
+                showerror(title="Speichern nicht moeglich!", message=response)
+            else:
+                logger.info(f"Created (book) type with name {book_type}")
+                app_context.mainWindow.update()
+                self.destroy()
+
+
+    def cancel(self):
+        if self.id == -1:
+            logger.info("Closed empty book_type editing dialog wihtout saving")
+        else:
+            logger.info(f"Closed book_type editing dialog for book_type with id {self.id} wihtout saving")
+
+        self.destroy()
+
+
+class AllTypesWidget(Frame):
+    def __init__(self, parent, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
+
+        logger.info("Creating 'all book_types widget'")
+
+        self.types = get_book_type_ids()
+
+        self.type_widgets = []
+
+        self.update()
+
+    def update(self):
+
+        logger.info("Updating 'all book_types widget'")
+
+        self.types = get_book_type_ids()
+
+        for widget in self.type_widgets:
+            for child in widget.winfo_children():
+                child.destroy()
+            widget.destroy()
+        
+        self.type_widgets = []
+
+        for book_type in self.types:
+            self.type_widgets.append(TypeWidget(self, book_type))
+
+        for widget in self.type_widgets:
+            widget.pack(pady=20)
+
 
 
 class Tab(Frame):
@@ -1061,17 +1316,34 @@ class SearchTab(Tab):
 class RoomsTab(Tab):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+    
+        self.header_label = Label(self.inner_frame, text="Raueme", font="Arial 25 bold")
+        self.header_label.pack(padx=0, pady=10)
+
+        self.create_button = Button(self.inner_frame, text='Neuen Raum hinzufuegen', command=lambda: RoomEdit(-1))
+        self.create_button.pack(padx=0, pady=5)
+
+        self.rooms = AllRoomsWidget(self.inner_frame)
+        self.rooms.pack(padx=0, pady=5)
 
     def update(self):
-        pass
+        self.rooms.update()
 
 
 class TypesTab(Tab):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.header_label = Label(self.inner_frame, text="Buchtypen", font="Arial 25 bold")
+        self.header_label.pack(padx=0, pady=10)
+
+        self.create_button = Button(self.inner_frame, text='Neuen Typ hinzufuegen', command=lambda: TypeEdit(-1))
+        self.create_button.pack(padx=0, pady=5)
+
+        self.types = AllTypesWidget(self.inner_frame)
+        self.types.pack(padx=0, pady=5)
 
     def update(self):
-        pass
+        self.types.update()
 
 
 class App(Tk):
