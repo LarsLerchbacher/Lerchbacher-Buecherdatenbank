@@ -1,9 +1,22 @@
-venv/*
-.git/*
-.idea/*
-Dekstop/__pycache__
-Web/__pycache__
-.idea/*
+# Gitignore file
+# Includes a linx and windows variation of each path
+
+Desktop/__pycache__
+Desktop\__pycache__
+
 Desktop/log.txt
-Desktop/flags.txt
 Desktop/cache
+Desktop\log.txt
+Desktop\cache
+
+.git/*
+.git\*
+
+.idea\*
+.idea/*
+
+venv/*
+venv\*
+
+Web\__pycache__
+Web/__pycache__
