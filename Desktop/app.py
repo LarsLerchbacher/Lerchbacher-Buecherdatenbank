@@ -131,6 +131,79 @@ def get_image_src(book):
     return filename
 
 
+def init_files() -> None:
+    global logger
+
+    logger.info("Checking for cache folder...")
+    if not os.path.exists("./cache"):
+        logger.warning("No existing cache folder found! Creating one...")
+        os.mkdir("cache")
+    else:
+        logger.info("Existing cache folder found!")
+
+    logger.info("Checking for static folder...")
+    if not os.path.exists("./static"):
+        logger.warning("No existing static folder found! Creating one...")
+        os.mkdir("./static")
+    else:
+        logger.info("Existing static folder found!")
+
+    logger.info("Checking for noCover.png file...")
+    if not os.path.exists("./static/noCover.png"):
+        logger.warning("File not found! Downloading it...")
+        request = requests.get("https://github.com/LarsLerchbacher/Lerchbacher-Buecherdatenbank/raw/master/Destkop/static/noCover.png")
+        file = open("./static/noCover.png", "wb")
+        file.write(request.content)
+        file.close()
+    else:
+        logger.info("File found!")
+
+    logger.info("Checking for database...")
+    if not os.path.exists("./database.sqlite"):
+        logger.warning("No existing database found! Creating a new one...")
+        db, cur = prepare_db()
+
+        cur.execute("""
+        CREATE TABLE authors (
+            author_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+            author_name STRING NOT NULL,
+            has_nobel_prize BOOLEAN,
+            author_country STRING NOT NULL,
+            date_of_birth TIMESTAMP NOT NULL,
+            date_of_death TIMESTAMP
+        );""")
+
+        cur.execute("""
+            CREATE TABLE "books" (
+                "book_id"	INTEGER,
+                "book_title"	STRING NOT NULL,
+                "author_ids"	BLOB,
+                "book_publisher"	NUMERIC NOT NULL,
+                "book_isbn"	NUMERIC,
+                "book_edition"	TEXT NOT NULL DEFAULT 1,
+                "book_year"	INTEGER,
+                "book_type"	INTEGER,
+                "book_tags"	BLOB,
+                "book_room"	STRING,
+                "book_shelf"	STRING,
+                "book_lend"	INTEGER,
+                PRIMARY KEY("book_id" AUTOINCREMENT)
+            );""")
+
+        cur.execute("""CREATE TABLE rooms (room_id INTEGER PRIMARY KEY AUTOINCREMENT, room_name STRING NOT NULL);""")
+
+        cur.execute("""CREATE TABLE types (type_id INTEGER PRIMARY KEY AUTOINCREMENT, type_name STRING NOT NULL);""")
+
+        db.commit()
+        
+        cur.close()
+
+        db.close()
+
+    else:
+        logger.info("Existing database found!")
+
+
 def main() -> None:
     global logger, formatter
     global mainWindow
@@ -139,6 +212,9 @@ def main() -> None:
     logger.info("---------")
     logger.info(f"Lerchbacher book database desktop v{app_context.version}")
     logger.info("Starting application")
+
+    # Check for the necesary files and folders
+    init_files()
 
     mainWindow = App()
     mainWindow.mainloop()
