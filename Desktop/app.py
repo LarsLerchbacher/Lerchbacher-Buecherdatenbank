@@ -17,6 +17,7 @@
 #
 
 
+import argparse
 import app_context
 import logging
 from UIClasses import *
@@ -59,28 +60,27 @@ def process_args() -> None:
     global logger, formatter, args
 
     # Process arguments
-    args = sys.argv
 
-    for arg in args:
-        # If the verbose flag is set, also log to stdout
-        if arg in ["-v", "--verbose"]:
-            stdoutHandler = logging.StreamHandler(sys.stdout)
-            stdoutHandler.setLevel(logging.DEBUG)
-            stdoutHandler.setFormatter(formatter)
-            logger.addHandler(stdoutHandler)
+    parser = argparse.ArgumentParser(
+            prog=f"Lerchbacher Buecherdatenbank",
+            description=f"Lerchbacher Buecherdatenbank v{app_context.version}\nA book management system",
+            )
 
-            logger.setLevel(logging.DEBUG)
+    parser.add_argument('-v', '--verbose',
+                        action='store_true',
+                        help="Increase verbosity"
+                        )
 
-        # The -h or --help flag print a small help text to the console
-        elif flag in ["-h", "--help"]:
-            print(f"""Lerchbacher book database v{app_context.version}
-                  Arguments:
-                    -h --help       Show this help
-                    -v --verbose    Show log output in console 
-                """)
-            quit()
-        else:
-            raise Exception(f"Unknown Flag {flag}")
+    args = parser.parse_args()
+
+    # If the verbose flag is set, also log to stdout
+    if args.verbose:
+        stdoutHandler = logging.StreamHandler(sys.stdout)
+        stdoutHandler.setLevel(logging.DEBUG)
+        stdoutHandler.setFormatter(formatter)
+        logger.addHandler(stdoutHandler)
+
+        logger.setLevel(logging.DEBUG)
 
 
 def update_image(book):
@@ -150,14 +150,6 @@ if __name__ == "__main__":
 
     # Setting the application's version that is displayed
     app_context.version = "DEV" 
-
-    # Proces the arguments
-    args = sys.argv
-    if len(args) > 1:
-        del args[0]
-        app_context.flags = args
-    else:
-        app_context.flags = []
 
     # Init the logger and check for any flags
     init_logger()

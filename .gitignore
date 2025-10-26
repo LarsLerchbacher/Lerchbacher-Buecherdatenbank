@@ -1,8 +1,8 @@
 venv/*
 .git/*
 .idea/*
-Dekstop/__pycache__/*
-Web/__pycache__/*
+Dekstop/__pycache__
+Web/__pycache__
 .idea/*
 Desktop/log.txt
 Desktop/flags.txt

@@ -17,17 +17,18 @@
 #
 
 
-from array import array
 from app import get_image, get_image_src, update_image
 import app_context
+from array import array
 from database import *
 from datetime import date
+import PIL
+import requests
 from tkinter import *
 from tkinter import messagebox
 from tkinter.ttk import *
 from tkinter.messagebox import *
-from PIL import Image, ImageTk
-import requests
+from ttkwidgets.autocomplete import AutocompleteCombobox
 
 
 IMAGE_SIZE = 175
@@ -49,15 +50,16 @@ class BookWidget(Frame):
         self.title = Label(self.preview, text = "", font="Arial 16 bold", wraplength=500, justify='center')
         self.author = Label(self.preview, text = "", font = "Arial 12")
 
-        image = Image.open("../Web/static/noCover.png")
+        image = PIL.Image.open("../Web/static/noCover.png")
 
         w, h = image.size
         if h != IMAGE_SIZE:
             ratio = IMAGE_SIZE / h
             new_size = (int(w * ratio), IMAGE_SIZE)
-            image = image.resize(new_size, Image.BILINEAR)
 
-        self.image_data = ImageTk.PhotoImage(image)
+            image = image.resize(new_size, PIL.Image.BILINEAR)
+
+        self.image_data = PIL.ImageTk.PhotoImage(image)
 
         self.image = Label(self.details, image = self.image_data)
         self.publisher = Label(self.details, text = 'Verlag: ')
@@ -122,7 +124,7 @@ class BookWidget(Frame):
 
         image = get_image(book)
 
-        self.image_data = ImageTk.PhotoImage(image)
+        self.image_data = PIL.ImageTk.PhotoImage(image)
         self.image.config(image = self.image_data)
 
         self.publisher.config(text = f'Verlag: {book.publisher}')
@@ -157,6 +159,7 @@ class BookWidget(Frame):
     def expand(self):
         self.button_frame.pack_forget()
         self.details.pack()
+
         self.button.configure(text = 'Weniger anzeigen', command = self.shrink)
         self.edit.grid(row = 0, column = 1)
         self.delete.grid(row = 0, column = 2, padx = 10)
@@ -180,6 +183,7 @@ class BookWidget(Frame):
             delete_book(self.id, SECURITY_KEY)
             app_context.mainWindow.update()
         
+
         
 
 
@@ -214,7 +218,7 @@ class RecentBooksWidget(Frame):
             self.bookWidgets.append(BookWidget(self, book.id))
 
         for bookWidget in self.bookWidgets:
-            bookWidget.pack(pady = 20)
+            bookWidget.pack(pady=20)
 
 
 
@@ -281,6 +285,11 @@ class BookEdit(Toplevel):
         else:
             logger.info("Opening empty book editing dialog")
 
+        self.columnconfigure(index=0, weight=1)
+        self.columnconfigure(index=1, weight=1)
+        self.columnconfigure(index=2, weight=1)
+        self.columnconfigure(index=3, weight=1)
+
         self.title_frame = Frame(self)
         self.title_frame.pack(padx=20, pady=20)
 
@@ -334,9 +343,9 @@ class BookEdit(Toplevel):
 
         self.all_types = get_book_types()
         self.type_label = Label(self.type_frame, text="Typ: ")
-        self.type = Combobox(self.type_frame, values=self.all_types, state="readonly", width=25)
+        self.type_select = AutocompleteCombobox(self.type_frame, completevalues=self.all_types, width=25)
         self.type_label.grid(row=0, column=0)
-        self.type.grid(row=0, column=1)
+        self.type_select.grid(row=0, column=1)
 
         self.tags_frame = Frame(self)
         self.tags_frame.pack(padx=20, pady=5)
@@ -351,7 +360,7 @@ class BookEdit(Toplevel):
 
         self.all_rooms = get_rooms()
         self.room_label = Label(self.room_frame, text='Raum: ')
-        self.room = Combobox(self.room_frame, values=self.all_rooms, width=25)
+        self.room = AutocompleteCombobox(self.room_frame, completevalues=self.all_rooms, width=25)
         self.room_label.grid(row=0, column=0)
         self.room.grid(row=0, column=1)
 
@@ -405,12 +414,12 @@ class BookEdit(Toplevel):
         self.all_types = get_book_types()
         if self.all_types == []:
             set_book_types(["Kinderbuch", "Jugendbuch", "Roman", "Sachbuch"])
-        self.type['values'] = self.all_types
+        self.type_select.config(completevalues=self.all_types)
 
         if book.type in range(0, len(self.all_types)):
-            self.type.set(self.all_types[book.type])
+            self.type_select.set(self.all_types[book.type])
         else:
-            self.type.set("Unbekannt")
+            self.type_select.set("Unbekannt")
 
         if book.room in range(0, len(self.all_rooms)):
             self.room.set(self.all_rooms[book.room])
@@ -456,15 +465,15 @@ class BookEdit(Toplevel):
         year = self.year.get()
         logger.info(f"\tJahr: {year}")
 
-        book_type = self.type.get()
-        type_nr = self.all_types.index(book_type)
+        book_type = self.type_select.get()
+        type_nr = get_book_type_id(book_type)
         logger.info(f"\tBuchtyp: {book_type} (Typ Nr. {type_nr})")
 
         tags = self.tags.get().replace("; ", ";").split(";")
         logger.info(f"\tKategorien: {tags}")
 
         book_room = self.room.get()
-        room_nr = self.all_rooms.index(book_room)
+        room_nr = get_room_id(book_room)
         logger.info(f"\tRaum: {book_room} (Raum Nr. {room_nr})")
 
         shelf = self.shelf.get()
@@ -517,6 +526,16 @@ class AuthorSelectWidget(Frame):
         self.columnconfigure(index=1, weight=1)
         self.columnconfigure(index=2, weight=1)
         self.rowconfigure(index=0, weight=1)
+        self.rowconfigure(index=1, weight=1)
+
+        self.searchVar = StringVar(self)
+        self.searchVar.trace_add("write", self.search)
+
+        self.searchLabel = Label(self, text="Suche nach: ")
+        self.searchLabel.grid(row=0, column=0)
+    
+        self.searchBox = Entry(self, textvariable=self.searchVar)
+        self.searchBox.grid(row=0, column=2)
 
         self.available_var = Variable(self, value=self.available)
         self.available_list = Listbox(self, listvariable=self.available_var, selectmode=MULTIPLE)
@@ -526,13 +545,13 @@ class AuthorSelectWidget(Frame):
         self.used_list = Listbox(self, listvariable=self.used_var, selectmode=MULTIPLE)
         self.used_scrollbar = Scrollbar(self, orient="vertical", command=self.used_list.yview)
 
-        self.available_list.grid(row=0, column=0)
-        self.av_scrollbar.grid(row=0, column=1)
-        self.used_list.grid(row=0, column=3)
-        self.used_scrollbar.grid(row=0, column=4)
+        self.available_list.grid(row=1, column=0)
+        self.av_scrollbar.grid(row=1, column=1)
+        self.used_list.grid(row=1, column=3)
+        self.used_scrollbar.grid(row=1, column=4)
 
         self.button_frame = Frame(self)
-        self.button_frame.grid(row=0, column=2)
+        self.button_frame.grid(row=1, column=2)
 
         self.select = Button(self.button_frame, text='>', command=self.select)
         self.deselect = Button(self.button_frame, text='<', command=self.deselect)
@@ -606,6 +625,14 @@ class AuthorSelectWidget(Frame):
 
             else:
                 self.used.append("Unbekannt")
+
+    def search(self, *args):
+        self.available_list.delete(0, END)
+        self.authors = fetch_authors()
+
+        for author in self.authors:
+            if self.searchVar.get() in author.name:
+                self.available_list.insert(END, author.name)
 
 
 class AuthorWidget(Frame):
@@ -724,9 +751,9 @@ class DateWidget(Frame):
         self.secondDot.grid(row=0, column=3)
         self.year.grid(row=0, column=4)
 
-        self.day.set(1)
-        self.month.set(1)
         self.year.set(2200)
+        self.month.set(1)
+        self.day.set(1)
 
         self.update()
 
@@ -838,8 +865,6 @@ class AuthorEdit(Toplevel):
         self.cancelButton = Button(self.buttonFrame, text='Abbrechen', command=self.cancel)
         self.saveButton.grid(row=0, column=0)
         self.cancelButton.grid(row=0, column=1, padx=10)
-
-
 
         if self.id != -1:
             self.update()
@@ -1308,10 +1333,653 @@ class AuthorsTab(Tab):
 class SearchTab(Tab):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-    
-    def update(self):
-        pass
 
+        #
+        # The header of the tab
+        #
+        self.header_label = Label(self.inner_frame, text="Suche", font="Arial 25 bold")
+        self.header_label.pack(padx=0, pady=10)
+
+        
+        #
+        # Selection widget to choose between search for: everything, books, authors, book types or rooms
+        #
+        self.selectFrame = Frame(self.inner_frame)
+        self.selectFrame.pack(padx=0, pady=10)
+
+        self.selectVar = StringVar(self.selectFrame, "1")
+        self.selectVar.trace_add("write", self.update)
+
+        self.selectLabel = Label(self.selectFrame, text="Suche nach: ")
+        self.selectLabel.grid(row=0, columnspan=5, pady=10)
+
+        self.selectAll = Radiobutton(self.selectFrame, text="Alles", value=1, variable=self.selectVar)
+        self.selectAll.grid(row=1, column=0, padx=5)
+
+        self.selectBooks = Radiobutton(self.selectFrame, text="Buecher", value=2, variable=self.selectVar)
+        self.selectBooks.grid(row=1, column=1, padx=5)
+        
+        self.selectAuthors = Radiobutton(self.selectFrame, text="Autoren", value=3, variable=self.selectVar)
+        self.selectAuthors.grid(row=1, column=2, padx=5)
+
+        self.selectTypes = Radiobutton(self.selectFrame, text="Buchtypen", value=4, variable=self.selectVar)
+        self.selectTypes.grid(row=1, column=3, padx=5)
+
+        self.selectRooms = Radiobutton(self.selectFrame, text="Raueme", value=5, variable=self.selectVar)
+        self.selectRooms.grid(row=1, column=4, padx=5)
+
+
+        #
+        #  The frame in which the filter options for the above selected option appear
+        #
+        self.filterFrame = Frame(self.inner_frame)
+        self.filterFrame.pack(padx=0, pady=10)
+
+
+        #
+        # The search button
+        #
+        self.searchButton = Button(self.inner_frame, text="Suchen", command=self.search)
+        self.searchButton.pack(padx=0, pady=10)
+
+
+        #
+        # The filters for searching everything
+        #
+        self.filterFrameAll = Frame(self.filterFrame)
+        self.filterFrameAll.pack()
+
+        self.allLabel = Label(self.filterFrameAll, text="Suchbegriff: ")
+        self.allLabel.grid(row=0, column=0)
+        
+        self.allEntry = Entry(self.filterFrameAll, width=80)
+        self.allEntry.grid(row=0, column=1)
+
+
+        #
+        # The filters for searching for books
+        #
+        self.filterFrameBooks = Frame(self.filterFrame)
+        self.title_frame = Frame(self.filterFrameBooks)
+        self.title_frame.pack(padx=20, pady=20)
+
+        self.title_label = Label(self.title_frame, text="Titel: ")
+        self.title = Entry(self.title_frame, width=75)
+        self.title_label.grid(row=0, column=0)
+        self.title.grid(row=0, column=1, columnspan=4)
+
+        self.authors_frame = Frame(self.filterFrameBooks)
+        self.authors_frame.pack(padx=20, pady=5)
+
+        self.authors_label = Label(self.authors_frame, text="Autoren: ")
+        self.authors = AuthorSelectWidget(self.authors_frame, [])
+        self.authors_label.grid(row=0, column=0)
+        self.authors.grid(row=1, column=0, pady=20)
+
+        self.publisher_frame = Frame(self.filterFrameBooks)
+        self.publisher_frame.pack(padx=20, pady=5)
+
+        self.publisher_label = Label(self.publisher_frame, text="Verlag: ")
+        self.publisher = Entry(self.publisher_frame, width=50)
+        self.publisher_label.grid(row=0, column=0)
+        self.publisher.grid(row=0, column=1, columnspan=3)
+
+        self.isbn_frame = Frame(self.filterFrameBooks)
+        self.isbn_frame.pack(padx=20, pady=5)
+
+        self.isbn_label = Label(self.isbn_frame, text="  ISBN: ")
+        self.isbn = ISBNWidget(self.isbn_frame, width=50)
+        self.isbn_label.grid(row=0, column=0)
+        self.isbn.grid(row=0, column=1, columnspan=3)
+
+        self.edition_frame = Frame(self.filterFrameBooks)
+        self.edition_frame.pack(padx=20, pady=5)
+
+        self.edition_label = Label(self.edition_frame, text='Auflage: ')
+        self.edition = Spinbox(self.edition_frame, increment=1, from_=1, to=20, wrap=True, width=25)
+        self.edition_label.grid(row=0, column=0)
+        self.edition.grid(row=0, column=1)
+
+        self.year_frame = Frame(self.filterFrameBooks)
+        self.year_frame.pack(padx=20, pady=5)
+
+        self.year_label = Label(self.year_frame, text="Jahr: ")
+        self.year = Spinbox(self.year_frame, increment=1, from_=1800, to=2099, wrap=True, width=25)
+        self.year_label.grid(row=0, column=0)
+        self.year.grid(row=0, column=1)
+
+        self.type_frame = Frame(self.filterFrameBooks)
+        self.type_frame.pack(padx=20, pady=5)
+
+        self.all_types = get_book_types()
+        self.type_label = Label(self.type_frame, text="Typ: ")
+        self.type_select = AutocompleteCombobox(self.type_frame, completevalues=self.all_types, width=25)
+        self.type_label.grid(row=0, column=0)
+        self.type_select.grid(row=0, column=1)
+
+        self.tags_frame = Frame(self.filterFrameBooks)
+        self.tags_frame.pack(padx=20, pady=5)
+
+        self.tags_label = Label(self.tags_frame, text="Kategorien (durch ';' getrennt): ")
+        self.tags = Entry(self.tags_frame, width=50)
+        self.tags_label.grid(row=0, column=0)
+        self.tags.grid(row=0, column=1)
+
+        self.room_frame = Frame(self.filterFrameBooks)
+        self.room_frame.pack(padx=20, pady=5)
+
+        self.all_rooms = get_rooms()
+        self.room_label = Label(self.room_frame, text='Raum: ')
+        self.room = AutocompleteCombobox(self.room_frame, completevalues=self.all_rooms, width=25)
+        self.room_label.grid(row=0, column=0)
+        self.room.grid(row=0, column=1)
+
+        self.shelf_frame = Frame(self.filterFrameBooks)
+        self.shelf_frame.pack(padx=20, pady=5)
+        
+        self.shelf_label = Label(self.shelf_frame, text='Regal: ')
+        self.shelf = Entry(self.shelf_frame, width=25)
+        self.shelf_label.grid(row=0, column=0)
+        self.shelf.grid(row=0, column=1)
+
+        self.lend_frame = Frame(self.filterFrameBooks)
+        self.lend_frame.pack(padx=20, pady=5)
+
+        self.lend_label = Label(self.lend_frame, text='Verliehen : ')
+        self.lend = AutocompleteCombobox(self.lend_frame, completevalues=["Ja", "Nein"], width=25)
+        self.lend_label.grid(row=0, column=0)
+        self.lend.grid(row=0, column=1)
+
+
+        #
+        # The filters for searching authors
+        #
+        self.filterFrameAuthors = Frame(self.filterFrame)
+
+        self.author_nameFrame = Frame(self.filterFrameAuthors)
+        self.author_nameFrame.pack(padx=20, pady=10)
+
+        self.author_name = Entry(self.author_nameFrame, width=75)
+        self.author_nameLabel = Label(self.author_nameFrame, text='Name: ')
+        self.author_nameLabel.grid(row=0, column=0)
+        self.author_name.grid(row=0, column=1)
+
+        self.countryFrame = Frame(self.filterFrameAuthors)
+        self.countryFrame.pack(padx=20, pady=10)
+
+        self.country = Entry(self.countryFrame, width=75)
+        self.countryLabel = Label(self.countryFrame, text='Land: ')
+        self.countryLabel.grid(row=0, column=0)
+        self.country.grid(row=0, column=1)
+
+        # DOB = date of birth
+        self.dobFrame = Frame(self.filterFrameAuthors)
+        self.dobFrame.pack(padx=20, pady=10)
+
+        self.dob = DateWidget(self.dobFrame)
+        self.dobLabel = Label(self.dobFrame, text='Geburtsdatum (Unbekannt = 12.12.2200, Ignorieren = 1.1.1): ')
+        self.dobLabel.grid(row=0, column=0)
+        self.dob.grid(row=1, column=0)
+
+        # DOD = date of death
+        self.dodFrame = Frame(self.filterFrameAuthors)
+        self.dodFrame.pack(padx=20, pady=10)
+
+        self.dod = DateWidget(self.dodFrame)
+        self.dodLabel = Label(self.dodFrame, text='Sterbedatum (Noch am Leben = 1.1.2200, Unbekannt = 12.12.2200, Ignorieren = 1.1.1): ')
+        self.dodLabel.grid(row=0, column=0)
+        self.dod.grid(row=1, column=0)
+
+        # NPW = Nobel prize winner
+        self.npwFrame = Frame(self.filterFrameAuthors)
+        self.npwFrame.pack(padx=20, pady=10)
+
+        self.npw = AutocompleteCombobox(self.npwFrame, completevalues=["Ja", "Nein"])
+        self.npwLabel = Label(self.npwFrame, text='Ist ein Nobelpreistraeger?: ')
+        self.npwLabel.grid(row=0, column=0)
+        self.npw.grid(row=0, column=1)
+
+
+        #
+        # The filters for searching for book types
+        #
+        self.filterFrameTypes = Frame(self.filterFrame)
+
+        self.type_label = Label(self.filterFrameTypes, text="Name: ")
+        self.type_entry = Entry(self.filterFrameTypes, width=30)
+        self.type_label.grid(row=0, column=0, padx=10, pady=10)
+        self.type_entry.grid(row=0, column=1, padx=10)
+
+
+        #
+        # The filters for searching for rooms
+        #
+        self.filterFrameRooms = Frame(self.filterFrame)
+
+        self.room_label = Label(self.filterFrameRooms, text="Name: ")
+        self.room_entry = Entry(self.filterFrameRooms, width=30)
+        self.room_label.grid(row=0, column=0, padx=10, pady=10)
+        self.room_entry.grid(row=0, column=1, padx=10)
+
+
+        #
+        # The results for each category
+        #
+        self.resultBooks = []
+        self.resultBooksFrame = Frame(self.inner_frame)
+        self.resultBooksHeader = Label(self.resultBooksFrame, text="Buecher", font="Arial 18 bold")
+        self.resultBooksHeader.pack()
+        self.resultBooksFrame.pack(pady=10)
+
+        self.resultAuthors = []
+        self.resultAuthorsFrame = Frame(self.inner_frame)
+        self.resultAuthorsHeader = Label(self.resultAuthorsFrame, text="Autoren", font="Arial 18 bold")
+        self.resultAuthorsHeader.pack()
+
+        self.resultTypes = []
+        self.resultTypesFrame = Frame(self.inner_frame)
+        self.resultTypesHeader = Label(self.resultTypesFrame, text="Buchtypen", font="Arial 18 bold")
+        self.resultTypesHeader.pack()
+
+        self.resultRooms = []
+        self.resultRoomsFrame = Frame(self.inner_frame)
+        self.resultRoomsHeader = Label(self.resultRoomsFrame, text="Raeume", font="Arial 18 bold")
+        self.resultRoomsHeader.pack()
+
+        self.update()
+
+
+    def update(self, *args):
+        # Remove all shown filters
+        self.filterFrameAll.pack_forget()
+        self.filterFrameBooks.pack_forget()
+        self.filterFrameAuthors.pack_forget()
+        self.filterFrameTypes.pack_forget()
+        self.filterFrameRooms.pack_forget()
+        # And all shown results
+        self.resultBooksFrame.pack_forget()
+        self.resultAuthorsFrame.pack_forget()
+        self.resultTypesFrame.pack_forget()
+        self.resultRoomsFrame.pack_forget()
+
+        for child in self.resultBooksFrame.winfo_children():
+            if type(child) != Label:
+                child.destroy()
+        for child in self.resultAuthorsFrame.winfo_children():
+            if type(child) != Label:
+                child.destroy()
+        for child in self.resultTypesFrame.winfo_children():
+            if type(child) != Label:
+                child.destroy()
+        for child in self.resultRoomsFrame.winfo_children():
+            if type(child) != Label:
+                child.destroy()
+
+        # Then show the ones needed for the current selection
+        match self.selectVar.get():
+            case "1":
+                # Everything
+                self.all_types = get_book_types()
+                self.all_rooms = get_rooms()
+                self.authors.update()
+                self.filterFrameAll.pack()
+
+            case "2":
+                # Books
+                self.all_types = get_book_types()
+                self.all_rooms = get_rooms()
+                self.authors.update()
+                self.filterFrameBooks.pack()
+                self.resultBooksFrame.pack(pady=10)
+
+            case "3":
+                # Authors
+                self.filterFrameAuthors.pack()
+                self.resultAuthorsFrame.pack(pady=10)
+            
+            case "4":
+                # Book types
+                self.filterFrameTypes.pack()
+                self.resultTypesFrame.pack(pady=10)
+
+            case "5":
+                # Rooms
+                self.filterFrameRooms.pack()
+                self.resultRoomsFrame.pack(pady=10)
+
+    def search(self):
+        match self.selectVar.get():
+            case "1":
+                # Get the search value
+                search_value = self.allEntry.get()
+
+
+                # Remove all old search results 
+                for book in self.resultBooks:
+                    for child in book.winfo_children():
+                        child.destroy()
+                    book.destroy()
+                self.resultBooks = []
+
+                for author in self.resultAuthors:
+                    for child in author.winfo_children():
+                        child.destroy()
+                    author.destroy()
+                self.resultAuthors = []
+
+                for book_type in self.resultTypes:
+                    for child in book_type.winfo_children():
+                        child.destroy()
+                    book_type.destroy()
+                self.resultTypes = []
+
+                for room in self.resultRooms:
+                    for child in room.winfo_children():
+                        child.destroy()
+                    room.destroy()
+                self.resultRooms = []
+
+
+                # Get a list of all items in the db
+                all_books = fetch_books()
+                all_authors = fetch_authors()
+                all_types = get_book_types()
+                all_type_ids = get_book_type_ids()
+                all_rooms = get_rooms()
+                all_room_ids = get_room_ids()
+
+                
+                if search_value != "":
+                    # Search the books
+                    for book in all_books:
+                        if search_value in book.title:
+                            self.resultBooks.append(BookWidget(self.resultBooksFrame, book.id))
+
+                    # Display the found books
+                    for bookWidget in self.resultBooks:
+                        bookWidget.pack(pady=20)
+
+
+                    # Sound the authors
+                    for author in all_authors:
+                        if search_value in author.name:
+                            self.resultAuthors.append(AuthorWidget(self.resultAuthorsFrame, author.id))
+
+                    # Display the found authors
+                    for authorWidget in self.resultAuthors:
+                        authorWidget.pack(pady=20)
+
+                    
+                    # Search the book types
+                    for index, book_type in enumerate(all_types):
+                        if search_value in type:
+                            id = get_book_type_id(type)
+                            self.resultTypes.append(TypeWidget(self.resultTypesFrame, id))
+
+                    # Display the found book types
+                    for typeWidget in self.resultTypes:
+                        typeWidget.pack(pady=20)
+
+
+                    # Search the rooms
+                    for index, room in enumerate(all_rooms):
+                        if search_value in room:
+                            id = all_room_ids[index]
+                            self.resultRooms.append(RoomWidget(self.resultRoomsFrame, id))
+
+                    # Display the found rooms
+                    for roomWidget in self.resultRooms:
+                        roomWidget.pack(pady=20)
+
+                    # Show the results
+                    self.resultBooksFrame.pack(pady=10)
+                    self.resultAuthorsFrame.pack(pady=10)
+                    self.resultTypesFrame.pack(pady=10)
+                    self.resultRoomsFrame.pack(pady=10)
+
+                # If the search bar is empty, update the display
+                else:
+                    self.update()
+
+            case "2":
+                # Searching for books
+
+                for book in self.resultBooks:
+                    for child in book.winfo_children():
+                        child.destroy()
+                    book.destroy()
+                self.resultBooks = []
+
+                all_books = fetch_books()
+
+
+                for book in all_books:
+                    title = self.title.get()
+                    author_ids = self.authors.get()
+                    publisher = self.publisher.get()
+                    isbn = self.isbn.get()
+                    edition = self.edition.get()
+                    year = self.year.get()
+                    book_type = None
+                    book_type_name = self.type_select.get()
+                    tags = self.tags.get().replace("; ", ";").split(";")
+                    room = None
+                    room_name = self.room.get()
+                    shelf = self.shelf.get()
+                    lend = None
+                    lend_str = self.lend.get()
+
+                    if lend_str == "Ja":
+                        lend = 1
+                    elif lend_str == "Nein":
+                        lend = 0
+
+
+                    if book_type_name:
+                        book_type = get_book_type_id(book_type_name)
+
+                    if room_name:
+                        room = get_room_id(room_name)
+
+
+                    criteria = []
+
+                    if title:
+                        if title in book.title:
+                            criteria.append(True)
+                        else:
+                            continue
+
+                    if author_ids != []:
+                        containsAuthors = []
+                        for author_id in author_ids:
+                            if author_id in book.author_ids:
+                                containsAuthors.append(True)
+                            else: 
+                                containsAuthors.append(False)
+                            
+                        if (True in containsAuthors) and (False not in containsAuthors):
+                            criteria.append(True)
+                        else:
+                            continue
+
+                    if publisher:
+                        if publisher in book.publisher:
+                            criteria.append(True)
+                        else:
+                            continue
+
+                    if isbn:
+                        if isbn in str(book.isbn):
+                            criteria.append(True)
+                        else:
+                            continue
+
+                    if edition:
+                        if edition == book.edition:
+                            criteria.append(True)
+                        else:
+                            continue
+
+                    if year:
+                        if int(year) == book.year:
+                            criteria.append(True)
+                        else:
+                            continue
+
+                    if book_type != None:
+                        if book_type == book.type:
+                            criteria.append(True)
+                            continue
+
+                    if tags != []:
+                        for tag in tags:
+                            if tag in book.tags:
+                               criteria.append(True)
+                            else:
+                               continue
+
+                    if room != None:
+                        if room == book.room:
+                            criteria.append(True)
+                        else:
+                            continue
+
+                    if shelf != "":
+                        if shelf in book.shelf:
+                            criteria.append(True)
+                        else:
+                            continue
+
+                    if lend != None:
+                        if lend == book.lend:
+                            criteria.append(True)
+                        else:
+                            continue
+                    
+                    if (False not in criteria) and (True in criteria):
+                        self.resultBooks.append(BookWidget(self.resultBooksFrame, book.id))
+
+
+                # Pack the book widgets
+                for bookWidget in self.resultBooks:
+                    bookWidget.pack(pady=20)
+
+                # Display the results
+                self.resultBooksFrame.pack(pady=10)
+
+            case "3":
+                for author in self.resultAuthors:
+                    for child in author.winfo_children():
+                        child.destroy()
+                    author.destroy()
+                self.resultAuthors = []
+
+                all_authors = fetch_authors()
+
+                name = self.author_name.get()
+                country = self.country.get()
+                dob = self.dob.get()
+                dod = self.dod.get()
+                hasNobel = None
+                hasNobelName = self.npw.get()
+
+                if hasNobelName == "Ja":
+                    hasNobel = 1
+                elif hasNobelName == "Nein":
+                    hasNobel = 0
+
+                for author in all_authors:
+                    criteria = []
+
+                    if name:
+                        if name in author.name:
+                            criteria.append(True)
+                        else:
+                            continue
+
+                    if country:
+                        if country in author.country:
+                            criteria.append(True)
+                        else:
+                            continue
+
+                    if dob != Date(1, 1, 1):
+                        if dob == author.birthdate:
+                            criteria.append(True)
+                        else:
+                            continue
+
+                    if dod != Date(1, 1, 1):
+                        if dob == author.date_of_death:
+                            criteria.append(True)
+                        else:
+                            continue
+                    
+                    if hasNobel != None:
+                        if hasNobel == author.has_nobel_prize:
+                            criteria.append(True)
+                        else:
+                            continue
+
+                    if (True in criteria) and (False not in criteria):
+                        self.resultAuthors.append(AuthorWidget(self.resultAuthorsFrame, author.id))
+
+                for authorWidget in self.resultAuthors:
+                    authorWidget.pack(pady=20)
+
+                self.resultAuthorsFrame.pack(pady=10)
+
+            case "4":
+                for book_type in self.resultTypes:
+                    for child in book_type.winfo_children():
+                        child.destroy()
+                    book_type.destroy()
+                self.resultTypes = []
+
+                self.all_types = get_book_types()
+                search_value = self.type_entry.get()
+
+                for type in self.all_types:
+                    if search_value:
+                        if search_value in type:
+                            id = get_book_type_id(type)
+                            self.resultTypes.append(TypeWidget(self.resultTypesFrame, id))
+
+                for typeWidget in self.resultTypes:
+                    typeWidget.pack(pady=20)
+
+                self.resultTypesFrame.pack(pady=10)
+
+
+            case "5":
+                for room in self.resultRooms:
+                    for child in room.winfo_children():
+                        child.destroy()
+                    room.destroy()
+                self.resultTypes = []
+
+                self.all_rooms= get_rooms()
+                search_value = self.room_entry.get()
+
+                for room in self.all_rooms:
+                    if search_value:
+                        if search_value in room:
+                            id = get_room_id(room)
+                            self.resultRooms.append(RoomWidget(self.resultRoomsFrame, id))
+
+                for roomWidget in self.resultRooms:
+                    roomWidget.pack(pady=20)
+
+                self.resultRoomsFrame.pack(pady=10)
+
+
+
+
+
+
+
+                    
 
 class RoomsTab(Tab):
     def __init__(self, *args, **kwargs):

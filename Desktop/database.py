@@ -20,14 +20,10 @@
 #
 # Importing all needed modules, packages and libraries
 #
-# Imports:
-# sqlite3 for the database handling and operations
-# datetime datatype from the datetime module for timestamp handling
-#
-from sqlite3 import *
+from app import get_image
 from datetime import date, datetime
 import requests
-from app import get_image
+from sqlite3 import *
 
 
 #
@@ -155,7 +151,7 @@ def fetch_authors() -> list[Author]:
     for index in range(0, len(authors)):
         author = authors[index]
         # Updates the list element at the current index to a new Author object with all the data filled in
-        authors[index] = Author(id=author[0], name=author[1], has_nobel_prize=author[2], country=author[3], birthdate=datetime.strptime(author[4], '%Y-%m-%d').date(), date_of_death=datetime.strptime(author[5], '%Y-%m-%d').date() if author[5] else "")
+        authors[index] = Author(id=author[0], name=author[1], has_nobel_prize=author[2], country=author[3], birthdate=datetime.datetime.strptime(author[4], '%Y-%m-%d').date(), date_of_death=datetime.datetime.strptime(author[5], '%Y-%m-%d').date() if author[5] else "")
 
     # Returns the fetched and converted authors
     return authors
@@ -348,7 +344,7 @@ def fetch_author_by_id(author_id:int) -> Author | bool:
 
     if author:
 
-        author = Author(id=author[0], name=author[1], has_nobel_prize=author[2], country=author[3], birthdate=datetime.strptime(author[4], '%Y-%m-%d').date(), date_of_death=datetime.strptime(author[5], '%Y-%m-%d').date())
+        author = Author(id=author[0], name=author[1], has_nobel_prize=author[2], country=author[3], birthdate=datetime.datetime.strptime(author[4], '%Y-%m-%d').date(), date_of_death=datetime.datetime.strptime(author[5], '%Y-%m-%d').date())
 
         # If there is one that has the same id as passed to the function as parameter, author is an author object
         # else it is false
@@ -376,7 +372,7 @@ def fetch_author_by_name(name:str) -> Author:
     author = cur.execute(f"SELECT * FROM authors WHERE author_name == \"{name}\";").fetchone()
 
     # Converts it to an author object
-    new_author = Author(id=author[0], name=author[1], has_nobel_prize=author[2], country=author[3], birthdate=datetime.strptime(author[4], '%Y-%m-%d').date(), date_of_death=datetime.strptime(author[5], '%Y-%m-%d').date())
+    new_author = Author(id=author[0], name=author[1], has_nobel_prize=author[2], country=author[3], birthdate=datetime.datetime.strptime(author[4], '%Y-%m-%d').date(), date_of_death=datetime.datetime.strptime(author[5], '%Y-%m-%d').date())
 
     # Returns the author as an Author object
     return new_author
@@ -637,6 +633,15 @@ def get_book_type_ids() -> list[str]:
 
     return type_ids 
 
+def get_book_type_id(name) -> int:
+    db, cur = prepare_db()
+    id = cur.execute(f"SELECT * FROM types WHERE type_name == '{name}';").fetchone()[0]
+
+    cur.close()
+    db.close()
+
+    return id
+
 
 def get_book_type(type_id) -> str:
     db, cur = prepare_db()
@@ -738,6 +743,15 @@ def get_room_ids() -> list[str]:
     db.close()
 
     return room_ids
+
+
+def get_room_id(name) -> int:
+    db, cur = prepare_db()
+    id = cur.execute(f"SELECT * FROM rooms WHERE room_name == '{name}';").fetchone()[0]
+    cur.close()
+    db.close()
+    
+    return id
 
 
 
