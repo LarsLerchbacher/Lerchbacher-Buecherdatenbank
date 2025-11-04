@@ -1,5 +1,5 @@
 #
-# Web/handle_db.py
+# Desktop/database.py and Web/database.py (symlink)
 # ----------
 #
 #   The Lerchbacher book database project
@@ -20,8 +20,8 @@
 #
 # Importing all needed modules, packages and libraries
 #
-from app import get_image
 from datetime import date, datetime
+from images import get_image
 import requests
 from sqlite3 import *
 
@@ -73,7 +73,7 @@ class Book:
         self.lend = lend
 
     def __str__(self):
-        authors = [fetch_author_by_id(id).name for id in self.author_ids]
+        authors = [fetch_author(id).name for id in self.author_ids]
         return f"{self.id} {self.title} {authors} {self.publisher} {self.isbn} {self.edition} {self.year} {self.type} {self.tags} {self.room} {self.shelf} {self.lend}"
 
 
@@ -191,7 +191,7 @@ def does_author_exist(name) -> bool:
     return is_existent
 
 
-def delete_author(id, security_key) -> bool:
+def delete_author(id) -> bool:
     """
     ### Function delete_author
 
@@ -201,35 +201,26 @@ def delete_author(id, security_key) -> bool:
 
     **Parameters:**
         name - The name of the author to be deleted
-        security_key - the key which is checked with the saved one to authorize the action
     """
 
-    # If the security key parameter and the predefined one match
-    if security_key == SECURITY_KEY:
 
-        # Initializes the db connection
-        db, cur = prepare_db()
+    # Initializes the db connection
+    db, cur = prepare_db()
 
-        # Deletes the author from the db
-        cur.execute(f"DELETE FROM authors WHERE author_id == {id};")
+    # Deletes the author from the db
+    cur.execute(f"DELETE FROM authors WHERE author_id == {id};")
 
-        # Commits the changes to the db
-        db.commit()
+    # Commits the changes to the db
+    db.commit()
 
-        # Closes the cursor
-        cur.close()
+    # Closes the cursor
+    cur.close()
 
-        # Closes the db connection
-        db.close()
+    # Closes the db connection
+    db.close()
 
-        # Returns True because the author was deleted
-        return True
-
-    # If the security keys don't match
-    else:
-
-        # Returns False, because the action wasn't authenticated
-        return False
+    # Returns True because the author was deleted
+    return True
 
 
 def create_author(author:Author) -> bool:
@@ -288,7 +279,7 @@ def edit_author(author_id:int, new:Author) -> bool:
     """
 
     # If the author exists
-    if fetch_author_by_id(author_id):
+    if fetch_author(author_id):
 
         try:
 
@@ -321,10 +312,10 @@ def edit_author(author_id:int, new:Author) -> bool:
             return e
 
 
-# TODO: Finish commenting fetch_author_by_id function
-def fetch_author_by_id(author_id:int) -> Author | bool:
+# TODO: Finish commenting fetch_author function
+def fetch_author(author_id:int) -> Author | bool:
     """
-    ### Function fetch_author_by_id
+    ### Function fetch_author
 
     **Use:** Checks if there is an author with the provided id and returns it
 
@@ -440,7 +431,7 @@ def create_book(book:Book) -> str | int:
 
     authors_existing = True
     for id in book.author_ids:
-        if not fetch_author_by_id(id):
+        if not fetch_author(id):
             return f"Autor mit der ID {id} existier nicht!"
 
 
@@ -462,7 +453,7 @@ def create_book(book:Book) -> str | int:
     return id
 
 
-def delete_book(book_id:int, security_key:str) -> bool:
+def delete_book(book_id:int) -> bool:
     """"
     ### Function delete_book
 
@@ -474,11 +465,10 @@ def delete_book(book_id:int, security_key:str) -> bool:
 
     **Parameters:**
     -   name - The name of the book to be deleted
-    -   security_key - The security key to check if the user performing the action is an admin
     """
 
-    # If the security key matches the predefined one and the book with the provided name does exist
-    if security_key == SECURITY_KEY and fetch_book_by_id(book_id):
+    # If a book with the provided name does exist
+    if fetch_book(book_id):
 
         # Initializes db connection
         db, cur = prepare_db()
@@ -498,7 +488,6 @@ def delete_book(book_id:int, security_key:str) -> bool:
         # Returns True because the book was successfully deleted
         return True
 
-    # If the conditions for the deletion aren't met
     else:
 
         # Returns False, because the book couldn't be deleted
@@ -522,10 +511,10 @@ def edit_book(book_id:int, new:Book) -> str:
 
     authors_existing = True
     for id in new.author_ids:
-        if not fetch_author_by_id(id):
+        if not fetch_author(id):
             return f"Autor mit der ID {id} existiert nicht!"
 
-    if not fetch_book_by_id(book_id):
+    if not fetch_book(book_id):
         return f"Das Buch mit der ID {book_id} existier nicht!"
 
     # Initializes the db connection
@@ -551,9 +540,9 @@ WHERE book_id = ?;
     return "OK"
 
 
-def fetch_book_by_id(book_id:int) -> Book|bool:
+def fetch_book(book_id:int) -> Book|bool:
     """
-    ### Function fetch_book_by_id
+    ### Function fetch_book
 
     **Use:** Checks if there is a book with the provided id and returns it
 
@@ -606,7 +595,7 @@ def fetch_book_by_isbn(isbn:str) -> Book:
     return book
 
 
-def get_book_types() -> list[str]:
+def fetch_book_types() -> list[str]:
     db, cur = prepare_db()
     raw_types = cur.execute("SELECT * FROM types;").fetchall()
     book_types = []
@@ -620,7 +609,7 @@ def get_book_types() -> list[str]:
     return book_types
 
 
-def get_book_type_ids() -> list[str]:
+def fetch_book_type_ids() -> list[str]:
     db, cur = prepare_db()
     raw_types = cur.execute("SELECT * FROM types;").fetchall()
     type_ids = []
@@ -633,7 +622,7 @@ def get_book_type_ids() -> list[str]:
 
     return type_ids 
 
-def get_book_type_id(name) -> int:
+def fetch_book_type_id(name) -> int:
     db, cur = prepare_db()
     id = cur.execute(f"SELECT * FROM types WHERE type_name == '{name}';").fetchone()[0]
 
@@ -643,10 +632,12 @@ def get_book_type_id(name) -> int:
     return id
 
 
-def get_book_type(type_id) -> str:
+def fetch_book_type(type_id) -> str:
     db, cur = prepare_db()
-
-    name = cur.execute(f"SELECT * FROM types WHERE type_id={type_id}").fetchone()[1]
+    try:
+        name = cur.execute(f"SELECT * FROM types WHERE type_id={type_id}").fetchone()[1]
+    except Exception as e:
+        name = "Unbekannt"
 
     cur.close()
     db.close()
@@ -674,7 +665,7 @@ def set_book_types(types: list[str]) -> None:
     db.close()
 
 
-def update_book_type(type_id: int, new_type_name: str) -> str:
+def edit_book_type(type_id: int, new_type_name: str) -> str:
     db, cur = prepare_db()
 
     try:
@@ -689,7 +680,7 @@ def update_book_type(type_id: int, new_type_name: str) -> str:
     return "OK"
 
 
-def add_book_type(type_name: str) -> str:
+def create_book_type(type_name: str) -> str:
     db, cur = prepare_db()
 
     try:
@@ -717,7 +708,7 @@ def delete_book_type(type_id: int):
     return "OK"
 
 
-def get_rooms() -> list[str]:
+def fetch_rooms() -> list[str]:
     db, cur = prepare_db()
     raw_rooms = cur.execute("SELECT * FROM rooms;").fetchall()
     rooms = []
@@ -731,7 +722,7 @@ def get_rooms() -> list[str]:
     return rooms
 
 
-def get_room_ids() -> list[str]:
+def fetch_room_ids() -> list[str]:
     db, cur = prepare_db()
     raw_rooms = cur.execute("SELECT * FROM rooms;").fetchall()
     room_ids = []
@@ -745,7 +736,7 @@ def get_room_ids() -> list[str]:
     return room_ids
 
 
-def get_room_id(name) -> int:
+def fetch_room_id(name) -> int:
     db, cur = prepare_db()
     id = cur.execute(f"SELECT * FROM rooms WHERE room_name == '{name}';").fetchone()[0]
     cur.close()
@@ -755,10 +746,12 @@ def get_room_id(name) -> int:
 
 
 
-def get_room(room_id) -> str:
+def fetch_room(room_id) -> str:
     db, cur = prepare_db()
-
-    name = cur.execute(f"SELECT * FROM rooms WHERE room_id == {room_id};").fetchone()[1]
+    try:
+        name = cur.execute(f"SELECT * FROM rooms WHERE room_id == {room_id};").fetchone()[1]
+    except Exception as e:
+        name = "Unbekannt"
 
     cur.close()
     db.close()
@@ -766,7 +759,7 @@ def get_room(room_id) -> str:
     return name
 
 
-def update_room(room_id: int, new_room_name: str) -> str:
+def edit_room(room_id: int, new_room_name: str) -> str:
     db, cur = prepare_db()
 
     try:
@@ -781,7 +774,7 @@ def update_room(room_id: int, new_room_name: str) -> str:
     return "OK" 
 
 
-def add_room(room_name: str) -> str:
+def create_room(room_name: str) -> str:
     db, cur = prepare_db()
 
     try:

@@ -4,6 +4,12 @@
 Desktop/__pycache__
 Desktop\__pycache__
 
+Desktop/UI/__pycache__
+Desktop\UI\__pycache__
+
+Desktop/UI/*/__pycache__
+Desktop\UI\*\__pycache__
+
 Desktop/log.txt
 Desktop/cache
 Desktop\log.txt

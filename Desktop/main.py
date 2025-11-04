@@ -1,5 +1,5 @@
 #
-# Desktop/app.py
+# Desktop/main.py
 # ----------
 #
 #   The Lerchbacher book database project
@@ -20,7 +20,7 @@
 import argparse
 import app_context
 import logging
-from UIClasses import *
+from UI.App import App
 from PIL import Image
 import os
 import sys
@@ -28,19 +28,20 @@ import traceback
 
 
 global logger, formatter
-IMAGE_SIZE = 175
 
 
 class ErrorHandler(object):
+    """Class to redirect stderr to the logger"""
     def write(self, data):
         logger.error(data)
 
 
 def init_logger() -> None:
+    """Function that creates a logger"""
     global logger, formatter, args
 
     # Preparing the logger
-    app_context.logger = logging.getLogger(__name__)
+    app_context.logger = logging.getLogger()
     logger = app_context.logger
     logger.setLevel(logging.INFO)
 
@@ -51,29 +52,33 @@ def init_logger() -> None:
     # Always log to log.txt
     logfile = open('log.txt', 'w')
     fileHandler = logging.StreamHandler(logfile)
-    fileHandler.setLevel(logging.DEBUG)
+    fileHandler.setLevel(logging.INFO)
     fileHandler.setFormatter(formatter)
     logger.addHandler(fileHandler)
 
+    # Stop Pillow from logging debug messages
+    logging.getLogger("PIL.PngImagePlugin").setLevel(logging.WARNING)
+
 
 def process_args() -> None:
+    """Function that processes the provided arguments"""
     global logger, formatter, args
 
-    # Process arguments
-
+    # Create an ArgumentParser Instance
     parser = argparse.ArgumentParser(
             prog=f"Lerchbacher Buecherdatenbank",
-            description=f"Lerchbacher Buecherdatenbank v{app_context.version}\nA book management system",
-            )
+            description=f"Lerchbacher Bücherdatenbank v{app_context.version}")
 
+    # Add the verbose flag to it
     parser.add_argument('-v', '--verbose',
                         action='store_true',
                         help="Increase verbosity"
                         )
 
+    # Parse the arguments
     args = parser.parse_args()
 
-    # If the verbose flag is set, also log to stdout
+    # If the verbose flag is set, set the logger to also log to stdout
     if args.verbose:
         stdoutHandler = logging.StreamHandler(sys.stdout)
         stdoutHandler.setLevel(logging.DEBUG)
@@ -83,86 +88,58 @@ def process_args() -> None:
         logger.setLevel(logging.DEBUG)
 
 
-def update_image(book):
-    app_context.logger.info(f"Looking for a cover for the book {book.title} (ID: {book.id})")
-    filename = get_image_src(book)
-
-    if filename != "./static/noCover.png":            
-        app_context.logger.info("Existing found")
-
-    else:
-        app_context.logger.info("Downloading cover...")
-        try:
-            response = requests.get("https://covers.openlibrary.org/b/isbn/{book.isbn}-S.jpg")
-            file = open(cacheName, mode="wb+")
-            file.write(response.content)
-            file.close()
-        except Exception as e:
-            app_context.logger.info("Could not download cover")
-
-
-def get_image(book):
-    filename = get_image_src(book)
-
-    image = Image.open(filename)
-
-    w, h = image.size
-    if h != IMAGE_SIZE:
-        ratio = IMAGE_SIZE / h
-        new_size = (int(w * ratio), IMAGE_SIZE)
-        image = image.resize(new_size, Image.BILINEAR)
-
-    return image
-
-
-def get_image_src(book):
-    cachePath = os.path.join(os.getcwd(), 'cache', f'{book.id}.jpg')
-    staticPath = os.path.join(os.getcwd(), 'static', f'{book.id}.jpg')
-
-    if os.path.exists(staticPath):
-        filename = str(staticPath)
-
-    elif os.path.exists(cachePath):
-        filename = str(cachePath)
-
-    else:
-        filename = "./static/noCover.png"
-
-    return filename
-
 
 def init_files() -> None:
+    """Function that checks for the necesary files and folders and creates/downloads them if necesary"""
     global logger
 
+    # Checking for the cache folder
     logger.info("Checking for cache folder...")
+    
     if not os.path.exists("./cache"):
         logger.warning("No existing cache folder found! Creating one...")
         os.mkdir("cache")
+
     else:
         logger.info("Existing cache folder found!")
 
+
+    # Checkinf for the static folder
     logger.info("Checking for static folder...")
+
     if not os.path.exists("./static"):
         logger.warning("No existing static folder found! Creating one...")
         os.mkdir("./static")
+        
     else:
         logger.info("Existing static folder found!")
 
+    
+    # Checking for the noCover.png file
     logger.info("Checking for noCover.png file...")
+
     if not os.path.exists("./static/noCover.png"):
         logger.warning("File not found! Downloading it...")
+
+        # Downloading it from github
         request = requests.get("https://github.com/LarsLerchbacher/Lerchbacher-Buecherdatenbank/raw/master/Destkop/static/noCover.png")
         file = open("./static/noCover.png", "wb")
         file.write(request.content)
         file.close()
+
     else:
         logger.info("File found!")
 
+    
+    # Checking for the database
     logger.info("Checking for database...")
     if not os.path.exists("./database.sqlite"):
         logger.warning("No existing database found! Creating a new one...")
+
+        # Connecting to the database
         db, cur = prepare_db()
 
+        # Creating the authors table
         cur.execute("""
         CREATE TABLE authors (
             author_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
@@ -173,6 +150,7 @@ def init_files() -> None:
             date_of_death TIMESTAMP
         );""")
 
+        # Creating the books table
         cur.execute("""
             CREATE TABLE "books" (
                 "book_id"	INTEGER,
@@ -190,12 +168,16 @@ def init_files() -> None:
                 PRIMARY KEY("book_id" AUTOINCREMENT)
             );""")
 
+        # Creating the rooms table
         cur.execute("""CREATE TABLE rooms (room_id INTEGER PRIMARY KEY AUTOINCREMENT, room_name STRING NOT NULL);""")
 
+        # Creating the types table for book types
         cur.execute("""CREATE TABLE types (type_id INTEGER PRIMARY KEY AUTOINCREMENT, type_name STRING NOT NULL);""")
 
+        # Commiting the changes
         db.commit()
         
+        # Closing the db
         cur.close()
 
         db.close()
@@ -216,10 +198,9 @@ def main() -> None:
     # Check for the necesary files and folders
     init_files()
 
+    # Starting the main application
     mainWindow = App()
-    mainWindow.mainloop()
-
-
+    mainWindow.start()
 
 
 if __name__ == "__main__":
@@ -241,7 +222,7 @@ if __name__ == "__main__":
         main()
 
         # Logging a goodbye message
-        logger.info("Peacefully terminating application")
+        logger.info("Closing application!")
         logger.info("Goodbye!")
 
     except Exception as e:
