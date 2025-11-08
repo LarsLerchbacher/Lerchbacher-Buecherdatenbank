@@ -45,7 +45,7 @@ class TypeWidget(Frame):
 
     def delete(self):
         book_type = fetch_book_type(self.id)
-        decision = messagebox.askqüstion("Bestaetigen", f"Möchten Sie den Buchtypen {book_type} wirklich löschen?\n\n" + 
+        decision = messagebox.askquestion("Bestaetigen", f"Möchten Sie den Buchtypen {book_type} wirklich löschen?\n\n" +
                                           "Alle Bücher die diesen Buchtypen in ihren Daten enthalten werden statdessen unbekannt anzeigen.\n\n" + 
                                           "Diese Aktion kann NICHT rückgaengig gemacht werden!"\
                                          )

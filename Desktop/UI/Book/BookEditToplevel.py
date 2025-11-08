@@ -15,7 +15,7 @@
 
 
 import app_context
-from database import Book, create_book, edit_book, fetch_authors, fetch_book, fetch_book_type_id, fetch_book_types, fetch_room_id, fetch_rooms
+from database import Book, create_book, edit_book, fetch_authors, fetch_book, fetch_book_type, fetch_book_type_id, fetch_book_types, fetch_room, fetch_room_id, fetch_rooms
 from images import update_image
 from tkinter import *
 from UI.Book.BookEditWidget import BookEditWidget
@@ -38,6 +38,8 @@ class BookEditToplevel(Toplevel):
 
         self.edit = BookEditWidget(self)
         self.edit.pack()
+
+        self.edit.lend.config(command=self.edit.update_lend_to)
 
         self.button_frame = Frame(self)
         self.button_frame.pack(padx=20, pady=5)
@@ -70,20 +72,11 @@ class BookEditToplevel(Toplevel):
         self.edit.year.set(book.year)
 
         self.all_types = fetch_book_types()
-        if self.all_types == []:
-            set_book_types(["Kinderbuch", "Jugendbuch", "Roman", "Sachbuch"])
         self.edit.type_select.config(completevalues=self.all_types)
 
-        if book.type in range(0, len(self.all_types)):
-            self.edit.type_select.set(self.all_types[book.type])
-        else:
-            self.edit.type_select.set("Unbekannt")
+        self.edit.type_select.set(fetch_book_type(book.type))
 
-        self.all_rooms = fetch_rooms()
-        if book.room in range(0, len(self.all_rooms)):
-            self.edit.room.set(self.all_rooms[book.room])
-        else:
-            self.edit.room.set("Unbekannt")
+        self.edit.room.set(fetch_room(book.room))
 
         self.edit.tags.delete(0, END)
         self.edit.tags.insert(0, "; ".join(book.tags))
@@ -91,10 +84,12 @@ class BookEditToplevel(Toplevel):
         self.edit.shelf.delete(0, END)
         self.edit.shelf.insert(0, book.shelf)
 
-        if book.lend == 0:
-            self.edit.lend_var.set(0)
-        else:
-            self.edit.lend_var.set(1)
+        self.edit.lend_var.set(book.lend)
+
+        self.edit.update_lend_to()
+
+        if book.lend == 1:
+            self.edit.lend_to.insert(0, book.lend_to)
 
     def save(self):
         # Code to save changes / create new book
@@ -141,7 +136,11 @@ class BookEditToplevel(Toplevel):
         lend = self.edit.lend_var.get()
         app_context.logger.info(f"\tVerliehen: {"ja" if lend else "nein"} (lend_var: {lend})")
 
-        book = Book(id=self.id, title=title, author_ids=author_ids, publisher=publisher, isbn=isbn, edition=edition, year=year, type=type_nr, tags=tags, room=room_nr, shelf=shelf, lend=lend)
+        lend_to = self.edit.lend_to.get()
+        if lend_to != "":
+            app_context.logger.info(f"\tVerliehen an: {lend_to}")
+
+        book = Book(id=self.id, title=title, author_ids=author_ids, publisher=publisher, isbn=isbn, edition=edition, year=year, type=type_nr, tags=tags, room=room_nr, shelf=shelf, lend=lend, lend_to=lend_to)
 
         if self.id != -1:
             response = edit_book(self.id, book)

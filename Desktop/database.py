@@ -57,8 +57,9 @@ class Book:
         room - str
         shelf - str
         lend - int
+        lend_to - str
     """
-    def __init__(self, title:str, author_ids:list[int], publisher:str, isbn:str, edition:int, year:int, type:int, tags:list, room:str, shelf:str, lend:int=-1, id:int=-1):
+    def __init__(self, title:str, author_ids:list[int], publisher:str, isbn:str, edition:int, year:int, type:int, tags:list, room:str, shelf:str, lend_to: str, lend:int=-1, id:int=-1):
         self.id = id
         self.title = title
         self.author_ids = author_ids
@@ -71,10 +72,11 @@ class Book:
         self.room = room
         self.shelf = shelf
         self.lend = lend
+        self.lend_to = lend_to
 
     def __str__(self):
         authors = [fetch_author(id).name for id in self.author_ids]
-        return f"{self.id} {self.title} {authors} {self.publisher} {self.isbn} {self.edition} {self.year} {self.type} {self.tags} {self.room} {self.shelf} {self.lend}"
+        return f"{self.id} {self.title} {authors} {self.publisher} {self.isbn} {self.edition} {self.year} {self.type} {self.tags} {self.room} {self.shelf} {self.lend} {self.lend_to}"
 
 
 class Author:
@@ -223,7 +225,7 @@ def delete_author(id) -> bool:
     return True
 
 
-def create_author(author:Author) -> bool:
+def create_author(author:Author) -> str | bool | Exception:
     """"
     ### Function create_author
 
@@ -264,8 +266,10 @@ def create_author(author:Author) -> bool:
             # Returns False because you mustn't override an existing author to create a new one
             return e
 
+    return "Author existiert bereits!"
 
-def edit_author(author_id:int, new:Author) -> bool:
+
+def edit_author(author_id:int, new:Author) -> str | bool | Exception:
     """"
     ### Function edit_author
 
@@ -306,13 +310,14 @@ def edit_author(author_id:int, new:Author) -> bool:
             return "OK"
 
         # If the author doesn't exist
-        except exception as e:
+        except Exception as e:
 
             # Returns False, because you can't alter the details of a not existing author
             return e
+    else:
+        return "Autor existiert nicht!"
 
 
-# TODO: Finish commenting fetch_author function
 def fetch_author(author_id:int) -> Author | bool:
     """
     ### Function fetch_author
@@ -406,7 +411,7 @@ def fetch_books() -> list[Book]:
     # Converts each book into a Book object
     for index in range(0, len(books)):
         book = books[index]
-        new_books.append(Book(id=book[0], title=book[1], author_ids=eval(book[2]), publisher=book[3], isbn=book[4], edition=book[5], year=book[6], type=book[7], tags=eval(book[8]), room=book[9], shelf=book[10], lend=book[11]))
+        new_books.append(Book(id=book[0], title=book[1], author_ids=eval(book[2]), publisher=book[3], isbn=book[4], edition=book[5], year=book[6], type=book[7], tags=eval(book[8]), room=book[9], shelf=book[10], lend=book[11], lend_to=book[12]))
 
     # Returns all found books
     return new_books
@@ -434,9 +439,8 @@ def create_book(book:Book) -> str | int:
         if not fetch_author(id):
             return f"Autor mit der ID {id} existier nicht!"
 
-
     # Creates the book with the provided parameters
-    cur.execute(f"INSERT INTO books (book_title, author_ids, book_publisher, book_isbn, book_edition, book_year, book_type, book_tags, book_room, book_shelf, book_lend) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);", (book.title, str(book.author_ids), book.publisher, book.isbn, book.edition, book.year, book.type, str(book.tags), book.room, book.shelf, book.lend))
+    cur.execute(f"INSERT INTO books (book_title, author_ids, book_publisher, book_isbn, book_edition, book_year, book_type, book_tags, book_room, book_shelf, book_lend, lend_to) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);", (book.title, str(book.author_ids), book.publisher, book.isbn, book.edition, book.year, book.type, str(book.tags), book.room, book.shelf, book.lend, book.lend_to))
 
     # Commits the changes to the db
     db.commit()
@@ -523,9 +527,9 @@ def edit_book(book_id:int, new:Book) -> str:
     # Updates the book
     cur.execute(f"""
 UPDATE books
-SET book_title = ?, author_ids = ?, book_publisher = ?, book_isbn = ?, book_edition = ?, book_year = ?, book_type = ?, book_tags = ?, book_room = ?, book_shelf = ?, book_lend = ?
+SET book_title = ?, author_ids = ?, book_publisher = ?, book_isbn = ?, book_edition = ?, book_year = ?, book_type = ?, book_tags = ?, book_room = ?, book_shelf = ?, book_lend = ?, lend_to = ?
 WHERE book_id = ?;
-    """, (new.title, str(new.author_ids), new.publisher, new.isbn, new.edition, new.year, new.type, str(new.tags), new.room, new.shelf, new.lend, book_id))
+    """, (new.title, str(new.author_ids), new.publisher, new.isbn, new.edition, new.year, new.type, str(new.tags), new.room, new.shelf, new.lend, new.lend_to, book_id))
 
     # Commits the changes to the db
     db.commit()
@@ -562,7 +566,7 @@ def fetch_book(book_id:int) -> Book|bool:
 
     # Turns the fetched book into a Book object
     new_book = Book(id=book[0], title=book[1], author_ids=eval(book[2]), publisher=book[3], isbn=book[4], edition=book[5],
-                year=book[6], type=book[7], tags=eval(book[8]), room=book[9], shelf=book[10], lend=book[11])
+                year=book[6], type=book[7], tags=eval(book[8]), room=book[9], shelf=book[10], lend=book[11], lend_to=book[12])
 
     # Returns the found book
     return new_book
@@ -589,7 +593,7 @@ def fetch_book_by_isbn(isbn:str) -> Book:
 
     # Turns the fetched book into a Book object
     book = Book(id=book[0], title=book[1], author_ids=eval(book[2]), publisher=book[3], isbn=book[4], edition=book[5],
-                year=book[6], type=book[7], tags=eval(book[8]), room=book[9], shelf=book[10], lend=book[11])
+                year=book[6], type=book[7], tags=eval(book[8]), room=book[9], shelf=book[10], lend=book[11], lend_to=book[12])
 
     # Returns the found book
     return book
@@ -635,7 +639,7 @@ def fetch_book_type_id(name) -> int:
 def fetch_book_type(type_id) -> str:
     db, cur = prepare_db()
     try:
-        name = cur.execute(f"SELECT * FROM types WHERE type_id={type_id}").fetchone()[1]
+        name = cur.execute(f"SELECT * FROM types WHERE type_id == {type_id}").fetchone()[1]
     except Exception as e:
         name = "Unbekannt"
 
@@ -645,24 +649,24 @@ def fetch_book_type(type_id) -> str:
     return name
 
 
-def set_book_types(types: list[str]) -> None:
-    db, cur = prepare_db()
-
-    cur.execute("DROP TABLE types;")
-
-    db.commit()
-
-    cur.execute("CREATE TABLE types (type_id INTEGER PRIMARY KEY AUTOINCREMENT, type_name STRING NOT NULL);")
-
-    db.commit()
-
-    for book_type in types:
-        cur.execute(f"INSERT INTO types (type_name) VALUES ('{book_type}');")
-
-    db.commit()
-
-    cur.close()
-    db.close()
+# def set_book_types(types: list[str]) -> None:
+#     db, cur = prepare_db()
+#
+#     cur.execute("DROP TABLE types;")
+#
+#     db.commit()
+#
+#     cur.execute("CREATE TABLE types (type_id INTEGER PRIMARY KEY AUTOINCREMENT, type_name STRING NOT NULL);")
+#
+#     db.commit()
+#
+#     for book_type in types:
+#         cur.execute(f"INSERT INTO types (type_name) VALUES ('{book_type}');")
+#
+#     db.commit()
+#
+#     cur.close()
+#     db.close()
 
 
 def edit_book_type(type_id: int, new_type_name: str) -> str:

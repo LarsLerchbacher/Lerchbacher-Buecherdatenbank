@@ -23,6 +23,14 @@ class SearchFilterBooks(BookEditWidget):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.lend = AutocompleteCombobox(self.lend_frame, completevalues=["Ja", "Nein"], width=25)
+        self.lend = AutocompleteCombobox(self.lend_frame, completevalues=["Ja", "Nein"], width=25, postcommand=self.update)
         self.lend.grid(row=0, column=1)
+
+        self.lend.bind("<<ComboboxSelected>>", self.update_lend_to)
+
+    def update_lend_to(self, event_object):
+        if self.lend.get() == "Ja":
+            self.lend_to_frame.pack(padx=20, pady=5)
+        else:
+            self.lend_to_frame.pack_forget()
 

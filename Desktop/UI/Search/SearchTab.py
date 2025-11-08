@@ -386,6 +386,7 @@ class SearchTab(Tab):
                     shelf = self.filterBooks.shelf.get()
                     lend = None
                     lend_str = self.filterBooks.lend.get()
+                    lend_to = self.filterBooks.lend_to.get()
 
                     if lend_str == "Ja":
                         lend = 1
@@ -406,6 +407,7 @@ class SearchTab(Tab):
                         if title in book.title:
                             criteria.append(True)
                         else:
+                            print("not matching title")
                             continue
 
                     if author_ids != []:
@@ -419,62 +421,84 @@ class SearchTab(Tab):
                         if (True in containsAuthors) and (False not in containsAuthors):
                             criteria.append(True)
                         else:
+                            print("not matching authors")
                             continue
 
                     if publisher:
                         if publisher in book.publisher:
                             criteria.append(True)
                         else:
+                            print("not matching publisher")
                             continue
 
                     if isbn:
                         if isbn in str(book.isbn):
                             criteria.append(True)
                         else:
+                            print("not matching isbn")
                             continue
 
                     if edition:
                         if edition == book.edition:
                             criteria.append(True)
                         else:
+                            print("not matching edition")
                             continue
 
                     if year:
                         if int(year) == book.year:
                             criteria.append(True)
                         else:
+                            print("not matching year")
                             continue
 
                     if book_type != None:
-                        print(book_type)
-                        print(book.type)
                         if book_type == book.type:
-                            print("Matching")
                             criteria.append(True)
+                        else:
+                            print("not matching book type")
+                            continue
 
-                    if tags != []:
+                    if tags != ['']:
+                        containsTags = []
                         for tag in tags:
                             if tag in book.tags:
-                               criteria.append(True)
+                               containsTags.append(True)
                             else:
-                               continue
+                                containsTags.append(False)
+
+                        if True in containsTags and False not in containsTags:
+                            criteria.append(True)
+                        else:
+                            print("not matching tags")
+                            continue
 
                     if room != None:
                         if room == book.room:
                             criteria.append(True)
                         else:
+                            print("not matching room")
                             continue
 
                     if shelf != "":
                         if shelf in book.shelf:
                             criteria.append(True)
                         else:
+                            print("not matching shelf")
                             continue
 
                     if lend != None:
                         if lend == book.lend:
                             criteria.append(True)
                         else:
+                            print("not matching lend state")
+                            continue
+
+                    if lend_to != "":
+                        if lend_to in book.lend_to:
+                            criteria.append(True)
+                        else:
+                            print("not matching lend to")
                             continue
                     
                     if (False not in criteria) and (True in criteria):

@@ -19,10 +19,12 @@
 
 import argparse
 import app_context
+from database import prepare_db
 import logging
 from UI.App import App
 from PIL import Image
 import os
+import requests
 import sys
 import traceback
 
@@ -165,6 +167,7 @@ def init_files() -> None:
                 "book_room"	STRING,
                 "book_shelf"	STRING,
                 "book_lend"	INTEGER,
+                "lend_to" STRING,
                 PRIMARY KEY("book_id" AUTOINCREMENT)
             );""")
 

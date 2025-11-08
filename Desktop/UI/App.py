@@ -52,7 +52,7 @@ class App(Tk):
         self.tabControl.add(self.booksTab, text='Bücher')
         self.tabControl.add(self.authorsTab, text='Autoren')
         self.tabControl.add(self.typesTab, text='Buchtypen')
-        self.tabControl.add(self.roomsTab, text='Räme')
+        self.tabControl.add(self.roomsTab, text='Räume')
         self.tabControl.add(self.searchTab, text='Suche')
 
         app_context.logger.info("Successfully initialized main window")
@@ -61,7 +61,7 @@ class App(Tk):
 
 
     def update(self):
-        self.mainTab.update()
+        self.overviewTab.update()
         self.booksTab.update()
         self.authorsTab.update()
         self.searchTab.update()

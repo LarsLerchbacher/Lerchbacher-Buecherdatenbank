@@ -117,3 +117,16 @@ class BookEditWidget(Frame):
         self.lend_label.grid(row=0, column=0)
         self.lend.grid(row=0, column=1)
 
+        self.lend_to_frame = Frame(self)
+
+        self.lend_to_label = Label(self.lend_to_frame, text="Verliehen an: ")
+        self.lend_to = Entry(self.lend_to_frame)
+        self.lend_to_label.grid(row=1, column=0)
+        self.lend_to.grid(row=1, column=1)
+
+    def update_lend_to(self):
+        print(self.lend_var.get())
+        if self.lend_var.get() == 1:
+            self.lend_to_frame.pack(padx=20, pady=5)
+        else:
+            self.lend_to_frame.pack_forget()

@@ -69,6 +69,9 @@ class BookWidget(Frame):
         self.lend = Label(self.details, text = 'Verliehen: ')
         self.lend.pack(pady = 5, padx = 50)
 
+        self.lend_to = Label(self.details, text = 'Verliehen an: ')
+        self.lend_to.pack(pady = 5, padx = 50)
+
         self.button_frame = Frame(self.preview)
         
         self.button = Button(self.button_frame, text='Mehr anzeigen', command = self.expand)
@@ -80,7 +83,6 @@ class BookWidget(Frame):
         self.image.pack(pady = 10, padx = 50)
         self.button_frame.pack(pady = 10, padx = 250)
         self.button.grid(padx = 10, row = 0, column = 0)
-
 
         self.update()
 
@@ -131,6 +133,12 @@ class BookWidget(Frame):
         self.shelf.config(text = f'Regal: {book.shelf}')
 
         self.lend.config(text = f'Verliehen: {"Ja" if book.lend else "Nein"}')
+
+        if book.lend == 1:
+            self.lend_to.config(text=f'Verliehen an: {book.lend_to}')
+            self.lend_to.pack(pady=5, padx=20)
+        else:
+            self.lend_to.pack_forget()
 
     
 
