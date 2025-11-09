@@ -65,7 +65,10 @@ class BookEditToplevel(Toplevel):
 
         self.edit.isbn.delete(0, END)
         isbn_value = str(book.isbn)
-        self.edit.isbn.insert(0, f"{isbn_value[0:3]}-{isbn_value[3]}-{isbn_value[4:7]}-{isbn_value[7:12]}-{isbn_value[12]}")
+        if len(isbn_value) == 13:
+            self.edit.isbn.insert(0, f"{isbn_value[0:3]}-{isbn_value[3]}-{isbn_value[4:7]}-{isbn_value[7:12]}-{isbn_value[12]}")
+        else:
+            self.edit.isbn.insert(0, "Unbekannt")
 
         self.edit.edition.set(book.edition)
 
@@ -110,8 +113,7 @@ class BookEditToplevel(Toplevel):
         app_context.logger.info(f"\tVerlag: {publisher}")
 
         isbn = self.edit.isbn.get()
-        isbn_value = str(isbn)
-        app_context.logger.info(f"\tISBN: {isbn_value[0:3]}-{isbn_value[3]}-{isbn_value[4:7]}-{isbn_value[7:12]}-{isbn_value[12]}")
+        app_context.logger.info(f"\tISBN: {isbn}")
 
         edition = self.edit.edition.get()
         app_context.logger.info(f"\tAuflage: {edition}")

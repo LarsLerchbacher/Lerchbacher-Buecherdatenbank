@@ -149,7 +149,7 @@ def init_files() -> None:
             has_nobel_prize BOOLEAN,
             author_country STRING NOT NULL,
             date_of_birth TIMESTAMP NOT NULL,
-            date_of_death TIMESTAMP
+            date_of_death TIMESTAMP NOT NULL
         );""")
 
         # Creating the books table
@@ -158,9 +158,9 @@ def init_files() -> None:
                 "book_id"	INTEGER,
                 "book_title"	STRING NOT NULL,
                 "author_ids"	BLOB,
-                "book_publisher"	NUMERIC NOT NULL,
-                "book_isbn"	NUMERIC,
-                "book_edition"	TEXT NOT NULL DEFAULT 1,
+                "book_publisher"	STRING,
+                "book_isbn"	STRING,
+                "book_edition"	INTEGER NOT NULL DEFAULT 1,
                 "book_year"	INTEGER,
                 "book_type"	INTEGER,
                 "book_tags"	BLOB,

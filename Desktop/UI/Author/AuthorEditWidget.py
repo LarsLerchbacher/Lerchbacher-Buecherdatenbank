@@ -63,7 +63,7 @@ class AuthorEditWidget(Frame):
 
         self.npwVar = IntVar(self.npwFrame)
         self.npw = Checkbutton(self.npwFrame, var=self.npwVar)
-        self.npwLabel = Label(self.npwFrame, text='Ist ein Nobelpreistraeger?: ')
+        self.npwLabel = Label(self.npwFrame, text='Ist ein Nobelpreisträger?: ')
         self.npwLabel.grid(row=0, column=0)
         self.npw.grid(row=0, column=1)
 

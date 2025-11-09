@@ -111,9 +111,12 @@ class BookWidget(Frame):
 
         self.publisher.config(text = f'Verlag: {book.publisher}')
 
-        self.isbn.config(text = 'ISBN: {}')
+        self.isbn.config(text = 'ISBN: ')
         isbn_value = str(book.isbn)
-        self.isbn.config(text = f"ISBN: {isbn_value[0:3]}-{isbn_value[3]}-{isbn_value[4:7]}-{isbn_value[7:12]}-{isbn_value[12]}")
+        if len(isbn_value) == 13:
+            self.isbn.config(text = f"ISBN: {isbn_value[0:3]}-{isbn_value[3]}-{isbn_value[4:7]}-{isbn_value[7:12]}-{isbn_value[12]}")
+        else:
+            self.isbn.config(text = "ISBN: Unbekannt")
 
         self.edition.config(text = f'Auflage: {book.edition}')
 
