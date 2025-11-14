@@ -1,0 +1,43 @@
+.toc {
+	margin-left: 5%;
+	width: 90%;
+}
+
+.toc > ol {
+	counter-reset: item;
+}
+
+.toc > ol > li {
+	display: block;
+}
+
+.toc > ol > li:before {
+	content: counters(item, ".") " ";
+	counter-increment: item;
+}
+
+.toc > ol > li > ol {
+	counter-reset: item;
+}
+
+.toc > ol > li > ol > li {
+	display: block;
+}
+
+.toc > ol > li > ol > li:before {
+	content: counters(item, ".") " ";
+	counter-increment: item;
+}
+
+.toc > ol > li > ol > li > ol{
+	counter-reset: item;
+}
+
+.toc > ol > li > ol > li > ol > li{
+	display: block;
+}
+
+.toc > ol > li > ol > li > ol > li:before {
+	content: counters(item, ".") " ";
+	counter-increment: item;
+}
