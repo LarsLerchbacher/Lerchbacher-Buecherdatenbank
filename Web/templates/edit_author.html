@@ -1,0 +1,36 @@
+<!--
+(c) 2025 Lars Lerchbacher,
+Lerchbacher Bücherdatenbank templates/edit_author.html
+This is the author editing page of the project
+The following page was made using the flask templates system
+-->
+
+<!-- Uses base.html as a template for this page -->
+{% extends "base.html" %}
+
+<!-- Use Bootstrap for the form of this page -->
+{% from 'bootstrap5/form.html' import render_form %}
+
+<!-- Adds additional tags to the head tag -->
+{% block head %}
+
+	<!-- Links a stylesheet -->
+    <link rel="stylesheet" href="static/index.css">
+
+	<!-- Sets the title of this page -->
+	<title>Author Bearbeitung - Lerchbacher Bücherdatenbank</title>
+
+{% endblock %}
+
+<!-- Adds content to the page -->
+{% block content %}
+
+	{% if message %}
+		<h2 class="error">{{ message }}</h2>
+	{% endif %}
+
+	<i>Das Sterbedatum 2200-01-01 ist das Standardmäßige Sterbedatum und wird als "Noch nicht gestorben" gewertet.</i>
+
+    {{ render_form(form) }}
+
+{% endblock %}

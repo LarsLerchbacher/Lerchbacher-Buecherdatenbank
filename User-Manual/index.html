@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+
+<html lang="de">
+
+	<head>
+	
+		<title>Benutzerhandbuch - Lerchbacher Bücherdatenbank</title>
+		<meta charset="UTF-8">
+		<link rel="stylesheet" href="stylesheets/index.css">
+		<link rel="stylesheet" href="stylesheets/table-of-contents.css">
+	
+	</head>
+	
+	<body>
+	
+		<h1 id="top">Benutzerhandbuch der Lerchbacher Bücherdatenbank</h1>
+		
+		<br>
+		
+		<h2>Inhaltsübersicht</h2>
+		
+		<div class="toc">
+			<ol>
+				<li><a href="#general">Allgemein</a></li>
+				<li>
+					<a href="#installation">Installation</a>
+					<ol>
+						<li><a href="#dependencies">Abhaengigkeiten</a></li>
+						<li><a href="#installation-steps">Installationsschritte</a></li>
+						<li>
+							<a href="#add-start-method">Startmoeglichkeit hinzufuegen</a>
+							<ol>
+								<li><a href="#windows">Windows</a></li>
+								<li><a href="#linux">Linux</a></li>
+							</ol>
+						</li>
+						
+					</ol>
+				</li>
+				<li><a href="#overview">Übersicht</a></li>
+				<li>
+					<a href="#books">Bücher</a>
+					<ol>
+						<li>
+							<a href="#book-edit">Bearbeitungs-Dialog</a>
+							<ol>
+								<li><a href="#book-edit-title">Titel</a></li>
+								<li><a href="#book-edit-authors">Autoren</a></li>
+								<li><a href="#book-edit-publisher">Verlag</a></li>
+								<li><a href="#book-edit-isbn">ISBN</a></li>
+								<li><a href="#book-edit-edition">Auflage</a></li>
+								<li><a href="#book-edit-type">Typ</a></li>
+								<li><a href="#book-edit-tags">Kategorien</a></li>
+								<li><a href="#book-edit-room">Raum</a></li>
+								<li><a href="#book-edit-lend">Verliehen</a></li>
+								<li><a href="#book-edit-lend-to">Verliehen an</a></li>
+								<li><a href="#book-edit-buttons">Knoepfe</a></li>
+							</ol>
+						</li>
+					</ol>
+				</li>
+				<li>
+					<a href="#authors">Autoren</a>
+					<ol>
+						<li>
+							<a href="#author-edit">Bearbeitungs-Dialog</a>
+							<ol>
+								<li><a href="#author-edit-name">Name</a></li>
+								<li><a href="#author-edit-country">Land</a></li>
+								<li><a href="#author-edit-dob">Geburtsdatum</a></li>
+								<li><a href="#author-edit-dod">Sterbedatum</a></li>
+								<li><a href="#author-edit-npw">Nobelpreistraeger</a></li>
+								<li><a href="#author-edit-buttons">Knoepfe</a></li>
+							</ol>
+						</li>	
+					</ol>
+				</li>
+				<li>
+					<a href="#book-types">Buchtypen</a>
+					<ol>
+						<li><a href="#type-edit">Bearbeitungs-Dialog</a></li>
+					</ol>
+				</li>
+				<li>
+					<a href="#rooms">Räume</a>
+					<ol>
+						<li><a href="#room-edit">Bearbeitungs-Dialog</a></li>
+					</ol>
+				</li>
+				<li>
+					<a href="#search">Suche</a>
+					<ol>
+						<li><a href="#search-general">Alle</a></li>
+						<li><a href="#search-books">Buecher</a></li>
+						<li><a href="#search-authors">Autoren</a></li>
+						<li><a href="#search-book-types">Buchtypen</a></li>
+						<li><a href="#search-rooms">Raeume</a></li>
+					</ol>
+				</li>
+			</ol>
+		</div>
+		
+		<br>
+		
+		<h2 id="general">1. Allgemein</h2>
+		
+		<p>Dieses Handbuch bezieht sich momentan nur auf die Desktop Version. Die Webseite wird hinzugefügt werden, wenn ich sie entwickelt habe.</p>
+	
+		<p>Die Desktop Version (auch Applikation genannt) ist in fünf Tabs gegliedert, die in der Leiste oben links ersichtlich sind. Das wechseln zwischen Tabs funktioniert einfach durch anklicken des gewünschten Ziel-Tabs.</p>
+		
+		<p>Die Eingaben werden zwar im UTF-8 Format gespeichert, <b>es sollten dennoch keine Unicode Zeichen, wie Emojis, eingefuegt werden</b>, da dies die Applikation zum Absturz bringt (Python kann Unicode Zeichen nicht richtig darstellen). Sonderzeichen ihrer Anzeigesprache (wie die deutschen Umlaute) scheinen dennoch zu funktionieren.</p>
+		
+		<p>Sollten Fehler auftreten, befinden sich weiter Informationen dazu in der log.txt Datei, die von der Applikation automatisch angelegt wird. Diese ist vor allem fuer den Entwickler zur Fehlerbehebung sehr hilfreich. <b>Bitte beachten Sie, das die Datei beim erneuten Start der Applikation ueberschrieben wird.</b> Sollten Sie also einem Fehler begegnen, kopieren Sie sich bitte die log.txt Datei, wenn Sie den Fehler auch auf Github melden wollen. Ich wuerde mich sehr darueber freuen und natuerlich versuchen ihn zu beheben.</p>
+		
+		<p>Die folgenden Tabs sind momentan enthalten:</p>
+		
+		<div class="text-list">
+			<ol>
+		
+				<li><a href="#overview">Übersicht</a></li>
+				
+				<li><a href="#books">Bücher</a></li>
+				
+				<li><a href="#authors">Autoren</a></li>
+				
+				<li><a href="#book-types">Buchtypen</a></li>
+				
+				<li><a href="#rooms">Räume</a></li>
+				
+				<li><a href="#search">Suche</a></li>
+		
+		</ol>
+		</div>
+		
+		<br>
+		
+		<h2>2. Installation</h2>
+		
+		<h3 id="dependencies">Abhaengigkeiten:</h3>
+		
+		<div class="text-list">
+			<ul>
+				<li>Der Quellcode der Applikation</li>
+				<li>Python (getestet mit Version 3.13.1)</li>
+				<li>Eine Python virtual environment, kurz venv</li>
+				<li>Die Python Packete aus der requirements-Desktop.txt Datei</li>
+			</ul>
+		</div>
+		
+		<h3 id="installation-steps">Installationsschritte:</h3>
+		
+		<p>Laden Sie Python herunter, wenn Sie es nicht bereits installiert haben. Getestet wurde das Programm mit Version 3.13.1.<br>
+		Linux Benutzer sollten Python uber den Packetmanager iher Distribution installieren.<br>
+		Fuer Windows Benutzer befindet sich der Download auf <a href="https://www.python.org">der offiziellen Seite der Python Software Foundation</a>.<br>
+		<b>WICHTIG für Windows Benutzer: aktivieren Sie bei der Installation die Option Python zum PATH hinzufügen (add python to PATH)!</b></p>
+		
+		<p>Entscheiden Sie sich fuer einen Installationsordner fuer die Applikation. Soll die Datenbank von mehrern Benutzer verwendet werden, empfiehlt es sich, als Installationsordner einen geteilten Netzwerk- oder Cloudordner zu verweden. Beispielsweise ein Netzlaufwerk oder ein Gruppenordner in Nextcloud (meine Wahl).</p>
+		
+		<p>Dann sollten Sie eine Ordner namens <code>src</code> im Installationsordner erstellen. Dieser wird als Speicherort fuer den Quellcode dienen.</p>
+		
+		<p>Laden Sie nun den Quellcode herunter. Dafuer haben Sie folgenden Moeglichkeiten:</p>
+		<div class="text-list">
+			<ul>
+				<li>Sie koennen das "Sourcecode.zip" Archiv des zu installierenden Releases herunterladen und in den <code>src</code> Ordner entzippen. ODER</li>
+				<li>Sie koennen (wenn Sie mit Softwareentwicklungstools vertraut sind) mithilfe von Git das Repository des Projektes (<a href="https://github.com/LarsLerchbacher/Lerchbacher-Buecherdatenbank">hier</a>) in den <code>src</code> Ordner klonen und den Commit des zu installierenden Releases auschecken.</li>
+			</ul>
+		</div>
+		
+		<p>Als naechstes oeffnen Sie den <code>src</code> Ordner im Terminal (Windows: CMD oder Terminal auf Windows 11) und erstellen eine virtuelle Umgebung fuer Python:</p>
+
+		<p>Das funktioniert folgendermassen: <code>python -m venv NAME</code>, wobei Sie <code>NAME</code> mit dem gewuenschten Namen der virtuellen Umgebung ersetzen. Standard ist (zumindest fuer mich <code>venv</code> oder <code>env</code>.</p>
+		
+		<p>Nun muessen Sie die Packete aus der <code>requirements-Desktop.txt</code> Datei installiert werden. Am einfachsten geht das mit dem Befehl <code>NAME\Scripts\pip.exe install -r requirements-Desktop.txt</code> auf Windows und <code>NAME/bin/pip install -r requirements-Desktop.txt</code> auf Linux. Achten Sie wieder darauf, NAME mit dem von Ihnen gewaehlten Namen zu ersetzen<br>Windows benutzer koennen ihr Terminal/ ihre CMD jetzt schliessen.</p>
+		
+		<h3 id="add-start-method">Startmoeglichkeit hinzufuegen</h3>
+		
+		<p>Als naechstes sollten wir Ihnen eine Moeglichkeit geben, die Applikation einfacher zu starten. Auf Windows waere das etwas eine Verknuepfung, auf Linux ein Script fuer ihre Shell.</p>
+		
+		<h4 id="windows">Windows</h4>
+		
+		<p>Oeffnen Sie zunaechst den Installationsordner im Explorer und machen einen Rechtsklick auf eine leere Flaeche. Waehlen Sie nun <code>Neu -> Verknuepfung</code> aus. Geben Sie nun den Pfad des Installationsordners ein (Sie koennen ihn aus der Addressleiste oben im Explorer kopieren) ein und fuegen Sie folgendes hinzu: <code>src\NAME\Scripts\pythonw.exe</code>. Klicken Sie auf weiter und wahelen Sie einen Namen wie <code>Lerchbacher Buecherdatenbank</code>.</p>
+		
+		<p>Machen Sie nun einen Rechtsklick auf die neue Verknuepfung und waehlen Sie "Eigenschaften". Nun muessen wir zwei Kleinigkeiten Aendern:</p>
+		<p>Als erstes wenden wir uns dem Ziel zu: fuegen Sie am Ende der Zeile, ausserhalb der Anfuehrungszeichen, folgendes hinzu: <code> src\Desktop\main.py</code>.</p>
+		<p>Danach aendern wir etwas in Ausfueheren in: ersetzen Sie <code>src\NAME\Scripts\</code> durch <code>src\Desktop</code>.</p>
+		
+		<p>Jetzt sollten Sie in der Lage sein, die Applikation ueber die Verknuepfung zu starten.</p>
+		
+		<h4 id="linux">Linux</h4>
+		
+		<p>Unter Linux ist meine Empfehlung, ein einfaches Skript fuer Ihre Shell zu schreiben, dass die Applikation startet. Dieses sollte sich direkt im Installationsordner befinden. Ich kenne mich nicht gut mit den verschiedenen Shells aus, deshalb koennte es sein, dass mein Beispiel bei Ihnen nicht funktioniert. In dem Fall, fragen Sie bitte eine Person, die sich mit der Shell auskennt, ob sie ihnen helfen kann. Ersetzen Sie ausserdem SHELL durch ihre Shell und NAME durch den Namen der venv.</p>
+		
+		<p class="code-display">#!/bin/SHELL<br>
+		src/NAME/bin/python src/Desktop/main.py
+		</p>
+		
+		<p>Zum Schluss muessen Sie das Skript noch ausfuerbar machen. Das funktioniert mit dem Befehl <code>chmod +x SKRIPT</code>, wobei SKRIPT der Name des Skripts ist.</p>
+		
+		<br>
+		
+		<h2 id="overview">3. Uebersicht</h2>
+		
+		<p>Der Uebersicht Tab zeigt die 12 zuletzt hinzugefuegten Buecher und Autoren an.</p>
+		
+		<img src="img/overview.png">
+		
+		<p>Buecher und Autoren lassen sich ueber den "Mehr anzeigen" Knopf ausklappen. Dadurch werden mehr Informationen und Optionen angezeigt, wie etwas "Bearbeiten" und "Loeschen".</p>
+		<img src="img/overview-book.png">
+		
+		<br>
+		
+		<h2 id="books">4. Buecher</h2>
+		
+		<p>Der Buecher Tab enthaelt eine Liste alle Buecher, die in der Datenbank gespeichert sind. Ebenfalls findet sich dort die Moeglichkeit, neue Buecher hinzuzufuegen. Auch hier lassen sich Buecher ueber den "Mehr anzeigen" Knopf ausklappen. Dadurch werden mehr Informationen und Optionen angezeigt, wie etwas "Bearbeiten" und "Loeschen".</p>
+		
+		<img src="img/books.png">
+		
+		<h3 id="book-edit">Bearbeitungs-Dialog</h3>
+		
+		<p>Ein Klick auf den Knopf "Neues Buch hinzufuegen" oeffnent einen leeren Buch-Bearbeitungs Dialog.<br>
+		Der selbige wird auch geoeffnet, sollten Sie bei einem Buch "Bearbeiten" waehlen.<br>
+		In diesem finden sich eine Vielzahl an Eingabefeldern. Alle sind beschriftet, aber wir gehen Sie hier trotzdem einmal durch.</p>
+		
+		<img src="img/book-edit.png">
+		
+		<h4 id="book-edit-title">Titel</h4>
+		
+		<p>Dieses Feld speichert den Titel eines Buches.</p>
+		
+		<img src="img/book-edit-title.png">
+		
+		<h4 id="book-edit-authors">Autoren</h4>
+		
+		<p>Dieses Feld erlaub ihnen, eine beliebige Anzahl an Autoren zum Buch hinzuzufuegen. Bitte beachten Sie, dass <b>mindestens 1 Autor angegeben werden muss!</b> Sollten Sie also ein Buch von einem unbekannten Autor eintragen wollen, empfiehlt es sich, einen "Unbekannt" Autor hinzuzufuegen. (Siehe <a href="authors">5. Autoren</a>)<br>
+		Beachten Sie ausserdem, dass dieses Feld keine Moeglichkeit zum Erstellen von Autoren enthaelt. Daher sollten Sie die Autoren eines Buches vor dem Erstellen des Letzteren suchen und, wenn noetig, erstellen.</p>
+		
+		<img src="img/book-edit-authors.png">
+		
+		<p>Sehen wir es uns nun etwas genauer an:</p>
+		
+		<div class="text-list">
+			<ul>
+				<li>Das zentrierte kleine Textfeld dient dem Filtern der Autoren. Gefilter werden allerdings nur die noch nicht hinzugefuegten Autoren.</li>
+				<li>Auf der linken Seite befindet sich eine Auflistung aller Autoren, die den Inhalt des Suchfeldes in ihrem Namen haben. <br>Sie koennen durch einen einfachen Klick an- oder abgewaehlt werden. Gewaehlte Autoren werden blau markiert und unterstrichen.</li>
+				<li>
+					In der Mitte befinden sich vier Knoepfe:
+					<ul>
+						<li>Der <code>></code> Knopf verschiebt alle markierten Autoren von der linken auf die rechte Seite.</li>
+						<li>Der <code><</code> Knopf verschiebt alle markierten Autoren von der rechten auf die linke Seite.</li>
+						<li>Der <code>>></code> Knopf verschiebt alle Autoren von der linken auf die rechte Seite, egal ob gewaehlt oder nicht.</li>
+						<li>Der <code><<</code> Knopf verschiebt alle Autoren von der rechten auf die linke Seite, egal ob gewaehlt oder nicht.</li>
+					</ul>
+				</li>
+				<li>Auf der rechten Seite befindet sich eine Auflistung aller Autoren, die dem aktuellen Buch zugeordnet wurden. <br>Sie koennen durch einen einfachen Klick an- oder abgewaehlt werden. Gewaehlte Autoren werden blau markiert und unterstrichen.</li>
+			</ul>
+		</div>
+		
+		
+		<h4 id="book-edit-publisher">Verlag</h4>
+		
+		<p>Hier koenne Sie den Verlag / Herausgeber des Buches eintragen</p>
+		
+		<img src="img/book-edit-publisher.png">
+		
+		<h4 id="book-edit-isbn">ISBN</h4>
+		
+		<p>Dieses Feld bietet die Moeglichkeit, die ISBN-13 des Buches einzugeben. Die Beistriche zwischen den verschiedenen Segmenten werden automatisch gesetzt. Die Laenge dieses Feldes wurde, Aufgrund des einzugebenden Wertes, auf 13 Zeichen, ausgenommen der Beistriche, begrenzt. Schreiben Sie bitte nicht zu schnell, da die Formatierung etwas langsam ist. Zur Referenz, die ISBN-13 hat die Form <b>xxx-x-xxx-xxxxx-x</b>.</p>
+		
+		<img src="img/book-edit-isbn.png">
+		
+		<h4 id="book-edit-edition">Auflage</h4>
+		
+		<p>Hier koenne Sie die Auflage des Buches eintragen. Der akzeptierte Wertebereich liegt zwischen 1 und 20.</p>
+		
+		<img src="img/book-edit-edition.png">
+		
+		<h4 id="book-edit-type">Typ</h4>
+		
+		<p>Dieses Feld speichert den Buchtypen des Buches. Dieser kann aus der Liste gewaehlt werden, die beim Klicken auf den kleinen Pfeil rechts angezeigt wird. Bitte pruefen Sie vor Erstellen des Buches, ob der gewuenschte Buchtyp bereits existiert (<a href="#book-types">6. Buchtypen</a>) Das Feld verfuegt ausserdem ueber eine Autovervollstaendigung fuer die moeglichen Buchtypen. Sie koennen also den Anfang eines Typen eingeben und bekommen einen Vorschlag zur Vervollstaendigung.</p>
+		
+		<img src="img/book-edit-type.png">
+		
+		<h4 id="book-edit-tags">Kategorien</h4>
+		
+		<p>Hier koenne Sie Kategorien oder Stichwoerter zum Buch eintragen. Die einzelnen Eintraege koennen Leerzeichen enthalten und werden durch Semikolone(';') getrennt.</p>
+		
+		<img src="img/book-edit-tags.png">
+		
+		<h4 id="book-edit-room">Raum</h4>
+		
+		<p>Dieses Feld speichert den Raum des Buches. Dieser kann aus der Liste gewaehlt werden, die beim Klicken auf den kleinen Pfeil rechts angezeigt wird. Bitte pruefen Sie vor Erstellen des Buches, ob der gewuenschte Raum bereits existiert (<a href="#rooms">7. Raeume</a>) Das Feld verfuegt ausserdem ueber eine Autovervollstaendigung fuer die moeglichen Raeume. Sie koennen also den Anfang eines Raumes eingeben und bekommen einen Vorschlag zur Vervollstaendigung.</p>
+		
+		<img src="img/book-edit-room.png">
+		
+		<h4 id="book-edit-shelf">Regal</h4>
+		
+		<p>Hier koennen Sie das Regal eintragen, in dem das Buch normalerweise steht.</p>
+		
+		<img src="img/book-edit-shelf.png">
+		
+		<h4 id="book-edit-lend">Verliehen</h4>
+		
+		<p>Speichert, ob das Buch im Moment verliehen ist oder nicht. Den Zustand des Felder aendern Sie durch anklicken.</p>
+		
+		<img src="img/book-edit-lend.png">
+		
+		<h4 id="book-edit-lend-to">Verliehen an</h4>
+		
+		<p>Dieses Feld wird nur angezeigt, wenn im vorherigen Feld angegeben wurde, dass das Buch momentan verliehen ist. Hier kann eingetragen werden, an welche Person das Buch vergeben wurde.</p>
+		
+		<img src="img/book-edit-lend-to.png">
+		
+		<h4 id="book-edit-buttons">Knoepfe</h4>
+		
+		<p>Am unteren Ende der Bearbeitungs- und Erstellungsdialoge befinden sich der "Speichern" und der "Abbrechen" Knopf. <br>
+		Der Speichern Knopf speichert die Daten der Felder in der Datenbank ab und schliesst den Dialog. Wurde der Dialog ueber den "Neues Buch hinzufuegen" Knopf geoeffnet, wird ein neues Buch		erstellt.<br>
+		Der Abbrechen Knopf schliesst den Dialog, ohne die gemachten Aenderungen/Eintragungen in der Datenbank zu speichern.<br>
+		Diese beiden Knoepfe werden in der ganzen Applikation mehrmals verwendet.</p>
+		
+		<img src="img/save-cancel-buttons.png">
+		
+		<h2 id="authors">5. Autoren</h2>
+		
+		<p>Der Autoren Tab enthaelt eine Liste alle Autoren, die in der Datenbank gespeichert sind. Ebenfalls findet sich dort die Moeglichkeit, neue Autoren hinzuzufuegen. Auch hier lassen sich Autoren ueber den "Mehr anzeigen" Knopf ausklappen. Dadurch werden mehr Informationen und Optionen angezeigt, wie etwas "Bearbeiten" und "Loeschen".</p>
+		
+		<img src="img/authors.png">
+		
+		<h3 id="author-edit">Bearbeitungs-Dialog</h3>
+		
+		<p>Ein Klick auf den Knopf "Neuen Autor hinzufuegen" oeffnet einen leeren Autoren-Bearbeitungs-Dialog.<br>
+		Der selbige wird auch geoeffnet, sollten Sie bei einem Autor "Bearbeiten" waehlen.<br>
+		In diesem finden sich einige Eingabefelder. Alle sind beschriftet, aber wir gehen Sie hier trotzdem einmal durch.</p>
+		
+		<img src="img/author-edit.png">
+		
+		<h4 id="author-edit-name">Name</h4>
+		
+		<p>Dieses Feld ist fuer den Namen des Autors.</p>
+		
+		<h4 id="author-edit-country">Land</h4>
+		
+		<p>Hier koennen Sie die Nationalitaet des Autors eintragen.</p>
+		
+		<h4 id="author-edit-dob">Geburtsdatum</h4>
+		
+		<p>In diesem Feld koennen Sie das Geburtsdatum des Autors angeben.<br>
+		Es gibt hier 1 Sonderdatum: wird der 12.12.2200 eingetragen, erkennt die Applikation dies als "Unbekanntes Geburtsdatum"</p>
+		
+		<h4 id="author-edit-dod">Sterbedatum</h4>
+		
+		<p>In diesem Feld koennen Sie das Sterbedatum des Autors angeben.<br>
+		Es gibt hier 2 Sonderdaten: <br>
+		- wird der 12.12.2200 eingetragen, erkennt die Applikation dies als "Unbekanntes Sterbedatum"<br>
+		- wird der 5.5.2200 eingetragen, erkennt die Applikation dies als "Ist noch am Leben"</p>
+		
+		<h4 id="author-edit-npw">Ist Nobelpreistraeger?</h4>
+		
+		<p>Hier koennen Sie auswaehlen, ob der Autor ein Nobelpreistraeger ist. Aendern des Zustands des Feldes funktioniert durch anklicken.</p>
+		
+		<h4 id="author-edit-buttons">Knoepfe</h4>
+		
+		<p>Am unteren Ende der Bearbeitungs- und Erstellungsdialoge befinden sich der "Speichern" und der "Abbrechen" Knopf. <br>
+		Der Speichern Knopf speichert die Daten der Felder in der Datenbank ab und schliesst den Dialog. Wurde der Dialog ueber den "Neuen Autor hinzufuegen" Knopf geoeffnet, wird ein neuer Autor		erstellt.<br>
+		Der Abbrechen Knopf schliesst den Dialog, ohne die gemachten Aenderungen/Eintragungen in der Datenbank zu speichern.<br>
+		Diese beiden Knoepfe werden in der ganzen Applikation mehrmals verwendet.</p>
+		
+		<img src="img/save-cancel-buttons.png">
+		
+		<h2 id="book-types">6. Buchtypen</h2>
+		
+		<p>In diesem Tab finden Sie eine Auflistung aller in der Datenbank gespeicherten Buchtypen. Ueber den "Neuen Buchtypen hinzufuegen" Knopf koenne Sie einen neuen Buchtypen anlegen. Ueber den "Bearbeiten" Knopf neben jedem Buchtypen laesst sich der Name des Typen aendern und ueber den "Loeschen" Knopf aus der Datenbank entfernen.</p>
+		
+		<img src="img/types.png">
+		
+		<h3 id="type-edit">Bearbeitungs-Dialog</h3>
+		
+		<p>Hier koennen Sie den Namen des Buchtypen aendern, bzw. einen neuen mit dem angegebenen Namen erstellen.</p>
+		
+		<img src="img/type-edit.png">
+		
+		<h2 id="rooms">7. Raeume</h2>
+		
+		<p>In diesem Tab finden Sie eine Auflistung aller in der Datenbank gespeicherten Raeume. Ueber den "Neuen Raum hinzufuegen" Knopf koenne Sie einen neuen Raum anlegen. Ueber den "Bearbeiten" Knopf neben jedem Raum laesst sich der Name des Raumes aendern und ueber den "Loeschen" Knopf aus der Datenbank entfernen.</p>
+		
+		<img src="img/rooms.png">
+		
+		<h3 id="room-edit">Bearbeitungs-Dialog</h3>
+		
+		<p>Hier koennen Sie den Namen des Raumes aendern, bzw. einen neuen mit dem angegebenen Namen erstellen.</p>
+		
+		<img src="img/room-edit.png">
+		
+		<h2 id="search">8. Suche</h2>
+		
+		<p>Der Suchen Tab stellt ihnen die Moeglichkeit, die Datenbank zu dursuchen, zur verfuegung.<br>
+		Sie koennen waehlen, ob sie eine generelle Suche nach einem Stichwort, oder eine Suche nach einem bestimmten Art von Eintrag in der Datenbank (Buch, Autor, Buchtyp oder Raum) durchfuehren moechten.<br>
+		Wenn Sie ihre Auswahl aendern, wird Ihnen eine andere Sammlung an Suchfeldern angezeigt. Diese Unterscheiden sich nur minimal von den Bearbeitungs-Dialogen der einzelnen Eintragstypen.<br>
+		Leergelassene Suchfelder werden meist ignoriert (Aussnahmen siehe unten).
+		Die Unterschiede werden im Folgenden erlaeutert: </p>
+		
+		<h3 id="search-general">Alles</h3>
+		
+		<p>Mit dieser Option koenne Sie eine Suche nach einem bestimmten Stichwort in den Titeln/Namen aller Eintraege in der Datenbank durchfuehren. Die Ergebnisse werden nach Eintragstyp gegliedert angezeigt.</p>
+		
+		<img src="img/search-all.png">
+		
+		<h3 id="search-books">Buecher</h3>
+		
+		<p>Diese Option laesst Sie nach Buechern suchen. Die Suchfelder, die hier angezeigt werden, sind eine Kopie des <a href="#book-edit">Bearbeitungs-Dialoges fuer Buecher</a>, abgesehen vom "Verliehen" Feld.<br>
+		Dieses wurde durch ein Textfeld mit Autovervollstaendigung ersetzt (Ja, Nein).</p>
+		
+		<img src="img/search-books.png">
+		
+		<h3 id="search-authors">Autoren</h3>
+		
+		<p>Diese Option laesst Sie nach Autoren suchen. Die Suchfelder, die hier angezeigt werden, sind eine Kopie des <a href="#author-edit">Bearbeitungs-Dialoges fuer Autoren</a>.<br>
+		Die Aenderungen an diesen Suchfeldern betreffen: <br>
+		1. die Sonderdaten der Datumsfelder: <br>
+		bei beiden Feldern wurde das Datum 1.1.2200 als Equivalenz zum Leerlassen des Feldes hinzugefuegt. <b>Bitte lassen Sie die Datumsfelder nicht frei! Dies fuehrt zu einem Fehler in der Applikation.</b><br>
+		2. Das "Ist ein Nobelpreistraeger?" Feld: Dieses wurde durch ein Textfeld mit Autovervollstaendigung ersetzt (Ja, Nein).</p>
+		
+		<img src="img/search-authors.png">
+		
+		<h3 id="search-book-types">Buchtypen</h3>
+		
+		<p>Hier koennen Sie nach Buchtypen suchen, die den Inhalt des Eingabefelds in ihrem Titel haben.</p>
+		
+		<img src="img/search-book-types.png">
+		
+		<h3 id="search-rooms">Raeume</h3>
+		
+		<p>Hier koennen Sie nach Raeumen suchen, die den Inhalt des Eingabefelds in ihrem Titel haben.</p>
+		
+		<img src="img/search-rooms.png">
+		
+		<a class="top" href="">^</button>
+	
+	</body>
+
+</html>

@@ -1,0 +1,50 @@
+<!--
+(c) 2025 Lars Lerchbacher,
+Lerchbacher Bücherdatenbank templates/books.html
+This is the book overview page of the project
+The following page was made using the flask templates system
+-->
+
+<!-- Uses base.html as a template for this page -->
+{% extends "base.html" %}
+
+<!-- Adds additional tags to the head tag -->
+{% block head %}
+
+	<!-- Links a stylesheet -->
+    <link rel="stylesheet" href="static/index.css">
+
+	<!-- Sets the title of this page -->
+	<title>Lerchbacher Bücherdatenbank Bücher</title>
+	
+{% endblock %}
+
+<!-- Adds content to the page -->
+{% block content %}
+
+	<!-- Displays the 12 latest added books in the database  -->
+	<ul>
+	
+		{% for book in books %}
+		
+			<li>
+			
+				<div class="book">
+				
+					<h2>{{book["title"]}}</h2>
+					
+					<img src="{{covers[books.index(book)]}}">
+					
+					<br>
+					
+					<a href="/books/details?id={{book["id"]}}">Weiterlesen...</a>
+					
+				</div>
+				
+			</li>
+			
+		{% endfor %}
+		
+	</ul>
+
+{% endblock %}

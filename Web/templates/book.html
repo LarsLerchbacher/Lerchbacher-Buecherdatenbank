@@ -1,0 +1,78 @@
+<!--
+(c) 2025 Lars Lerchbacher,
+Lerchbacher Bücherdatenbank templates/book.html
+This is the book detail page
+The following page was made using the flask templates system
+-->
+
+<!-- Uses base.html as a template for this page -->
+{% extends "base.html" %}
+
+<!-- Adds additional tags to the head tag -->
+{% block head %}
+
+	<!-- Links a stylesheet -->
+	<link rel="stylesheet" href="static/book.css">
+
+	<!-- set the title of this page -->
+	<title>{{book.title}} - Lerchbacher Bücherdatenbank</title>
+
+{% endblock %}
+
+<!-- Adds the main content of the page -->
+{% block content %}
+
+<div class="book">
+
+	<h2>{{book.title}}</h2>
+	
+	<img src="{{cover}}">
+	
+	<br>
+	
+	<ul class="menu">
+	
+		<li>
+			<a href="/books/edit?id={{book.id}}">Bearbeiten</a>
+			
+		</li>
+		
+		<li>
+		
+			<a href="/books/delete?id={{book.id}}">Löschen</a>
+		
+		</li>
+	
+	</ul>
+	
+	<p>Geschrieben von: {% for author in authors %}<a href="/author?id={{author.id}}">{{author.name}}</a> {% endfor %}
+	
+		<br>
+		Verlegt von: {{book.publisher}}
+		<br>
+		ISBN Nummer: {{isbn[:3]}}-{{isbn[3:4]}}-{{isbn[4:9]}}-{{isbn[9:12]}}-{{isbn[12:13]}}
+		<br>
+		{{book.edition}}. Auflage, {{book.year}}
+		<br>
+		Buchtypen: {{ types[book.type] }}
+		<br>
+		Kategorien: {% for tag in tags %} {{tag}}, {% endfor %}
+		<br>
+		Dieses Buch befindet sich üblicherweise in <i>{{book.room}}</i> in Regal <i>{{book.shelf}}</i>
+		<br>
+		{% if book.lend %}
+		<b>Dieses Buch ist zurzeit verliehen!</b>
+		{% else %}
+		Dieses Buch ist zurzeit <b>nicht</b> verliehen.
+		{% endif %}
+	</p>
+
+	{% if link != "" %}
+	
+		<p>Google Books hat weitere Informationen zu diesem Buch <a href="{{link}}">hier</a> verfügbar.</p>
+	
+	{% endif %}
+	
+</div>
+
+{% endblock %}

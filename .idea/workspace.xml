@@ -4,13 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8030cf15-be42-448b-b24a-3dd128dbaf28" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/Buecherdatenbank.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    <list default="true" id="8030cf15-be42-448b-b24a-3dd128dbaf28" name="Changes" comment="Added more features to the Book Edit Dialog, but it is still WIP">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -20,6 +15,18 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;LarsLerchbacher&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/LarsLerchbacher/Lerchbacher-Buecherdatenbank&quot;,
+    &quot;accountId&quot;: &quot;7f6c40c8-24b7-45df-8be7-cc9f417c2063&quot;
+  }
+}</component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
@@ -30,25 +37,49 @@
   &quot;associatedIndex&quot;: 3
 }</component>
   <component name="ProjectId" id="2oNcTfNtXHvOCNjZ5QLr04Vaj1h" />
-  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Python.handle_db.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/Lars/OneDrive - HTL Leoben/Dokumente/Privat/Python/Buecherdatenbank/.venv/Scripts/python.exe&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Python.Desktop.executor": "Run",
+    "Python.UIClasses.executor": "Run",
+    "Python.app.executor": "Run",
+    "Python.forms.executor": "Run",
+    "Python.handle_db.executor": "Run",
+    "Python.python app.py.executor": "Run",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "master",
+    "ignore.virus.scanning.warn.message": "true",
+    "last_opened_file_path": "C:/Users/Lars/OneDrive - HTL Leoben/Dokumente/Privat/Python/Aktiv/Lerchbacher-Buecherdatenbank",
+    "settings.editor.selected.configurable": "vcs.Git"
   }
-}</component>
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Lars\OneDrive - HTL Leoben\Dokumente\Privat\Python\Buecherdatenbank\templates" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Lars\OneDrive - HTL Leoben\Dokumente\Privat\Python\Aktiv\Buecherdatenbank" />
+      <recent name="C:\Users\Lars\OneDrive - HTL Leoben\Dokumente\Privat\Python\Buecherdatenbank\static" />
+      <recent name="C:\Users\Lars\OneDrive - HTL Leoben\Dokumente\Privat\Python\Buecherdatenbank" />
+    </key>
+  </component>
+  <component name="RunAnythingCache">
+    <option name="myCommands">
+      <command value="conda clean" />
+      <command value="pip install conda" />
+      <command value="pip install miniconda" />
+      <command value="python app.py" />
+    </option>
+  </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-python-sdk-98f27166c754-ba05f1cad1b1-com.jetbrains.pycharm.community.sharedIndexes.bundled-PC-242.21829.153" />
+        <option value="bundled-python-sdk-53e2683a6804-9cdd278e9d02-com.jetbrains.pycharm.community.sharedIndexes.bundled-PC-251.26094.141" />
       </set>
     </attachedChunks>
   </component>
@@ -61,6 +92,88 @@
       <option name="presentableId" value="Default" />
       <updated>1730713482548</updated>
     </task>
+    <task id="LOCAL-00001" summary="Initial commit - Project set up">
+      <created>1730913706149</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1730913706149</updated>
+    </task>
+    <task id="LOCAL-00002" summary="Added the database.sqlite and the handle_db.py file. The database contains a users table and the handle_db file some basic user handling functions">
+      <created>1730913767505</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1730913767505</updated>
+    </task>
+    <task id="LOCAL-00003" summary="Created the authors table in the database and the fetch_authors, does_author_exist and create_author functions in the handle_db.py file">
+      <created>1732117465088</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1732117465088</updated>
+    </task>
+    <task id="LOCAL-00004" summary="Finished the author handling functions and commented all code in the handle_db.py file. Updated it´s module version number to 0.0.2">
+      <created>1732123179208</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1732123179208</updated>
+    </task>
+    <task id="LOCAL-00005" summary="000-27-02-2025">
+      <option name="closed" value="true" />
+      <created>1740677280578</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1740677280578</updated>
+    </task>
+    <task id="LOCAL-00006" summary="004-19-03-2025 Version 0.0.4 Alpha">
+      <option name="closed" value="true" />
+      <created>1742404909987</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1742404909987</updated>
+    </task>
+    <task id="LOCAL-00007" summary="Added more features to the Book Edit Dialog, but it is still WIP">
+      <option name="closed" value="true" />
+      <created>1750773560003</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1750773560003</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Initial commit - Project set up" />
+    <MESSAGE value="000-06-11-2024 &#10;Added the database.sqlite and the handle_db.py file. The database contains a users table and the handle_db file some basic user handling functions" />
+    <MESSAGE value="001-20-11-2024&#10;Created the authors table in the database and the fetch_authors, does_author_exist and create_author functions in the handle_db.py file" />
+    <MESSAGE value="002-20-11-2024&#10;&#10;Finished the author handling functions and commented all code in the handle_db.py file. Updated it´s module version number to 0.0.2" />
+    <MESSAGE value="003-27-02-2025&#10;For changes see Changelog.md" />
+    <MESSAGE value="000-27-02-2025&#10;For changes see Changelog.md" />
+    <MESSAGE value="000-06-11-2024 &#10;Added the database.sqlite and the handle_db.py file. The database contains a users table and the handle_db file some basic user handling functions" />
+    <MESSAGE value="001-20-11-2024&#10;Created the authors table in the database and the fetch_authors, does_author_exist and create_author functions in the handle_db.py file" />
+    <MESSAGE value="002-20-11-2024&#10;&#10;Finished the author handling functions and commented all code in the handle_db.py file. Updated it´s module version number to 0.0.2" />
+    <MESSAGE value="002-20-11-2024&#10;Finished the author handling functions and commented all code in the handle_db.py file. Updated it´s module version number to 0.0.2" />
+    <MESSAGE value="002-20-11-2024&#10;Finished the author handling functions and commented all code in the handle_db.py file. Updated it´s module version number to 0.0.2" />
+    <MESSAGE value="003-27-02-2025&#10;For changes see Changelog.md" />
+    <MESSAGE value="004-19-03-2025 Version 0.0.4 Alpha&#10;For Changes see Changelog.md" />
+    <MESSAGE value="004-19-03-2025 Version 0.0.4 Alpha&#10;For Changes see Changelog.md" />
+    <MESSAGE value="Added more features to the Book Edit Dialog, but it is still WIP" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added more features to the Book Edit Dialog, but it is still WIP" />
   </component>
 </project>
