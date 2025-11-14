@@ -14,10 +14,11 @@
 #
 
 
-from tkinter import Label
+from tkinter import Label, Button
 from UI.Tab import Tab
 from UI.Book.RecentBooksWidget import RecentBooksWidget
 from UI.Author.RecentAuthorsWidget import RecentAuthorsWidget
+import webbrowser
 
 
 class OverviewTab(Tab):
@@ -33,7 +34,16 @@ class OverviewTab(Tab):
         self.recentAuthors = RecentAuthorsWidget(self.inner_frame)
         self.recentAuthors.pack(padx=0, pady=10)
 
+        self.label = Label(self.inner_frame, text="Brauchen Sie Hilfe? Hier koennen Sie das ")
+        self.button = Button(self.inner_frame, text="Benutzerhandbuch oeffnen", command=self.open_user_manual)
+        self.label.pack()
+        self.button.pack()
+
     def update(self):
         self.recentBooks.update()
         self.recentAuthors.update()
+
+
+    def open_user_manual(self):
+        webbrowser.open("https://LarsLerchbacher.github.io/Lerchbacher-Buecherdatenbank")
 

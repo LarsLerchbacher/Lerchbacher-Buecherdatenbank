@@ -125,7 +125,6 @@ class BookEditWidget(Frame):
         self.lend_to.grid(row=1, column=1)
 
     def update_lend_to(self):
-        print(self.lend_var.get())
         if self.lend_var.get() == 1:
             self.lend_to_frame.pack(padx=20, pady=5)
         else:
