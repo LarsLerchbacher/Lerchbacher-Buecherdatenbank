@@ -61,6 +61,10 @@ def init_logger() -> None:
     # Stop Pillow from logging debug messages
     logging.getLogger("PIL.PngImagePlugin").setLevel(logging.WARNING)
 
+    # Stop requests from logging debug messages
+    logging.getLogger("requests").setLevel(logging.WARNING)
+    logging.getLogger("urllib3").setLevel(logging.WARNING)
+
 
 def process_args() -> None:
     """Function that processes the provided arguments"""
@@ -96,36 +100,25 @@ def init_files() -> None:
     global logger
 
     # Checking for the cache folder
-    logger.info("Checking for cache folder...")
+    logger.info("Checking for image folder...")
     
-    if not os.path.exists("./cache"):
-        logger.warning("No existing cache folder found! Creating one...")
-        os.mkdir("cache")
+    if not os.path.exists("./img"):
+        logger.warning("No existing image folder found! Creating one...")
+        os.mkdir("img")
 
     else:
-        logger.info("Existing cache folder found!")
-
-
-    # Checkinf for the static folder
-    logger.info("Checking for static folder...")
-
-    if not os.path.exists("./static"):
-        logger.warning("No existing static folder found! Creating one...")
-        os.mkdir("./static")
-        
-    else:
-        logger.info("Existing static folder found!")
+        logger.info("Existing img folder found!")
 
     
     # Checking for the noCover.png file
     logger.info("Checking for noCover.png file...")
 
-    if not os.path.exists("./static/noCover.png"):
+    if not os.path.exists("./img/noCover.png"):
         logger.warning("File not found! Downloading it...")
 
         # Downloading it from github
         request = requests.get("https://github.com/LarsLerchbacher/Lerchbacher-Buecherdatenbank/blob/master/Desktop/static/noCover.png?raw=true")
-        file = open("./static/noCover.png", "wb")
+        file = open("./img/noCover.png", "wb")
         file.write(request.content)
         file.close()
 
@@ -209,7 +202,7 @@ def main() -> None:
 if __name__ == "__main__":
 
     # Setting the application's version that is displayed
-    app_context.version = "DEV" 
+    app_context.version = "1.1.0" 
 
     # Init the logger and check for any flags
     init_logger()
