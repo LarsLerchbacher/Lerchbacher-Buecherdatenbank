@@ -2,7 +2,7 @@
 Lerchbacher Bücherdatenbank
 ============================
 
-## Ueber dieses Projekt
+## Über dieses Projekt
 Dies ist ein Bücherverwaltungssystem, welche in zwei grosse Teile aufgespalten ist: die Desktop Applikation und die Website.
 
 Ich mache dieses Projekt hauptsächlich für meine Familie, allerdings werde ich dieses Repo veröffentlichen, um es anderen Menschen zugänglich zu machen.
@@ -28,7 +28,7 @@ Die Desktop Applikation ist der Kern des Systems, mit seiner Hilfe werden Büche
 
 Alle Aenderungen werden automatisch nach dem abschliessen der Aktion (Erstellen, Bearbeiten, Löschen) gespeichert.
 
-Die Desktop Applikation kann für einzelanwender ohne die Website Version oder einen Server genutzt werden, da die Datenbank nur eine lokale Datei ist. Bei mehreren
+Die Desktop Applikation kann für Einzelanwender ohne die Website Version oder einen Server genutzt werden, da die Datenbank nur eine lokale Datei ist. Bei mehreren
 Nutzern empfiehlt es sich, die Applikation samt Dateien und Ordnern in einen Netzwerk-/Cloudordner zu verschieben, da die Datenbank somit für alle Nutzer synchron bleibt.
 
 
@@ -45,11 +45,11 @@ Die Website enthält KEINE Möglichkeiten zur Erstellung, Bearbeitung oder Lösc
 
 ## Lizenz
 Dieses Projekt und alle enthaltenen Dateien werden unter der GNU AGPL-v3 zur Verfügung gestellt.
-Genaüre Infos finden sich an den Anfängen der Qüllcode-Dateien und ebenfalls in der LICENSE Datei.
+Genauere Infos finden sich an den Anfängen der Quellcode-Dateien und ebenfalls in der LICENSE Datei.
 
 
 ## Organisation
-Ja, ich weiss. Dieses Repo ist nicht sehr gut organisiert. Ich habe nur einen einzigen Branch für alle Commits.
+Ja, ich weiss. Dieses Repo ist nicht sehr gut organisiert. Ich habe nur einen einzigen Branch für alle Commits (inzwischen auch eine für Releases).
 
 Das hat den Grund, dass dies eines der ersten meiner Git Repos überhaupt ist. Inzwischen habe ich auch gelernt, wie man Branches und PRs verwendet.
 
@@ -57,4 +57,3 @@ Dieses Repo umzustrukturieren wäre allerdings sehr aufwendig gewesen, und das V
 weiterführen wie bisher.
 
 Und bitte ignoriert meinen fürchterlichen Commit Stil in den Anfängen des Projekts. Die (meisten) Infos zu den Aenderungen dieser Commits finden sich in der Datei Changelog.md, welche nur in älteren Versionen existiert.
-

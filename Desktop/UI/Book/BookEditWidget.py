@@ -29,7 +29,7 @@ class BookEditWidget(Frame):
         self.title_frame = Frame(self)
         self.title_frame.pack(padx=20, pady=20)
 
-        self.title_label = Label(self.title_frame, text="Titel: ")
+        self.title_label = Label(self.title_frame, text="Titel*: ")
         self.title = Entry(self.title_frame, width=75)
         self.title_label.grid(row=0, column=0)
         self.title.grid(row=0, column=1, columnspan=4)
@@ -37,7 +37,7 @@ class BookEditWidget(Frame):
         self.authors_frame = Frame(self)
         self.authors_frame.pack(padx=20, pady=5)
 
-        self.authors_label = Label(self.authors_frame, text="Autoren: ")
+        self.authors_label = Label(self.authors_frame, text="Autoren*: ")
         self.authors = AuthorSelectWidget(self.authors_frame, [])
         self.authors_label.grid(row=0, column=0)
         self.authors.grid(row=1, column=0, pady=20)
@@ -78,7 +78,7 @@ class BookEditWidget(Frame):
         self.type_frame.pack(padx=20, pady=5)
 
         self.all_types = fetch_book_types()
-        self.type_label = Label(self.type_frame, text="Typ: ")
+        self.type_label = Label(self.type_frame, text="Typ*: ")
         self.type_select = AutocompleteCombobox(self.type_frame, completevalues=self.all_types, width=25)
         self.type_label.grid(row=0, column=0)
         self.type_select.grid(row=0, column=1)
@@ -95,7 +95,7 @@ class BookEditWidget(Frame):
         self.room_frame.pack(padx=20, pady=5)
 
         self.all_rooms = fetch_rooms()
-        self.room_label = Label(self.room_frame, text='Raum: ')
+        self.room_label = Label(self.room_frame, text='Raum*: ')
         self.room = AutocompleteCombobox(self.room_frame, completevalues=self.all_rooms, width=25)
         self.room_label.grid(row=0, column=0)
         self.room.grid(row=0, column=1)
@@ -111,7 +111,7 @@ class BookEditWidget(Frame):
         self.lend_frame = Frame(self)
         self.lend_frame.pack(padx=20, pady=5)
 
-        self.lend_label = Label(self.lend_frame, text='Verliehen : ')
+        self.lend_label = Label(self.lend_frame, text='Verliehen: ')
         self.lend_var = IntVar()
         self.lend = Checkbutton(self.lend_frame, variable=self.lend_var)
         self.lend_label.grid(row=0, column=0)
@@ -129,3 +129,22 @@ class BookEditWidget(Frame):
             self.lend_to_frame.pack(padx=20, pady=5)
         else:
             self.lend_to_frame.pack_forget()
+
+    def check_is_filled(self):
+        filled = True
+
+        if self.title.get() == "":
+            filled = False
+
+        elif self.authors.get() == []:
+            filled = False
+
+        elif self.type_select.get() == "":
+            filled = False
+
+        elif self.room.get() == "":
+            filled = False
+
+        return filled
+
+

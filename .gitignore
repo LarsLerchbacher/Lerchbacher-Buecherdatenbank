@@ -11,9 +11,11 @@ Desktop/UI/*/__pycache__
 Desktop\UI\*\__pycache__
 
 Desktop/log.txt
-Desktop/cache
+Desktop/img/*.jpg
 Desktop\log.txt
-Desktop\cache
+Desktop\img\*.jpg
+Desktop/database.sqlite
+Desktop\database.sqlite
 
 .git/*
 .git\*

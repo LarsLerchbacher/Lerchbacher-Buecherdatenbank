@@ -37,7 +37,7 @@ class BookWidget(Frame):
         self.title = Label(self.preview, text = "", font="Arial 16 bold", wraplength=500, justify='center')
         self.author = Label(self.preview, text = "", font = "Arial 12")
 
-        image_data = PIL.Image.open("./static/noCover.png")
+        image_data = PIL.Image.open("./img/noCover.png")
         image_data = rescale_image(image_data)
         self.image_tk = ImageTk.PhotoImage(image_data)
         self.image = Label(self.details, image = self.image_tk)

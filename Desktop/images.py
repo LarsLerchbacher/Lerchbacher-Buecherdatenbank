@@ -18,8 +18,11 @@
 
 
 import app_context
+import logging
 import os
+import requests
 from PIL import Image
+import threading
 
 
 IMAGE_SIZE = 175
@@ -32,19 +35,38 @@ def update_image(book):
     filename = get_image_src(book)
 
     # Check for a manually added cover
-    if filename != "./static/noCover.png":            
+    if filename != "./img/noCover.png":            
         app_context.logger.info("Existing found")
 
     # If none was found, download one
     else:
-        app_context.logger.info("Downloading cover...")
-        try:
-            response = requests.get("https://covers.openlibrary.org/b/isbn/{book.isbn}-S.jpg")
-            file = open(cacheName, mode="wb+")
+        # Start the download in the background
+        thread = threading.Thread(target=download_cover, args=(book,))
+        thread.start()
+
+
+def download_cover(book):
+    """Function that downloads the cover of a book if available"""
+    app_context.logger.info("Downloading cover...")
+    try:
+        response = requests.get(f"https://covers.openlibrary.org/b/isbn/{book.isbn}-L.jpg")
+
+        # If the request got redirected (cover did exist)
+        if len(response.history) > 1:
+            file = open(f"./img/{book.id}.jpg", mode="wb+")
             file.write(response.content)
             file.close()
-        except Exception as e:
-            app_context.logger.info("Could not download cover")
+            app_context.logger.info("Successfully downloaded cover!")
+            app_context.mainWindow.update()
+
+        # Cover did not exist
+        else:
+            app_context.logger.info("Could not download cover (does not exist)")
+
+    # An error occured
+    except Exception as e:
+        app_context.logger.info("Could not download cover")
+        app_context.logger.error(e)
 
 
 def get_image(book):
@@ -74,20 +96,15 @@ def rescale_image(image: Image) -> Image:
 
 def get_image_src(book):
     """Function that gets the path to the cover belonging to a book"""
-    cachePath = os.path.join(os.getcwd(), 'cache', f'{book.id}.jpg')
-    staticPath = os.path.join(os.getcwd(), 'static', f'{book.id}.jpg')
+    path = os.path.join(os.getcwd(), 'img', f'{book.id}.jpg')
 
-    # Check if there is a manually added cover
-    if os.path.exists(staticPath):
-        filename = str(staticPath)
+    # Check if there is a cover for the book
+    if os.path.exists(path):
+        filename = str(path)
 
-    # If there is none, check if there is a downloaded cover
-    elif os.path.exists(cachePath):
-        filename = str(cachePath)
-
-    # And else use the noCover.png file
+    # else use the noCover.png file
     else:
-        filename = "./static/noCover.png"
+        filename = "./img/noCover.png"
 
     return filename
 
