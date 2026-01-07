@@ -43,11 +43,16 @@ h4 {
 p {
 	margin-left: 5%;
 	width: 90%;
+	line-height: 1.5;
 }
 
 .text-list {
 	margin-left: 5%;
 	width: 90%;
+}
+
+.text-list li {
+	margin: 1%;
 }
 
 li {
@@ -121,9 +126,36 @@ a {
 }
 
 a:hover {
+	animation: button-grow 0.1s;
 	background-color: #00ff00;
 	background-color: #ff0000;
 	border-color: #00ff00;
 	border-color: #ff0000;
 }
+
+.centered {
+	display: flex;
+	justify-content: center;
+}
+
+.current {
+	background-color: #33cc33;
+	border-color: #33cc33;
+}
+
+.current:hover {
+	background-color: #00e600;
+	border-color: #00e600;
+}
+
+.version-link {
+	margin: 5%;
+	padding: 1%;
+}
+
+.big-button {
+	font-size: 18pt;
+	padding: 0.6%;
+}
+
 
