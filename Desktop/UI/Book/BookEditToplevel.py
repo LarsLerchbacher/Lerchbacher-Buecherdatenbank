@@ -50,6 +50,9 @@ class BookEditToplevel(Toplevel):
         self.save_button.grid(row=0, column=0)
         self.cancel_button.grid(row=0, column=1, padx=10)
 
+        self.title.focus_set()
+        self.bind("<Return>", lambda e: self.save())
+
         if self.id != -1:
             self.update()
 

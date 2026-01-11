@@ -40,6 +40,9 @@ class TypeEditToplevel(Toplevel):
         self.saveButton.grid(row=0, column=0, padx=10)
         self.cancelButton.grid(row=0, column=1)
 
+        self.entry.focus_set()
+        self.bind("<Return>", lambda e: self.save())
+
         if id != -1:
             self.update()
 

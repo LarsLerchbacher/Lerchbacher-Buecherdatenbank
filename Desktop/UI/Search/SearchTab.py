@@ -202,6 +202,8 @@ class SearchTab(Tab):
             if type(child) != Label:
                 child.destroy()
 
+        self.filterBooks.update()
+
         # Then show the ones needed for the current selection
         match self.selectVar.get():
             case "1":

@@ -40,6 +40,9 @@ class AuthorEditToplevel(Toplevel):
         self.saveButton.grid(row=0, column=0)
         self.cancelButton.grid(row=0, column=1, padx=10)
 
+        self.name.focus_set()
+        self.bind("<Return>", lambda e: self.save())
+
         if self.id != -1:
             self.update()
 

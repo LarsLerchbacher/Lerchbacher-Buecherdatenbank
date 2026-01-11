@@ -14,6 +14,8 @@
 #
 
 
+import app_context
+from database import fetch_rooms, fetch_book_types
 from tkinter import Frame, Label
 from ttkwidgets.autocomplete import AutocompleteCombobox
 from UI.Book.BookEditWidget import BookEditWidget
@@ -27,6 +29,15 @@ class SearchFilterBooks(BookEditWidget):
         self.lend.grid(row=0, column=1)
 
         self.lend.bind("<<ComboboxSelected>>", self.update_lend_to)
+    
+    def update(self):
+        app_context.logger.info("Updating Search filters for books")
+        self.authors.update()
+        self.all_rooms = fetch_rooms()
+        self.all_types = fetch_book_types()
+        self.room.config(completevalues=self.all_rooms)
+        self.type_select.config(completevalues=self.all_types)
+
 
     def update_lend_to(self, event_object):
         if self.lend.get() == "Ja":
