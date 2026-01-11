@@ -14,6 +14,7 @@
 #
 
 
+import app_context
 from tkinter import Label, Button
 from UI.Tab import Tab
 from UI.Book.RecentBooksWidget import RecentBooksWidget
@@ -34,6 +35,9 @@ class OverviewTab(Tab):
         self.recentAuthors = RecentAuthorsWidget(self.inner_frame)
         self.recentAuthors.pack(padx=0, pady=10)
 
+        self.versionLabel = Label(self.inner_frame, text="Version " + app_context.version)
+        self.versionLabel.pack()
+
         self.label = Label(self.inner_frame, text="Brauchen Sie Hilfe? Hier koennen Sie das ")
         self.button = Button(self.inner_frame, text="Benutzerhandbuch oeffnen", command=self.open_user_manual)
         self.label.pack()
@@ -45,5 +49,5 @@ class OverviewTab(Tab):
 
 
     def open_user_manual(self):
-        webbrowser.open("https://LarsLerchbacher.github.io/Lerchbacher-Buecherdatenbank")
+        webbrowser.open(f"https://LarsLerchbacher.github.io/Lerchbacher-Buecherdatenbank/{app_context.version}.html")
 
