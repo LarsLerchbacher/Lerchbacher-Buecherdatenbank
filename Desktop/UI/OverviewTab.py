@@ -38,8 +38,8 @@ class OverviewTab(Tab):
         self.versionLabel = Label(self.inner_frame, text="Version " + app_context.version)
         self.versionLabel.pack()
 
-        self.label = Label(self.inner_frame, text="Brauchen Sie Hilfe? Hier koennen Sie das ")
-        self.button = Button(self.inner_frame, text="Benutzerhandbuch oeffnen", command=self.open_user_manual)
+        self.label = Label(self.inner_frame, text="Brauchen Sie Hilfe? Hier können Sie das ")
+        self.button = Button(self.inner_frame, text="Benutzerhandbuch öffnen", command=self.open_user_manual)
         self.label.pack()
         self.button.pack()
 
