@@ -141,7 +141,7 @@ def fetch_authors() -> list[Author]:
     db, cur = prepare_db()
 
     # Fetches all the author from the db
-    authors = cur.execute("SELECT * FROM authors;").fetchall()
+    authors = cur.execute("SELECT * FROM authors ORDER BY author_name ASC;").fetchall()
 
     # Closes the cursor
     cur.close()
@@ -398,7 +398,7 @@ def fetch_books() -> list[Book]:
     db, cur = prepare_db()
 
     # Fetches all books stored in the Database
-    books = cur.execute("SELECT * FROM books;").fetchall()
+    books = cur.execute("SELECT * FROM books ORDER BY book_title ASC;").fetchall()
 
     # Closes the cursor
     cur.close()

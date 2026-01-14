@@ -17,6 +17,7 @@
 import app_context
 from database import Author, create_author, edit_author, fetch_author
 from tkinter import *
+from tkinter.messagebox import showerror
 from UI.Author.AuthorEditWidget import AuthorEditWidget
 
 
@@ -45,7 +46,6 @@ class AuthorEditToplevel(Toplevel):
 
         if self.id != -1:
             self.update()
-
 
     def update(self):
         author = fetch_author(self.id)
