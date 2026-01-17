@@ -153,9 +153,25 @@ a:hover {
 	padding: 1%;
 }
 
-.big-button {
+.old {
+	background-color: grey;
+	border-color: grey;
+	color: black;
+}
+
+.old:hover {
+	background-color: lightgrey;
+	border-color: lightgrey;
+	color: black;
+}
+
+.home-button {
 	font-size: 18pt;
 	padding: 0.6%;
+}
+
+.spacing-left {
+	margin-left: 5%;
 }
 
 
