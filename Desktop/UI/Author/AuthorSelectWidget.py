@@ -21,8 +21,6 @@ from tkinter import *
 class AuthorSelectWidget(Frame):
     def __init__(self, parent, used: list):
         super().__init__(parent)
-        self.init_used = used
-        self.set(self.init_used)
 
         self.columnconfigure(index=0, weight=1)
         self.columnconfigure(index=1, weight=1)
@@ -39,12 +37,12 @@ class AuthorSelectWidget(Frame):
         self.searchBox = Entry(self, textvariable=self.searchVar)
         self.searchBox.grid(row=0, column=2)
 
-        self.available_var = Variable(self, value=self.available)
-        self.available_list = Listbox(self, listvariable=self.available_var, selectmode=MULTIPLE)
+        #self.available_var = Variable(self, value=self.available)
+        self.available_list = Listbox(self, selectmode=MULTIPLE)
         self.av_scrollbar = Scrollbar(self, orient="vertical", command=self.available_list.yview)
 
-        self.used_var = Variable(self, value=self.used)
-        self.used_list = Listbox(self, listvariable=self.used_var, selectmode=MULTIPLE)
+        #self.used_var = Variable(self, value=self.used)
+        self.used_list = Listbox(self, selectmode=MULTIPLE)
         self.used_scrollbar = Scrollbar(self, orient="vertical", command=self.used_list.yview)
 
         self.available_list.grid(row=1, column=0)
@@ -64,6 +62,9 @@ class AuthorSelectWidget(Frame):
         self.deselect.pack(padx=10, pady=5)
         self.select_all.pack(padx=10, pady=5)
         self.deselect_all.pack(padx=10, pady=5)
+
+        self.init_used = used
+        self.set(self.init_used)
 
     def select(self):
         selected = self.available_list.curselection()
@@ -110,23 +111,15 @@ class AuthorSelectWidget(Frame):
         return ids
 
     def set(self, init_used: list) -> None:
-        self.used = []
         self.authors = fetch_authors()
-        self.available = []
+        self.used_list.delete(0, END)
+        self.available_list.delete(0, END)
 
         for author in self.authors:
-            self.available.append(author.name)
-
-        for author_id in init_used:
-            author = fetch_author(author_id)
-            if author.name in self.available:
-                self.available.remove(author.name)
-                self.available_list.delete(self.available_list.get(0, END).index(author.name))
-                self.used.append(author.name)
+            if author.id in init_used:
                 self.used_list.insert(author.id, author.name)
-
             else:
-                self.used.append("Unbekannt")
+                self.available_list.insert(author.id, author.name)
 
     def search(self, *args):
         self.available_list.delete(0, END)

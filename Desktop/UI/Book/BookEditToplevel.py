@@ -19,6 +19,7 @@ from database import Book, create_book, edit_book, fetch_authors, fetch_book, fe
 from images import update_image
 from tkinter import *
 from tkinter import messagebox
+from UI.Author.AuthorEditToplevel import AuthorEditToplevel
 from UI.Book.BookEditWidget import BookEditWidget
 
 
@@ -42,6 +43,9 @@ class BookEditToplevel(Toplevel):
 
         self.edit.lend.config(command=self.edit.update_lend_to)
 
+        self.createButton = Button(self.edit.authors, text="Autor hinzufügen", command=self.create_author)
+        self.createButton.grid(row=0, column=3)
+
         self.button_frame = Frame(self)
         self.button_frame.pack(padx=20, pady=5)
 
@@ -49,6 +53,9 @@ class BookEditToplevel(Toplevel):
         self.cancel_button = Button(self.button_frame, text='Abbrechen', command=self.cancel)
         self.save_button.grid(row=0, column=0)
         self.cancel_button.grid(row=0, column=1, padx=10)
+
+        self.edit.title.focus_set()
+        self.bind("<Return>", lambda e: self.save())
 
         if self.id != -1:
             self.update()
@@ -179,3 +186,6 @@ class BookEditToplevel(Toplevel):
     def cancel(self):
         self.destroy()
 
+    def create_author(self):
+        self.wait_window(AuthorEditToplevel(-1))
+        self.edit.authors.set(self.edit.authors.get())

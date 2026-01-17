@@ -17,6 +17,7 @@
 import app_context
 from database import Author, create_author, edit_author, fetch_author
 from tkinter import *
+from tkinter.messagebox import showerror
 from UI.Author.AuthorEditWidget import AuthorEditWidget
 
 
@@ -40,9 +41,11 @@ class AuthorEditToplevel(Toplevel):
         self.saveButton.grid(row=0, column=0)
         self.cancelButton.grid(row=0, column=1, padx=10)
 
+        self.edit.name.focus_set()
+        self.bind("<Return>", lambda e: self.save())
+
         if self.id != -1:
             self.update()
-
 
     def update(self):
         author = fetch_author(self.id)
