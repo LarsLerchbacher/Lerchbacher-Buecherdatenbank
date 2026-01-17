@@ -117,7 +117,7 @@ def init_files() -> None:
         logger.warning("File not found! Downloading it...")
 
         # Downloading it from github
-        request = requests.get("https://github.com/LarsLerchbacher/Lerchbacher-Buecherdatenbank/blob/master/Desktop/static/noCover.png?raw=true")
+        request = requests.get("https://github.com/LarsLerchbacher/Lerchbacher-Buecherdatenbank/blob/master/Desktop/img/noCover.png?raw=true")
         file = open("./img/noCover.png", "wb")
         file.write(request.content)
         file.close()
