@@ -20,6 +20,7 @@
 import argparse
 import app_context
 from database import prepare_db
+import database_updater
 import logging
 from UI.App import App
 from PIL import Image
@@ -191,6 +192,9 @@ def main() -> None:
     logger.info(f"Lerchbacher book database desktop v{app_context.version}")
     logger.info("Starting application")
 
+    # check for database format compatibility
+    database_updater.check_if_update_is_needed()
+
     # Check for the necesary files and folders
     init_files()
 
@@ -202,7 +206,7 @@ def main() -> None:
 if __name__ == "__main__":
 
     # Setting the application's version that is displayed
-    app_context.version = "1.1.2" 
+    app_context.version = "1.2.0" 
 
     # Init the logger and check for any flags
     init_logger()
