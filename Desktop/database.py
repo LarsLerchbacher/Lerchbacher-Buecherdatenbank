@@ -20,6 +20,7 @@
 #
 # Importing all needed modules, packages and libraries
 #
+import app_context
 from datetime import date, datetime
 from images import get_image
 import requests
@@ -47,27 +48,31 @@ class Book:
     **Fields:**
         id - int
         title - str
-        author_ids - list
+        language - str
         publisher - str
         isbn - str
         edition - int
         year - int
-        type - int
+        book_type - int
         tags - list
         room - str
         shelf - str
         lend - int
         lend_to - str
     """
-    def __init__(self, title:str, author_ids:list[int], publisher:str, isbn:str, edition:int, year:int, type:int, tags:list, room:str, shelf:str, lend_to: str, lend:int=-1, id:int=-1):
+    def __init__(self, title:str, author_ids:list[int], language:str, publisher:str, isbn:str, edition:int, year:int, book_type:int, tags:list, room:str, shelf:str, lend_to: str, lend:int=-1, id:int=-1):
         self.id = id
         self.title = title
         self.author_ids = author_ids
+        if language:
+            self.language = str(language)
+        else:
+            self.language = "Unbekannt"
         self.publisher = publisher
         self.isbn = isbn
         self.edition = edition
         self.year = year
-        self.type = type
+        self.book_type = book_type
         self.tags = tags
         self.room = room
         self.shelf = shelf
@@ -76,7 +81,7 @@ class Book:
 
     def __str__(self):
         authors = [fetch_author(id).name for id in self.author_ids]
-        return f"{self.id} {self.title} {authors} {self.publisher} {self.isbn} {self.edition} {self.year} {self.type} {self.tags} {self.room} {self.shelf} {self.lend} {self.lend_to}"
+        return f"{self.id} {self.title} {authors} {self.publisher} {self.isbn} {self.edition} {self.year} {self.book_type} {self.tags} {self.room} {self.shelf} {self.lend} {self.lend_to} {self.language}"
 
 
 class Author:
@@ -87,22 +92,19 @@ class Author:
 
     **Fields:**
         id - int
-        name - str
-        has_nobel_prize - bool
-        country - str
-        birthdate - date
-        date_of_death - date, default = 2200-01-01 ==> still alive
+        firstName - str
+        lastName - str
     """
-    def __init__(self, id:int, name:str, has_nobel_prize:bool, country:str, birthdate:date, date_of_death:date="2200-01-01"):
+    def __init__(self, id:int, firstName:str, lastName:str):
         self.id = id
-        self.name = name
-        self.has_nobel_prize = has_nobel_prize
-        self.country = country
-        self.birthdate = birthdate
-        self.date_of_death = date_of_death
+        self.firstName = firstName
+        self.lastName = lastName
 
     def __str__(self) -> str:
-        return f"{self.name} {self.id} {self.birthdate} {self.country} {self.has_nobel_prize} {self.date_of_death}"
+        return f"{self.firstName} {self.lastName} {self.id} {self.firstName} {self.lastName}"
+
+    def getName(self) -> str:
+        return self.firstName + " " + self.lastName
 
 
 def prepare_db() -> tuple[Connection, Cursor]:
@@ -141,7 +143,7 @@ def fetch_authors() -> list[Author]:
     db, cur = prepare_db()
 
     # Fetches all the author from the db
-    authors = cur.execute("SELECT * FROM authors ORDER BY author_name ASC;").fetchall()
+    authors = cur.execute("SELECT * FROM authors ORDER BY lastName ASC;").fetchall()
 
     # Closes the cursor
     cur.close()
@@ -153,44 +155,9 @@ def fetch_authors() -> list[Author]:
     for index in range(0, len(authors)):
         author = authors[index]
         # Updates the list element at the current index to a new Author object with all the data filled in
-        authors[index] = Author(id=author[0], name=author[1], has_nobel_prize=author[2], country=author[3], birthdate=datetime.datetime.strptime(author[4], '%Y-%m-%d').date(), date_of_death=datetime.datetime.strptime(author[5], '%Y-%m-%d').date() if author[5] else "")
-
+        authors[index] = Author(id=author[0], firstName=author[1], lastName=author[2])
     # Returns the fetched and converted authors
     return authors
-
-
-def does_author_exist(name) -> bool:
-    """
-    ### Function does_author_exist
-    
-    **Use:** Checks if there is already an existing author with the provided name
-    
-    **Returns:** A boolean that indicates if there is already an author with the provided name
-    
-    **Parameters:** name - The name that should be checked
-    
-    """
-
-    # Fetches all authors from the db
-    authors = fetch_authors()
-
-    # Creates the is_existent variable to store the checks result
-    is_existent = False
-
-    # Iterates over all authors in the db
-    for author in authors:
-
-        # If the authors name and the name parameter match
-        if author.name == name:
-
-            # The is_existent variable is set to True
-            is_existent = True
-
-            # Breaks out of the loop
-            break
-
-    # Returns if the authors is existent
-    return is_existent
 
 
 def delete_author(id) -> bool:
@@ -210,7 +177,7 @@ def delete_author(id) -> bool:
     db, cur = prepare_db()
 
     # Deletes the author from the db
-    cur.execute(f"DELETE FROM authors WHERE author_id == {id};")
+    cur.execute(f"DELETE FROM authors WHERE author_id == ?;", (id,))
 
     # Commits the changes to the db
     db.commit()
@@ -236,37 +203,31 @@ def create_author(author:Author) -> str | bool | Exception:
     **Parameters:**
     author - an Author object containing the data of the new author
     """
+    try:
 
-    # If the author doesn't exist
-    if not does_author_exist(author.name):
+        # Initializes the db connection
+        db, cur = prepare_db()
+        app_context.logger.error(type(author.firstName))
+        app_context.logger.error(author.firstName)
 
-        try:
+        # The author is added to the db
+        cur.execute(f"INSERT INTO authors (firstName, lastName) VALUES (?, ?);", (author.firstName, author.lastName))
+        # Commits the changes to the db
+        db.commit()
 
-            # Initializes the db connection
-            db, cur = prepare_db()
+        # Closes the cursor
+        cur.close()
 
-            # The author is added to the db
-            cur.execute(f"INSERT INTO authors (author_name, has_nobel_prize, author_country, date_of_birth, date_of_death) VALUES (?, ?, ?, ?, ?);", (author.name, author.has_nobel_prize, author.country, author.birthdate, author.date_of_death))
+        # Closes the db connection
+        db.close()
 
-            # Commits the changes to the db
-            db.commit()
+        # Returns True because the author was created successfully
+        return "OK"
 
-            # Closes the cursor
-            cur.close()
+    # If an error occurs, return it, so it can be displayed
+    except Exception as e:
 
-            # Closes the db connection
-            db.close()
-
-            # Returns True because the author was created successfully
-            return "OK"
-
-        # If the author already exists
-        except Exception as e:
-
-            # Returns False because you mustn't override an existing author to create a new one
-            return e
-
-    return "Author existiert bereits!"
+        return e
 
 
 def edit_author(author_id:int, new:Author) -> str | bool | Exception:
@@ -282,40 +243,30 @@ def edit_author(author_id:int, new:Author) -> str | bool | Exception:
     new - an Author object with the updated data
     """
 
-    # If the author exists
-    if fetch_author(author_id):
+    try:
 
-        try:
+        # Initializes the db connection
+        db, cur = prepare_db()
 
-            # Initializes the db connection
-            db, cur = prepare_db()
+        # Updates the author's details
+        cur.execute("UPDATE authors SET firstName = ?, lastName = ? WHERE author_id == ?;", (new.firstName, new.lastName, author_id))
+        
+        # Commits the changes to the db
+        db.commit()
 
-            # Updates the author's details
-            cur.execute("""
-            UPDATE authors
-            SET author_name = ?, has_nobel_prize = ?, author_country = ?, date_of_birth = ?, date_of_death = ?
-            WHERE author_id == ?;
-            """, (new.name, new.has_nobel_prize, new.country, str(new.birthdate), str(new.date_of_death), author_id))
-            
-            # Commits the changes to the db
-            db.commit()
+        # Closes the cursor
+        cur.close()
 
-            # Closes the cursor
-            cur.close()
+        # Closes the db connection
+        db.close()
 
-            # Closes the db connection
-            db.close()
+        # Returns True because the author was successfully edited
+        return "OK"
 
-            # Returns True because the author was successfully edited
-            return "OK"
+    # If an error occurs, return it, so it can be displayed
+    except Exception as e:
 
-        # If the author doesn't exist
-        except Exception as e:
-
-            # Returns False, because you can't alter the details of a not existing author
-            return e
-    else:
-        return "Autor existiert nicht!"
+        return e
 
 
 def fetch_author(author_id:int) -> Author | bool:
@@ -336,11 +287,10 @@ def fetch_author(author_id:int) -> Author | bool:
     db, cur = prepare_db()
 
     # Tries to get the author with the id specified in author_id
-    author = cur.execute(f"SELECT * FROM authors WHERE author_id = {author_id};").fetchone()
+    author = cur.execute(f"SELECT * FROM authors WHERE author_id = ?;", (author_id,)).fetchone()
 
     if author:
-
-        author = Author(id=author[0], name=author[1], has_nobel_prize=author[2], country=author[3], birthdate=datetime.datetime.strptime(author[4], '%Y-%m-%d').date(), date_of_death=datetime.datetime.strptime(author[5], '%Y-%m-%d').date())
+        author = Author(id=author[0], firstName=author[1], lastName=author[2])
 
         # If there is one that has the same id as passed to the function as parameter, author is an author object
         # else it is false
@@ -364,23 +314,52 @@ def fetch_author_by_name(name:str) -> Author:
     # Creates a connection with the database
     db, cur = prepare_db()
 
+    nameParts = name.split(" ")
+    lastName = nameParts[-1]
+    firstName = " ".join(nameParts[:-1])
+
     # Tries to get the author with the author_name specified in name
-    author = cur.execute(f"SELECT * FROM authors WHERE author_name == \"{name}\";").fetchone()
+    author = cur.execute(f"SELECT * FROM authors WHERE firstName == ? AND lastName == ?;", (firstName, lastName)).fetchone()
 
     # Converts it to an author object
-    new_author = Author(id=author[0], name=author[1], has_nobel_prize=author[2], country=author[3], birthdate=datetime.datetime.strptime(author[4], '%Y-%m-%d').date(), date_of_death=datetime.datetime.strptime(author[5], '%Y-%m-%d').date())
+    new_author = Author(id=author[0], firstName=author[1], lastName=author[2])
 
     # Returns the author as an Author object
     return new_author
+
+def fetch_author_ids() -> list[int]:
+
+    db, cur = prepare_db()
+    
+    ids = [ row[0] for row in cur.execute("SELECT author_id FROM authors;").fetchall() ]
+
+    return ids
 
 
 def fetch_author_names() -> list[str]:
 
     authors = fetch_authors()
 
-    names = [author.name for author in authors]
+    names = [author.firstName + " " + author.lastName for author in authors]
 
     return names
+
+
+def fetch_authors_for_book(book_id: int) -> list[int]:
+
+    db, cur = prepare_db()
+
+    authors = [ row[0] for row in cur.execute("SELECT abAuthorID FROM author_books WHERE abBookID = ?;", (book_id,)).fetchall() ]
+
+    # results are packed in lists/tuples
+    ids = []
+    for author in authors:
+        ids.append(fetch_author(author))
+
+    cur.close()
+    db.close()
+
+    return ids 
 
 
 def fetch_books() -> list[Book]:
@@ -400,20 +379,23 @@ def fetch_books() -> list[Book]:
     # Fetches all books stored in the Database
     books = cur.execute("SELECT * FROM books ORDER BY book_title ASC;").fetchall()
 
-    # Closes the cursor
-    cur.close()
-
-    # Closes the database connection
-    db.close()
-
     new_books = []
 
     # Converts each book into a Book object
     for index in range(0, len(books)):
         book = books[index]
-        new_books.append(Book(id=book[0], title=book[1], author_ids=eval(book[2]), publisher=book[3], isbn=book[4], edition=book[5], year=book[6], type=book[7], tags=eval(book[8]), room=book[9], shelf=book[10], lend=book[11], lend_to=book[12]))
+        authorIDs = cur.execute("SELECT abAuthorID FROM author_books WHERE abBookID = ?;", (book[0],)).fetchall()
+        new_books.append(Book(id=book[0], title=book[1], author_ids=authorIDs, publisher=book[2], isbn=book[3], edition=book[4], year=book[5], book_type=book[6], tags=eval(book[7]),
+                              room=book[8], shelf=book[9], lend=book[10], lend_to=book[11], language=book[12]))
 
+
+    # Closes the cursor
+    cur.close()
+
+    # Closes the database connection
+    db.close()
     # Returns all found books
+
     return new_books
 
 
@@ -438,9 +420,16 @@ def create_book(book:Book) -> str | int:
     for id in book.author_ids:
         if not fetch_author(id):
             return f"Autor mit der ID {id} existier nicht!"
-
+       
     # Creates the book with the provided parameters
-    cur.execute(f"INSERT INTO books (book_title, author_ids, book_publisher, book_isbn, book_edition, book_year, book_type, book_tags, book_room, book_shelf, book_lend, lend_to) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);", (book.title, str(book.author_ids), book.publisher, book.isbn, book.edition, book.year, book.type, str(book.tags), book.room, book.shelf, book.lend, book.lend_to))
+    cur.execute(f"INSERT INTO books (book_title, book_publisher, book_isbn, book_edition, book_year, book_type, book_tags, book_room, book_shelf, book_lend, lend_to, book_language) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);", (book.title, book.publisher, book.isbn, book.edition, book.year, book.book_type, str(book.tags), book.room, book.shelf, book.lend, book.lend_to, book.language))
+
+    # get the id of the newest entry
+    id = cur.lastrowid
+
+    for author in book.author_ids:
+        cur.execute("INSERT INTO author_books (abAuthorID, abBookID) VALUES (?, ?);", (author, id))
+
 
     # Commits the changes to the db
     db.commit()
@@ -450,8 +439,6 @@ def create_book(book:Book) -> str | int:
 
     # Closes the db connection
     db.close()
-
-    id = fetch_book_by_isbn(book.isbn).id
 
     # Returns True, because the book was successfully created
     return id
@@ -478,7 +465,7 @@ def delete_book(book_id:int) -> bool:
         db, cur = prepare_db()
 
         # Deletes the book from the db
-        cur.execute(f"DELETE FROM books WHERE book_id = {book_id};")
+        cur.execute(f"DELETE FROM books WHERE book_id = ?;", (book_id,))
 
         # Commits the changes to the db
         db.commit()
@@ -513,23 +500,28 @@ def edit_book(book_id:int, new:Book) -> str:
     -   new - a Book object containing the new data for the book
     """
 
-    authors_existing = True
-    for id in new.author_ids:
-        if not fetch_author(id):
-            return f"Autor mit der ID {id} existiert nicht!"
-
     if not fetch_book(book_id):
-        return f"Das Buch mit der ID {book_id} existier nicht!"
+        return f"Das Buch mit der ID {book_id} existiert nicht!"
 
     # Initializes the db connection
     db, cur = prepare_db()
 
-    # Updates the book
+    old = fetch_book(book_id)
+
+    # Transfere authors
+    for author in old.author_ids:
+        if not author in new.author_ids:
+            cur.execute("DELETE FROM author_books WHERE abAuthorID = ? AND abBookID = ?;", (author, old.id))
+
+    for author in new.author_ids:
+        if not author in old.author_ids:
+            cur.execute("INSERT INTO author_books (abAuthorID, abBookID) VALUES (?, ?);", (author, new.id))    # Updates the book
+
     cur.execute(f"""
 UPDATE books
-SET book_title = ?, author_ids = ?, book_publisher = ?, book_isbn = ?, book_edition = ?, book_year = ?, book_type = ?, book_tags = ?, book_room = ?, book_shelf = ?, book_lend = ?, lend_to = ?
+SET book_title = ?, book_publisher = ?, book_isbn = ?, book_edition = ?, book_year = ?, book_type = ?, book_tags = ?, book_room = ?, book_shelf = ?, book_lend = ?, lend_to = ?, book_language = ?
 WHERE book_id = ?;
-    """, (new.title, str(new.author_ids), new.publisher, new.isbn, new.edition, new.year, new.type, str(new.tags), new.room, new.shelf, new.lend, new.lend_to, book_id))
+    """, (new.title, new.publisher, new.isbn, new.edition, new.year, new.book_type, str(new.tags), new.room, new.shelf, new.lend, new.lend_to, new.language, book_id))
 
     # Commits the changes to the db
     db.commit()
@@ -564,9 +556,12 @@ def fetch_book(book_id:int) -> Book|bool:
     # Fetches one book from the db where the id is equals to the book_id parameter
     book = cur.execute(f"SELECT * FROM books WHERE book_id = ?;", (book_id, )).fetchone()
 
+    authorIDs = [ row[0] for row in cur.execute("SELECT abAuthorID FROM author_books WHERE abBookID = ?;", (book_id,)).fetchall() ]
+
+
     # Turns the fetched book into a Book object
-    new_book = Book(id=book[0], title=book[1], author_ids=eval(book[2]), publisher=book[3], isbn=book[4], edition=book[5],
-                year=book[6], type=book[7], tags=eval(book[8]), room=book[9], shelf=book[10], lend=book[11], lend_to=book[12])
+    new_book = Book(id=book[0], title=book[1], author_ids=authorIDs, publisher=book[2], isbn=book[3], edition=book[4],
+                year=book[5], book_type=book[6], tags=eval(book[7]), room=book[8], shelf=book[9], lend=book[10], lend_to=book[11], language=book[12])
 
     # Returns the found book
     return new_book
@@ -590,10 +585,12 @@ def fetch_book_by_isbn(isbn:str) -> Book:
 
     # Fetches one book from the db where the title is equals to the name parameter
     book = cur.execute(f"SELECT * FROM books WHERE book_isbn = ?;", (isbn,)).fetchone()
+    
+    authorIDs = cur.execute("SELECT abAuthorID FROM author_books WHERE abBookID = ?;", (book[0],)).fetchall()
 
     # Turns the fetched book into a Book object
-    book = Book(id=book[0], title=book[1], author_ids=eval(book[2]), publisher=book[3], isbn=book[4], edition=book[5],
-                year=book[6], type=book[7], tags=eval(book[8]), room=book[9], shelf=book[10], lend=book[11], lend_to=book[12])
+    book = Book(id=book[0], title=book[1], author_ids=authorIDs, publisher=book[2], isbn=book[3], edition=book[4],
+                year=book[5], book_type=book[6], tags=eval(book[7]), room=book[8], shelf=book[9], lend=book[10], lend_to=book[11])
 
     # Returns the found book
     return book
@@ -628,7 +625,7 @@ def fetch_book_type_ids() -> list[str]:
 
 def fetch_book_type_id(name) -> int:
     db, cur = prepare_db()
-    id = cur.execute(f"SELECT * FROM types WHERE type_name == '{name}';").fetchone()[0]
+    id = cur.execute(f"SELECT * FROM types WHERE type_name == ?;", (name,)).fetchone()[0]
 
     cur.close()
     db.close()
@@ -639,7 +636,7 @@ def fetch_book_type_id(name) -> int:
 def fetch_book_type(type_id) -> str:
     db, cur = prepare_db()
     try:
-        name = cur.execute(f"SELECT * FROM types WHERE type_id == {type_id}").fetchone()[1]
+        name = cur.execute(f"SELECT * FROM types WHERE type_id == ?", (type_id,)).fetchone()[1]
     except Exception as e:
         name = "Unbekannt"
 
@@ -649,31 +646,11 @@ def fetch_book_type(type_id) -> str:
     return name
 
 
-# def set_book_types(types: list[str]) -> None:
-#     db, cur = prepare_db()
-#
-#     cur.execute("DROP TABLE types;")
-#
-#     db.commit()
-#
-#     cur.execute("CREATE TABLE types (type_id INTEGER PRIMARY KEY AUTOINCREMENT, type_name STRING NOT NULL);")
-#
-#     db.commit()
-#
-#     for book_type in types:
-#         cur.execute(f"INSERT INTO types (type_name) VALUES ('{book_type}');")
-#
-#     db.commit()
-#
-#     cur.close()
-#     db.close()
-
-
 def edit_book_type(type_id: int, new_type_name: str) -> str:
     db, cur = prepare_db()
 
     try:
-        cur.execute(f"UPDATE types SET type_name = '{new_type_name}' WHERE type_id == {type_id};")
+        cur.execute(f"UPDATE types SET type_name = ? WHERE type_id = ?;", (new_type_name, type_id))
         db.commit()
         cur.close()
         db.close()
@@ -688,7 +665,7 @@ def create_book_type(type_name: str) -> str:
     db, cur = prepare_db()
 
     try:
-        cur.execute(f"INSERT INTO types (type_name) VALUES ('{type_name}');")
+        cur.execute(f"INSERT INTO types (type_name) VALUES (?);", (type_name,))
         db.commit()
         cur.close()
         db.close()
@@ -701,7 +678,7 @@ def delete_book_type(type_id: int):
     db, cur = prepare_db()
 
     try:
-        cur.execute(f"DELETE FROM types WHERE type_id == {type_id}")
+        cur.execute(f"DELETE FROM types WHERE type_id == ?", (type_id))
         db.commit()
         cur.close()
         db.close()

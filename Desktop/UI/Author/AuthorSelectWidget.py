@@ -71,7 +71,7 @@ class AuthorSelectWidget(Frame):
         already_moved = 0
         for author in selected:
             author_object = fetch_author_by_name(self.available_list.get(author - already_moved))
-            self.used_list.insert(author_object.id, author_object.name)
+            self.used_list.insert(author_object.id, author_object.getName())
             self.available_list.delete(author - already_moved)
             already_moved += 1
 
@@ -80,7 +80,7 @@ class AuthorSelectWidget(Frame):
         already_moved = 0
         for author in selected:
             author_object = fetch_author_by_name(self.used_list.get(author - already_moved))
-            self.available_list.insert(author_object.id, author_object.name)
+            self.available_list.insert(author_object.id, author_object.getName())
             self.used_list.delete(author - already_moved)
             already_moved += 1
 
@@ -88,14 +88,14 @@ class AuthorSelectWidget(Frame):
         selected = self.available_list.get(0, END)
         for author in selected:
             author_object = fetch_author_by_name(author)
-            self.used_list.insert(author_object.id, author_object.name)
+            self.used_list.insert(author_object.id, author_object.getName())
         self.available_list.delete(0, END)
 
     def deselect_all(self):
         selected = self.used_list.get(0, END)
         for author in selected:
             author_object = fetch_author_by_name(author)
-            self.available_list.insert(author_object.id, author_object.name)
+            self.available_list.insert(author_object.id, author_object.getName())
         self.used_list.delete(0, END)
 
     def get(self) -> list[int]:
@@ -110,16 +110,16 @@ class AuthorSelectWidget(Frame):
 
         return ids
 
-    def set(self, init_used: list) -> None:
+    def set(self, used: list) -> None:
         self.authors = fetch_authors()
         self.used_list.delete(0, END)
         self.available_list.delete(0, END)
 
         for author in self.authors:
-            if author.id in init_used:
-                self.used_list.insert(author.id, author.name)
+            if author.id in used:
+                self.used_list.insert(author.id, author.getName())
             else:
-                self.available_list.insert(author.id, author.name)
+                self.available_list.insert(author.id, author.getName())
 
     def search(self, *args):
         self.available_list.delete(0, END)
@@ -127,5 +127,5 @@ class AuthorSelectWidget(Frame):
 
         for author in self.authors:
             if self.searchVar.get() in author.name:
-                self.available_list.insert(END, author.name)
+                self.available_list.insert(END, author.getName())
 

@@ -25,6 +25,11 @@ class SearchFilterBooks(BookEditWidget):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+        self.title_label.config(text="Titel: ")
+        self.authors_label.config(text="Autoren: ")
+        self.type_label.config(text="Typ: ")
+        self.room_label.config(text="Raum: ")
+
         self.lend = AutocompleteCombobox(self.lend_frame, completevalues=["Ja", "Nein"], width=25, postcommand=self.update)
         self.lend.grid(row=0, column=1)
 

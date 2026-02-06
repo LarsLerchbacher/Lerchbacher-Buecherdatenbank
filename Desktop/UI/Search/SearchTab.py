@@ -14,7 +14,7 @@
 #
 
 
-from database import fetch_authors, fetch_books, fetch_book_type_id, fetch_book_types, fetch_book_type_ids, fetch_rooms, fetch_room_id, fetch_room_ids
+from database import fetch_author_ids, fetch_authors, fetch_books, fetch_book_type_id, fetch_book_types, fetch_book_type_ids, fetch_rooms, fetch_room_id, fetch_room_ids, prepare_db
 from datetime import date
 from tkinter import *
 from UI.Author.AuthorWidget import AuthorWidget
@@ -23,7 +23,6 @@ from UI.BookType.TypeWidget import TypeWidget
 from UI.Room.RoomWidget import RoomWidget
 from UI.Tab import Tab
 from UI.Search.SearchFilterAll import SearchFilterAll
-from UI.Search.SearchFilterAuthors import SearchFilterAuthors
 from UI.Search.SearchFilterBooks import SearchFilterBooks
 
 
@@ -94,8 +93,15 @@ class SearchTab(Tab):
         #
         # The filters for searching authors
         #
-        self.filterAuthors = SearchFilterAuthors(self.filterFrame)
-
+        self.filterAuthors = Frame(self.filterFrame)
+        self.fn_label = Label(self.filterAuthors, text="First name: ")
+        self.fn_entry = Entry(self.filterAuthors, width=30)
+        self.fn_label.grid(row=0, column=0, padx=10, pady=10)
+        self.fn_entry.grid(row=0, column=1, padx=10)        
+        self.ln_label = Label(self.filterAuthors, text="Last name: ")
+        self.ln_entry = Entry(self.filterAuthors, width=30)
+        self.ln_label.grid(row=1, column=0, padx=10, pady=10)
+        self.ln_entry.grid(row=1, column=1, padx=10)
 
         #
         # The filters for searching for book types
@@ -322,7 +328,7 @@ class SearchTab(Tab):
 
                     # Sound the authors
                     for author in all_authors:
-                        if search_value in author.name:
+                        if search_value in author.getName():
                             self.resultAuthors.append(AuthorWidget(self.resultAuthorsFrame, author.id))
 
                     # Display the found authors
@@ -522,55 +528,26 @@ class SearchTab(Tab):
                     author.destroy()
                 self.resultAuthors = []
 
-                all_authors = fetch_authors()
+                conditions = []
+                params = []
 
-                name = self.filterAuthors.name.get()
-                country = self.filterAuthors.country.get()
-                dob = self.filterAuthors.dob.get()
-                dod = self.filterAuthors.dod.get()
-                hasNobel = None
-                hasNobelName = self.filterAuthors.npw.get()
+                if self.fn_entry.get():
+                    conditions.append("firstName LIKE ?")
+                    params.append("%" + self.fn_entry.get() + "%")
 
-                if hasNobelName == "Ja":
-                    hasNobel = 1
-                elif hasNobelName == "Nein":
-                    hasNobel = 0
+                if self.ln_entry.get():
+                    conditions.append("lastName LIKE ?")
+                    params.append("%" + self.ln_entry.get() + "%")
 
-                for author in all_authors:
-                    criteria = []
+                db, cur = prepare_db()
 
-                    if name:
-                        if name in author.name:
-                            criteria.append(True)
-                        else:
-                            criteria.append(False)
+                if len(conditions)> 0:
+                    authorIDs = [ row[0] for row in cur.execute("SELECT author_id FROM authors WHERE " + "AND".join(conditions) + ";", tuple(params)).fetchall() ]
+                else:
+                    authorIDs = fetch_author_ids()
 
-                    if country:
-                        if country in author.country:
-                            criteria.append(True)
-                        else:
-                            criteria.append(False)
-
-                    if dob != date(2200, 1, 1):
-                        if dob == author.birthdate:
-                            criteria.append(True)
-                        else:
-                            criteria.append(False)
-
-                    if dod != date(2200, 1, 1):
-                        if dob == author.date_of_death:
-                            criteria.append(True)
-                        else:
-                            criteria.append(False)
-                    
-                    if hasNobel != None:
-                        if hasNobel == author.has_nobel_prize:
-                            criteria.append(True)
-                        else:
-                            criteria.append(False)
-
-                    if (True in criteria) and (False not in criteria):
-                        self.resultAuthors.append(AuthorWidget(self.resultAuthorsFrame, author.id))
+                for id in authorIDs:
+                    self.resultAuthors.append(AuthorWidget(self.resultAuthorsFrame, id))
 
                 for authorWidget in self.resultAuthors:
                     authorWidget.pack(pady=20)

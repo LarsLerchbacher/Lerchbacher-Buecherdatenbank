@@ -51,6 +51,28 @@ def run_update_112_to_120():
 
     db.commit()
 
+    app_context.logger.debug("Creating intermediate table for authors and books...")
+    cur.execute("""CREATE TABLE author_books(
+    ABID INTEGER PRIMARY KEY AUTOINCREMENT,
+    abAuthorID INTEGER REFERENCES authors(author_id),
+    abBookID INTEGER REFERENCES books(book_id)
+);""")
+
+    db.commit()
+
+    app_context.logger("Transfering author-book data to author books intermediate table...")
+    books = fetch_books()
+    for book in books:
+        for authorID in book.author_ids:
+            cur.execute("INSERT INTO author_books(abAuthorID, abBookID) VALUES (?, ?);", (authorID,book.id)) 
+    
+    app_context.logger.debug("Deleting author_ids column from books table...")
+    cur.execute("ALTER TABLE books DROP COLUMN author_ids;")
+
+    app_context.logger.debug("Adding language column to books table...")
+    cur.execute("ALTER TABLE books ADD COLUMN book_language VARCHAR(50);")
+    cur.execute("UPDATE books SET book_language = 'Unbekannt';")
+
     app_context.logger.debug("Creating database version table...")
     cur.execute("CREATE Table dbVersion (id INTEGER PRIMARY KEY, Version VARCHAR);")
 
@@ -73,7 +95,9 @@ def check_if_update_is_needed():
     app_context.logger.info("Checking if the database needs to be converted...")
 
     try:
-            dbVersion = cur.execute("SELECT version from dbVersion WHERE id=0;").fetchone()
+            dbVersion = cur.execute("SELECT version from dbVersion WHERE id=0;").fetchone()[0]
+            app_context.logger.info("Database format version: " + dbVersion)
+            app_context.logger.info("Program version: " + app_context.version)
             if dbVersion == app_context.version:
                 app_context.logger.info("Database has a supported format")
             else:

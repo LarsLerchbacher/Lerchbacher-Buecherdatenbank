@@ -30,18 +30,25 @@ class AuthorEditToplevel(Toplevel):
         else:
             app_context.logger.info("Opening empty author editing dialog")
         
-        self.edit = AuthorEditWidget(self)
-        self.edit.pack()
+        self.fnLabel = Label(self, text="First name: ")
+        self.lnLabel = Label(self, text="Last name: ")
+        self.firstName = Entry(self, width=50)
+        self.lastName = Entry(self, width=50)
+
+        self.fnLabel.grid(row=0, column=0, padx=10, pady=10)
+        self.firstName.grid(row=0, column=1)
+        self.lnLabel.grid(row=1, column=0, padx=10, pady=10)
+        self.lastName.grid(row=1, column=1)
 
         self.buttonFrame = Frame(self)
-        self.buttonFrame.pack(padx=20, pady=20)
+        self.buttonFrame.grid(row=3, column=0, columnspan=2, padx=20, pady=20)
 
         self.saveButton = Button(self.buttonFrame, text='Speichern', command=self.save)
         self.cancelButton = Button(self.buttonFrame, text='Abbrechen', command=self.cancel)
         self.saveButton.grid(row=0, column=0)
         self.cancelButton.grid(row=0, column=1, padx=10)
 
-        self.edit.name.focus_set()
+        self.firstName.focus_set()
         self.bind("<Return>", lambda e: self.save())
 
         if self.id != -1:
@@ -49,30 +56,22 @@ class AuthorEditToplevel(Toplevel):
 
     def update(self):
         author = fetch_author(self.id)
+        if not type(author) == Author:
+            showerror("ERROR", "Autor nicht gefunden!")
+        else:
+            self.firstName.delete(0, END)
+            self.lastName.delete(0, END)
 
-        self.edit.name.delete(0, END)
-        self.edit.name.insert(0, author.name)
-
-        self.edit.country.delete(0, END)
-        self.edit.country.insert(0, author.country)
-
-        self.edit.dob.set(author.birthdate)
-
-        self.edit.dod.set(author.date_of_death)
-
-        self.edit.npwVar.set(author.has_nobel_prize)
-
+            self.firstName.insert(0, author.firstName)
+            self.lastName.insert(0, author.lastName)
 
 
     def save(self):
-        name = self.edit.name.get()
-        country = self.edit.country.get()
-        dob = str(self.edit.dob.get())
-        dod = str(self.edit.dod.get())
-        npw = self.edit.npwVar.get()
+        firstName = self.firstName.get()
+        lastName = self.lastName.get()
 
         if self.id != -1:
-            new_author = Author(id, name, npw, country, dob, dod)
+            new_author = Author(id, firstName, lastName)
             response = edit_author(self.id, new_author)
             if response != "OK":
                 app_context.logger.error(f"Speichern nicht möglich!\n{response}")
@@ -82,7 +81,7 @@ class AuthorEditToplevel(Toplevel):
                 app_context.mainWindow.update()
                 self.destroy()
         else:
-            new_author = Author(-1, name, npw, country, dob, dod)
+            new_author = Author(-1, firstName, lastName)
             response = create_author(new_author)
             if response != "OK":
                 app_context.logger.info(f"Speicher nicht möglich\n{response}")

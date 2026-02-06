@@ -139,37 +139,44 @@ def init_files() -> None:
         cur.execute("""
         CREATE TABLE authors (
             author_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-            author_name STRING NOT NULL,
-            has_nobel_prize BOOLEAN,
-            author_country STRING NOT NULL,
-            date_of_birth TIMESTAMP NOT NULL,
-            date_of_death TIMESTAMP NOT NULL
+            firstName VARCHAR(50),
+            lastName VARCHAR(50)
         );""")
 
         # Creating the books table
         cur.execute("""
             CREATE TABLE "books" (
-                "book_id"	INTEGER,
-                "book_title"	STRING NOT NULL,
-                "author_ids"	BLOB,
-                "book_publisher"	STRING,
-                "book_isbn"	STRING,
-                "book_edition"	INTEGER NOT NULL DEFAULT 1,
-                "book_year"	INTEGER,
-                "book_type"	INTEGER,
-                "book_tags"	BLOB,
-                "book_room"	STRING,
-                "book_shelf"	STRING,
-                "book_lend"	INTEGER,
-                "lend_to" STRING,
-                PRIMARY KEY("book_id" AUTOINCREMENT)
+                book_id	INTEGER PRIMARY KEY AUTOINCREMENT,
+                book_title	VARCHAR(100) NOT NULL,
+                book_publisher	VARCHAR(75),
+                book_isbn	VARCHAR(13),
+                book_edition	INTEGER NOT NULL DEFAULT 1,
+                book_year	INTEGER,
+                book_type	INTEGER,
+                book_tags	BLOB,
+                book_room	VARCHAR(50),
+                book_shelf	VARCHAR(50),
+                book_lend	INTEGER,
+                lend_to VARCHAR(50),
+                book_language VARCHAR(50)
             );""")
 
         # Creating the rooms table
-        cur.execute("""CREATE TABLE rooms (room_id INTEGER PRIMARY KEY AUTOINCREMENT, room_name STRING NOT NULL);""")
+        cur.execute("""CREATE TABLE rooms (room_id INTEGER PRIMARY KEY AUTOINCREMENT, room_name VARCHAR(50) NOT NULL);""")
 
         # Creating the types table for book types
-        cur.execute("""CREATE TABLE types (type_id INTEGER PRIMARY KEY AUTOINCREMENT, type_name STRING NOT NULL);""")
+        cur.execute("""CREATE TABLE types (type_id INTEGER PRIMARY KEY AUTOINCREMENT, type_name VARCHAR(50) NOT NULL);""")
+
+        # Creating the intermediate table for authors and books
+        cur.execute("""CREATE TABLE author_books (
+            ABID INTEGER PRIMARY KEY AUTOINCREMENT,
+            abAuthorID INTEGER REFERENCES authors(ID),
+            abBookID INTEGER REFERENCES books(ID)
+        );""")
+
+        cur.execute("CREATE TABLE dbVersion (id INTEGER PRIMARY KEY AUTOINCREMENT, version VARCHAR(5));")
+
+        cur.execute("INSERT INTO dbVersion (id, version) VALUES (0, '1.2.0');");
 
         # Commiting the changes
         db.commit()
@@ -182,6 +189,9 @@ def init_files() -> None:
     else:
         logger.info("Existing database found!")
 
+        # check for database format compatibility
+        database_updater.check_if_update_is_needed()
+
 
 def main() -> None:
     global logger, formatter
@@ -191,9 +201,6 @@ def main() -> None:
     logger.info("---------")
     logger.info(f"Lerchbacher book database desktop v{app_context.version}")
     logger.info("Starting application")
-
-    # check for database format compatibility
-    database_updater.check_if_update_is_needed()
 
     # Check for the necesary files and folders
     init_files()
