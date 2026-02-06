@@ -207,8 +207,6 @@ def create_author(author:Author) -> str | bool | Exception:
 
         # Initializes the db connection
         db, cur = prepare_db()
-        app_context.logger.error(type(author.firstName))
-        app_context.logger.error(author.firstName)
 
         # The author is added to the db
         cur.execute(f"INSERT INTO authors (firstName, lastName) VALUES (?, ?);", (author.firstName, author.lastName))
@@ -730,7 +728,7 @@ def fetch_room_ids() -> list[str]:
 
 def fetch_room_id(name) -> int:
     db, cur = prepare_db()
-    id = cur.execute(f"SELECT * FROM rooms WHERE room_name == '{name}';").fetchone()[0]
+    id = cur.execute(f"SELECT * FROM rooms WHERE room_name == ?;", (name,)).fetchone()[0]
     cur.close()
     db.close()
     
@@ -741,7 +739,7 @@ def fetch_room_id(name) -> int:
 def fetch_room(room_id) -> str:
     db, cur = prepare_db()
     try:
-        name = cur.execute(f"SELECT * FROM rooms WHERE room_id == {room_id};").fetchone()[1]
+        name = cur.execute(f"SELECT * FROM rooms WHERE room_id == ?;", (room_id,)).fetchone()[1]
     except Exception as e:
         name = "Unbekannt"
 
@@ -755,7 +753,7 @@ def edit_room(room_id: int, new_room_name: str) -> str:
     db, cur = prepare_db()
 
     try:
-        cur.execute(f"UPDATE rooms SET room_name = '{new_room_name}' WHERE room_id == {room_id};")
+        cur.execute(f"UPDATE rooms SET room_name = ? WHERE room_id == ?;", (new_room_name, room_id))
         db.commit()
         cur.close()
         db.close()
@@ -770,7 +768,7 @@ def create_room(room_name: str) -> str:
     db, cur = prepare_db()
 
     try:
-        cur.execute(f"INSERT INTO rooms (room_name) VALUES ('{room_name}');")
+        cur.execute(f"INSERT INTO rooms (room_name) VALUES (?);", (room_name,))
         db.commit()
         cur.close()
         db.close()
@@ -784,7 +782,7 @@ def delete_room(room_id: int):
     db, cur = prepare_db()
 
     try:
-        cur.execute(f"DELETE FROM rooms WHERE room_id = {room_id}")
+        cur.execute(f"DELETE FROM rooms WHERE room_id = ?;", (room_id,))
         db.commit()
         cur.close()
         db.close()
