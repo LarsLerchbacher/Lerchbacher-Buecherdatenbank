@@ -107,9 +107,8 @@ class BookEditToplevel(Toplevel):
             self.edit.lend_to.insert(0, book.lend_to)
 
     def save(self):
-        app_context.logger.warning("Trying to save, but not all necesary fields are filled.")
-
         if not self.edit.check_is_filled():
+            app_context.logger.warning("Trying to save, but not all necesary fields are filled.")
             messagebox.showinfo(title="Pflichtfelder ausfuellen", message="Bitte fuellen Sie alle Felder die mit einem * markiert sind aus.")
         else:
             if self.id == -1:

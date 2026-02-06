@@ -398,6 +398,17 @@ def fetch_books() -> list[Book]:
 
     return new_books
 
+def fetch_book_ids() -> list[int]:
+
+    db, cur = prepare_db()
+
+    ids = [ row[0] for row in cur.execute("SELECT book_id FROM books;").fetchall() ]
+
+    cur.close()
+    db.close()
+
+    return ids;
+
 
 def create_book(book:Book) -> str | int:
     """

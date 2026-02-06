@@ -14,7 +14,7 @@
 #
 
 
-from database import fetch_author_ids, fetch_authors, fetch_books, fetch_book_type_id, fetch_book_types, fetch_book_type_ids, fetch_rooms, fetch_room_id, fetch_room_ids, prepare_db
+from database import fetch_author_ids, fetch_authors, fetch_book_ids, fetch_books, fetch_book_type_id, fetch_book_types, fetch_book_type_ids, fetch_rooms, fetch_room_id, fetch_room_ids, prepare_db
 from datetime import date
 from tkinter import *
 from UI.Author.AuthorWidget import AuthorWidget
@@ -378,140 +378,98 @@ class SearchTab(Tab):
 
                 all_books = fetch_books()
 
+                conditions = []
+                params = []
 
-                for book in all_books:
-                    title = self.filterBooks.title.get()
-                    author_ids = self.filterBooks.authors.get()
-                    publisher = self.filterBooks.publisher.get()
-                    isbn = self.filterBooks.isbn.get()
-                    edition = self.filterBooks.edition.get()
-                    year = self.filterBooks.year.get()
-                    book_type = None
-                    book_type_name = self.filterBooks.type_select.get()
-                    tags = self.filterBooks.tags.get().replace("; ", ";").split(";")
-                    room = None
-                    room_name = self.filterBooks.room.get()
-                    shelf = self.filterBooks.shelf.get()
-                    lend = None
-                    lend_str = self.filterBooks.lend.get()
-                    lend_to = self.filterBooks.lend_to.get()
+                title = self.filterBooks.title.get()
+                author_ids = self.filterBooks.authors.get()
+                publisher = self.filterBooks.publisher.get()
+                isbn = self.filterBooks.isbn.get()
+                edition = self.filterBooks.edition.get()
+                year = self.filterBooks.year.get()
+                book_type = None
+                book_type_name = self.filterBooks.type_select.get()
+                tags = self.filterBooks.tags.get().replace("; ", ";").split(";")
+                room = None
+                room_name = self.filterBooks.room.get()
+                shelf = self.filterBooks.shelf.get()
+                lend = None
+                lend_str = self.filterBooks.lend.get()
+                lend_to = self.filterBooks.lend_to.get()
+                language = self.filterBooks.language.get()
 
-                    if lend_str == "Ja":
-                        lend = 1
-                    elif lend_str == "Nein":
-                        lend = 0
+                if lend_str == "Ja":
+                    lend = 1
+                elif lend_str == "Nein":
+                    lend = 0
 
+                if title:
+                    conditions.append("book_title LIKE ?")
+                    params.append("%" + title + "%")
 
-                    if book_type_name:
-                        book_type = fetch_book_type_id(book_type_name)
+                if author_ids != []:
+                    for author_id in author_ids:
+                        conditions.append("book_id IN (SELECT abBookID FROM author_books WHERE abAuthorID = ?)")
+                        params.append(author_id)
 
-                    if room_name:
-                        room = fetch_room_id(room_name)
+                if publisher:
+                    conditions.append("book_publisher LIKE ?")
+                    params.append("%" + publisher + "%")
 
+                if isbn:
+                    conditions.append("book_isbn LIKE ?")
+                    params.append("%" + isbn + "%")
 
-                    criteria = []
+                if edition:
+                    conditions.append("book_edition = ?")
+                    params.append(edition)
 
-                    if title:
-                        if title in book.title:
-                            criteria.append(True)
-                        else:
-                            print("not matching title")
-                            continue
+                if year:
+                    conditions.append("book_year = ?")
+                    params.append(year)
 
-                    if author_ids != []:
-                        containsAuthors = []
-                        for author_id in author_ids:
-                            if author_id in book.author_ids:
-                                containsAuthors.append(True)
-                            else: 
-                                containsAuthors.append(False)
-                            
-                        if (True in containsAuthors) and (False not in containsAuthors):
-                            criteria.append(True)
-                        else:
-                            print("not matching authors")
-                            continue
+                if book_type:
+                    cirteria.append("book_type = ?")
+                    params.append(book_type)
 
-                    if publisher:
-                        if publisher in book.publisher:
-                            criteria.append(True)
-                        else:
-                            print("not matching publisher")
-                            continue
+                if tags != ['']:
+                    for tag in tags:
+                        conditions.append("book_tags LIKE ?")
+                        params.append("%" + tag + "%")
 
-                    if isbn:
-                        if isbn in str(book.isbn):
-                            criteria.append(True)
-                        else:
-                            print("not matching isbn")
-                            continue
+                if room:
+                    conditions.append("book_room LIKE ?")
+                    params.append("%" + room + "%")
 
-                    if edition:
-                        if edition == book.edition:
-                            criteria.append(True)
-                        else:
-                            print("not matching edition")
-                            continue
+                if shelf:
+                    conditions.append("book_shelf LIKE ?")
+                    params.append("%" + shelf + "%")
 
-                    if year:
-                        if int(year) == book.year:
-                            criteria.append(True)
-                        else:
-                            print("not matching year")
-                            continue
+                if lend:
+                    conditions.append("book_lend = ?")
+                    params.append(lend)
 
-                    if book_type != None:
-                        if book_type == book.type:
-                            criteria.append(True)
-                        else:
-                            print("not matching book type")
-                            continue
+                if lend_to:
+                    conditions.append("lendTo LIKE ?")
+                    params.append(lend_to)
 
-                    if tags != ['']:
-                        containsTags = []
-                        for tag in tags:
-                            if tag in book.tags:
-                               containsTags.append(True)
-                            else:
-                                containsTags.append(False)
+                if language:
+                    conditions.append("book_language LIKE ?")
+                    params.append("%" + language + "%")
 
-                        if True in containsTags and False not in containsTags:
-                            criteria.append(True)
-                        else:
-                            print("not matching tags")
-                            continue
+                db, cur = prepare_db()
 
-                    if room != None:
-                        if room == book.room:
-                            criteria.append(True)
-                        else:
-                            print("not matching room")
-                            continue
+                if len(conditions) > 0:
+                    book_ids = [ row[0] for row in cur.execute("SELECT book_id FROM books WHERE " + "AND".join(conditions) + ";", tuple(params)).fetchall() ]
+                else:
+                    book_ids = fetch_book_ids()
 
-                    if shelf != "":
-                        if shelf in book.shelf:
-                            criteria.append(True)
-                        else:
-                            print("not matching shelf")
-                            continue
+                cur.close()
+                db.close()
 
-                    if lend != None:
-                        if lend == book.lend:
-                            criteria.append(True)
-                        else:
-                            print("not matching lend state")
-                            continue
-
-                    if lend_to != "":
-                        if lend_to in book.lend_to:
-                            criteria.append(True)
-                        else:
-                            print("not matching lend to")
-                            continue
-                    
-                    if (False not in criteria) and (True in criteria):
-                        self.resultBooks.append(BookWidget(self.resultBooksFrame, book.id))
-
+                for book_id in book_ids:
+                    self.resultBooks.append(BookWidget(self.resultBooksFrame, book_id))
+                
 
                 # Pack the book widgets
                 for bookWidget in self.resultBooks:
@@ -562,14 +520,12 @@ class SearchTab(Tab):
                     book_type.destroy()
                 self.resultTypes = []
 
-                self.all_types = fetch_book_types()
-                search_value = self.type_entry.get()
+                db, cur = prepare_db()
 
-                for book_type in self.all_types:
-                    if search_value:
-                        if search_value in book_type:
-                            id = fetch_book_type_id(book_type)
-                            self.resultTypes.append(TypeWidget(self.resultTypesFrame, id))
+                ids = [ row[0] for row in cur.execute("SELECT type_id FROM types WHERE type_name LIKE ?;", ("%" + self.type_entry.get() + "%",)).fetchall() ]
+
+                for id in ids:
+                    self.resultTypes.append(TypeWidget(self.resultTypesFrame, id))
 
                 for typeWidget in self.resultTypes:
                     typeWidget.pack(pady=20)
@@ -585,14 +541,12 @@ class SearchTab(Tab):
                     room.destroy()
                 self.resultTypes = []
 
-                self.all_rooms= fetch_rooms()
-                search_value = self.room_entry.get()
+                db, cur = prepare_db()
 
-                for room in self.all_rooms:
-                    if search_value:
-                        if search_value in room:
-                            id = fetch_room_id(room)
-                            self.resultRooms.append(RoomWidget(self.resultRoomsFrame, id))
+                ids = [ row[0] for row in cur.execute("SELECT room_id FROM rooms WHERE room_name LIKE ?;", ("%" + self.room_entry.get() + "%",)).fetchall() ]
+
+                for id in ids:
+                        self.resultRooms.append(RoomWidget(self.resultRoomsFrame, id))
 
                 for roomWidget in self.resultRooms:
                     roomWidget.pack(pady=20)
