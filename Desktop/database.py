@@ -793,14 +793,26 @@ def delete_room(room_id: int):
     return "OK"
 
 
-"""
-Main program loop
-Is executed when the module is run as a standalone python script
-Contains some information to be printed and is used for testing functions
-"""
-if __name__ == "__main__":
-    print("-------------------------------------------")
-    print("Executing file 'handle_db.py'")
-    print("This file is executed as the main process")
-    print("To start the webserver, please rub 'python app.py'!")
-    print("-------------------------------------------")
+def get_author_count():
+
+    db, cur = prepare_db()
+
+    count = cur.execute("SELECT COUNT(author_id) FROM authors;").fetchone()[0]
+
+    cur.close()
+    db.close()
+
+    return count
+
+
+def get_book_count():
+
+    db, cur = prepare_db()
+
+    count = cur.execute("SELECT COUNT(book_id) FROM books;").fetchone()[0]
+
+    cur.close()
+    db.close()
+
+    return count
+
