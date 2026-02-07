@@ -18,7 +18,6 @@ import app_context
 from database import Author, create_author, edit_author, fetch_author
 from tkinter import *
 from tkinter.messagebox import showerror
-from UI.Author.AuthorEditWidget import AuthorEditWidget
 
 
 class AuthorEditToplevel(Toplevel):
@@ -36,9 +35,9 @@ class AuthorEditToplevel(Toplevel):
         self.lastName = Entry(self, width=50)
 
         self.fnLabel.grid(row=0, column=0, padx=10, pady=10)
-        self.firstName.grid(row=0, column=1)
+        self.firstName.grid(row=0, column=1, padx=10)
         self.lnLabel.grid(row=1, column=0, padx=10, pady=10)
-        self.lastName.grid(row=1, column=1)
+        self.lastName.grid(row=1, column=1, padx=10)
 
         self.buttonFrame = Frame(self)
         self.buttonFrame.grid(row=3, column=0, columnspan=2, padx=20, pady=20)
