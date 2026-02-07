@@ -5,17 +5,24 @@ from database import *
 import sqlite3
 
 
+# Defines which database format versions each program version supports
+SUPPORTED_VERSIONS = \
+{
+    "1.2.0": ["1.2.0"]
+}
+
+
 def run_update(dbVersion, programVersion):
     if dbVersion == "1.1.2" and programVersion == "1.2.0":
         run_update_112_to_120()
 
 
 def run_update_112_to_120():
-    app_context.logger.info("Database updater for the Lerchbacher Buecherdatenbank")
+    app_context.logger.info("Database format conversion tool for the Lerchbacher Buecherdatenbank")
     app_context.logger.info("----------------------------------------------------")
     app_context.logger.info("Opening database connection...")
     db, cur = prepare_db()
-    app_context.logger.info("Done!")
+    app_context.logger.info("Success!")
     app_context.logger.info("Attempting to convert the database...")
 
     app_context.logger.debug("Creating tempomary authors table...")
@@ -98,7 +105,7 @@ def check_if_update_is_needed():
             dbVersion = cur.execute("SELECT version from dbVersion WHERE id=0;").fetchone()[0]
             app_context.logger.info("Database format version: " + dbVersion)
             app_context.logger.info("Program version: " + app_context.version)
-            if dbVersion == app_context.version:
+            if dbVersion in SUPPORTED_VERSIONS[app_context.version]:
                 app_context.logger.info("Database has a supported format")
             else:
                 app_context.logger.info("Database needs to be converted")

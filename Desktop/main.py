@@ -20,7 +20,7 @@
 import argparse
 import app_context
 from database import prepare_db
-import database_updater
+import format_conversion
 import logging
 from UI.App import App
 from PIL import Image
@@ -190,7 +190,7 @@ def init_files() -> None:
         logger.info("Existing database found!")
 
         # check for database format compatibility
-        database_updater.check_if_update_is_needed()
+        format_conversion.check_if_update_is_needed()
 
 
 def main() -> None:
