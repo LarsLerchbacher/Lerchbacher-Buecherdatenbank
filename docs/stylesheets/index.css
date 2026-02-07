@@ -118,6 +118,7 @@ a {
 	border-radius: 2.5rem;
 	padding-left: 0.25%;
 	padding-right: 0.25%;
+	transition: width 4s, height 4s;
 }
 
 a:hover {
@@ -125,5 +126,54 @@ a:hover {
 	background-color: #ff0000;
 	border-color: #00ff00;
 	border-color: #ff0000;
+	font-size: 1.1em;
+	line-height: 1.0em;
 }
+
+.centered {
+	display: flex;
+	justify-content: center;
+}
+
+.current {
+	background-color: #33cc33;
+	border-color: #33cc33;
+}
+
+.current:hover {
+	background-color: #00e600;
+	border-color: #00e600;
+}
+
+.version-link {
+	margin: 5%;
+	padding: 1%;
+}
+
+.old {
+	background-color: grey;
+	border-color: grey;
+	color: black;
+}
+
+.old:hover {
+	background-color: lightgrey;
+	border-color: lightgrey;
+	color: black;
+}
+
+.home-button {
+	font-size: 1.5rem;
+	padding: 0.6%;
+}
+
+.home-button:hover {
+	font-size: 2rem;
+	line-height: 2rem;
+}
+
+.spacing-left {
+	margin-left: 5%;
+}
+
 
