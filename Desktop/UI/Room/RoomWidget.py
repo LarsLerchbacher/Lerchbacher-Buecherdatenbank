@@ -44,9 +44,9 @@ class RoomWidget(Frame):
 
     def delete(self):
         room = fetch_room(self.id)
-        decision = messagebox.askquestion("Bestaetigen", f"Möchten Sie den Raum {room} wirklich löschen?\n\n" +
+        decision = messagebox.askquestion("Bestätigen", f"Möchten Sie den Raum {room} wirklich löschen?\n\n" +
                                           "Alle Bücher die diesen Raum in ihren Daten enthalten werden statdessen unbekannt anzeigen.\n\n" + 
-                                          "Diese Aktion kann NICHT rückgaengig gemacht werde!"\
+                                          "Diese Aktion kann NICHT rückgängig gemacht werden!"\
                                          )
         if decision == "yes":
             app_context.logger.info(f"Deleting room with id {self.id}...")

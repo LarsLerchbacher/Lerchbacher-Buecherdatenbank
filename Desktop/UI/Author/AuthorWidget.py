@@ -56,7 +56,7 @@ class AuthorWidget(Frame):
 
     def delete(self):
         author = fetch_author(self.id)
-        decision = messagebox.askquestion("Bestaetigen", f"Möchten Sie den Autor {author.getName()} wirklich löschen?\n Diese Aktion kann NICHT rueckgaengig gemacht werden!")
+        decision = messagebox.askquestion("Bestätigen", f"Möchten Sie den Autor {author.getName()} wirklich löschen?\n Diese Aktion kann NICHT rückgängig gemacht werden!")
         if decision == "yes":
             app_context.logger.info(f"Deleting author with id {self.id}...")
             delete_author(self.id)

@@ -175,7 +175,7 @@ class BookWidget(Frame):
 
     def delete_book(self):
         book = fetch_book(self.id)
-        decision = messagebox.askquestion("Bestaetigen", f"Moechten Sie das Buch {book.title} wirklich löschen?\n Diese Aktion kann NICHT rückgaengig gemacht werden!")
+        decision = messagebox.askquestion("Bestaetigen", f"Möchten Sie das Buch {book.title} wirklich löschen?\n Diese Aktion kann NICHT rückgängig gemacht werden!")
         if decision == "yes":
             app_context.logger.info(f"Deleting book with id {self.id}...")
             delete_book(self.id)

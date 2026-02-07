@@ -33,13 +33,13 @@ class OverviewTab(Tab):
         self.statsFrame = Frame(self.inner_frame)
         self.statsFrame.pack(padx=0, pady=10)
 
-        self.statsHeader = Label(self.statsFrame, text="Statistics", font="Arial 16 bold")
+        self.statsHeader = Label(self.statsFrame, text="Statistiken", font="Arial 16 bold")
         self.statsHeader.pack()
 
-        self.statsBooks = Label(self.statsFrame, text="Number of books: ")
+        self.statsBooks = Label(self.statsFrame, text="Anzahl an Büchern: ")
         self.statsBooks.pack()
 
-        self.statsAuthors = Label(self.statsFrame, text="Number of authors: ")
+        self.statsAuthors = Label(self.statsFrame, text="Anzahl an Autoren: ")
         self.statsAuthors.pack()
 
         self.recentBooks = RecentBooksWidget(self.inner_frame)
