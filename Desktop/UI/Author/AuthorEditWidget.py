@@ -15,7 +15,6 @@
 
 
 from tkinter import Checkbutton, Entry, Frame, IntVar, Label
-from UI.DateWidget import DateWidget
 
 
 class AuthorEditWidget(Frame):
