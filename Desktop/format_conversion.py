@@ -67,11 +67,11 @@ def run_update_112_to_120():
 
     db.commit()
 
-    app_context.logger("Transfering author-book data to author books intermediate table...")
-    books = fetch_books()
+    app_context.logger.debug("Transfering author-book data to author books intermediate table...")
+    books = cur.execute("SELECT book_id, author_ids FROM books;").fetchall()
     for book in books:
-        for authorID in book.author_ids:
-            cur.execute("INSERT INTO author_books(abAuthorID, abBookID) VALUES (?, ?);", (authorID,book.id)) 
+        for authorID in eval(book[1]):
+            cur.execute("INSERT INTO author_books(abAuthorID, abBookID) VALUES (?, ?);", (authorID,book[0])) 
     
     app_context.logger.debug("Deleting author_ids column from books table...")
     cur.execute("ALTER TABLE books DROP COLUMN author_ids;")
