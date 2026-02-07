@@ -42,11 +42,19 @@ class BookEditWidget(Frame):
         self.authors_label.grid(row=0, column=0)
         self.authors.grid(row=1, column=0, pady=20)
 
+        self.language_frame = Frame(self)
+        self.language_frame.pack(padx=20, pady=5)
+
+        self.language_label = Label(self.language_frame, text="Sprache: ")
+        self.language = Entry(self.language_frame, width=25)
+        self.language_label.grid(row=0, column=0)
+        self.language.grid(row=0, column=1)
+
         self.publisher_frame = Frame(self)
         self.publisher_frame.pack(padx=20, pady=5)
 
         self.publisher_label = Label(self.publisher_frame, text="Verlag: ")
-        self.publisher = Entry(self.publisher_frame, width=50)
+        self.publisher = Entry(self.publisher_frame, width=25)
         self.publisher_label.grid(row=0, column=0)
         self.publisher.grid(row=0, column=1, columnspan=3)
 
@@ -54,7 +62,7 @@ class BookEditWidget(Frame):
         self.isbn_frame.pack(padx=20, pady=5)
 
         self.isbn_label = Label(self.isbn_frame, text="  ISBN: ")
-        self.isbn = ISBNWidget(self.isbn_frame, width=50)
+        self.isbn = ISBNWidget(self.isbn_frame, width=25)
         self.isbn_label.grid(row=0, column=0)
         self.isbn.grid(row=0, column=1, columnspan=3)
 
@@ -87,7 +95,7 @@ class BookEditWidget(Frame):
         self.tags_frame.pack(padx=20, pady=5)
 
         self.tags_label = Label(self.tags_frame, text="Kategorien (durch ';' getrennt): ")
-        self.tags = Entry(self.tags_frame, width=50)
+        self.tags = Entry(self.tags_frame, width=25)
         self.tags_label.grid(row=0, column=0)
         self.tags.grid(row=0, column=1)
 

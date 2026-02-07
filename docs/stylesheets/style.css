@@ -104,15 +104,18 @@ img {
 	border: 2px solid #d9d9d9;
 	border-radius: 1rem;
 	text-decoration: none;
-	font-size: 32px;
+	font-size: 2rem;
 	padding-left: 0.75%;
 	padding-right: 0.75%;
 	padding-top: 0.5%;
+	transition: width 4s, height 4s;
 }
 
 .top:hover {
 	background-color:  #bfbfbf;
 	border-color:  #bfbfbf;
+	font-size: 2.5rem;
+	right: 0.8%;
 }
 
 a {
@@ -123,14 +126,16 @@ a {
 	border-radius: 2.5rem;
 	padding-left: 0.25%;
 	padding-right: 0.25%;
+	transition: width 4s, height 4s;
 }
 
 a:hover {
-	animation: button-grow 0.1s;
 	background-color: #00ff00;
 	background-color: #ff0000;
 	border-color: #00ff00;
 	border-color: #ff0000;
+	font-size: 1.1em;
+	line-height: 1.0em;
 }
 
 .centered {
@@ -166,8 +171,13 @@ a:hover {
 }
 
 .home-button {
-	font-size: 18pt;
+	font-size: 1.5rem;
 	padding: 0.6%;
+}
+
+.home-button:hover {
+	font-size: 2rem;
+	line-height: 2rem;
 }
 
 .spacing-left {

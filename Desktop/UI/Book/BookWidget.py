@@ -16,7 +16,7 @@
 
 import app_context
 from images import rescale_image, get_image
-from database import delete_book, fetch_author, fetch_book, fetch_room, fetch_book_type
+from database import delete_book, fetch_author, fetch_book, fetch_room, fetch_book_type, fetch_authors_for_book
 import PIL
 from PIL import ImageTk
 from tkinter import *
@@ -66,6 +66,9 @@ class BookWidget(Frame):
         self.shelf = Label(self.details, text = 'Regal: ')
         self.shelf.pack(pady = 5, padx = 50)
 
+        self.language = Label(self.details, text = 'Sprache: ')
+        self.language.pack(pady = 5, padx = 50)
+
         self.lend = Label(self.details, text = 'Verliehen: ')
         self.lend.pack(pady = 5, padx = 50)
 
@@ -94,15 +97,21 @@ class BookWidget(Frame):
     def update(self):
         book = fetch_book(self.id)
         self.title.config(text=book.title)
-        authors = [fetch_author(id) for id in book.author_ids] 
+        authors = fetch_authors_for_book(book.id)
         self.author.config(text="")
         if len(authors) > 1:
             while len(authors) > 2:
-                self.author.config(text = self.author["text"] + authors.pop().name)
+                app_context.logger.debug(f"Length of author list: {len(authors)}")
+                self.author.config(text = self.author["text"] + authors.pop().getName())
                 self.author.config(text = self.author["text"] + ", ")
-            self.author.config(text = self.author["text"] + authors.pop().name)
+            self.author.config(text = self.author["text"] + authors.pop().getName())
             self.author.config(text = self.author["text"] + " und ")
-        self.author.config(text = self.author["text"] + authors.pop().name)
+        if len(authors) >= 1:
+            self.author.config(text = self.author["text"] + authors.pop().getName())
+        else:
+            self.author.config(text = self.author["text"] + "Unbekannt")
+
+        self.language.config(text = "Sprache : " + book.language)
 
         image = get_image(book)
 
@@ -122,7 +131,7 @@ class BookWidget(Frame):
 
         self.year.config(text = f'Jahr: {book.year}')
 
-        self.type.config(text = f'Buchtyp: {fetch_book_type(book.type)}')
+        self.type.config(text = f'Buchtyp: {fetch_book_type(book.book_type)}')
 
         tag_string = ""
         tag_loop = book.tags
@@ -166,7 +175,7 @@ class BookWidget(Frame):
 
     def delete_book(self):
         book = fetch_book(self.id)
-        decision = messagebox.askquestion("Bestaetigen", f"Moechten Sie das Buch {book.title} wirklich löschen?\n Diese Aktion kann NICHT rückgaengig gemacht werden!")
+        decision = messagebox.askquestion("Bestaetigen", f"Möchten Sie das Buch {book.title} wirklich löschen?\n Diese Aktion kann NICHT rückgängig gemacht werden!")
         if decision == "yes":
             app_context.logger.info(f"Deleting book with id {self.id}...")
             delete_book(self.id)

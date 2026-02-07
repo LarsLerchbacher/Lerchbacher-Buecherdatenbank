@@ -15,7 +15,7 @@
 
 
 import app_context
-from database import Book, create_book, edit_book, fetch_authors, fetch_book, fetch_book_type, fetch_book_type_id, fetch_book_types, fetch_room, fetch_room_id, fetch_rooms
+from database import Book, create_book, edit_book, fetch_author, fetch_authors, fetch_authors_for_book, fetch_book, fetch_book_type, fetch_book_type_id, fetch_book_types, fetch_room, fetch_room_id, fetch_rooms
 from images import update_image
 from tkinter import *
 from tkinter import messagebox
@@ -66,7 +66,11 @@ class BookEditToplevel(Toplevel):
         self.edit.title.delete(0, END)
         self.edit.title.insert(0, book.title)
 
-        self.edit.authors.set(book.author_ids)
+        selected_ids = [ row.id for row in fetch_authors_for_book(self.id) ]
+        self.edit.authors.set(selected_ids)
+
+        self.edit.language.delete(0, END)
+        self.edit.language.insert(0, book.language)
 
         self.edit.publisher.delete(0, END)
         self.edit.publisher.insert(0, book.publisher)
@@ -85,7 +89,7 @@ class BookEditToplevel(Toplevel):
         self.all_types = fetch_book_types()
         self.edit.type_select.config(completevalues=self.all_types)
 
-        self.edit.type_select.set(fetch_book_type(book.type))
+        self.edit.type_select.set(fetch_book_type(book.book_type))
 
         self.edit.room.set(fetch_room(book.room))
 
@@ -104,56 +108,63 @@ class BookEditToplevel(Toplevel):
 
     def save(self):
         if not self.edit.check_is_filled():
+            app_context.logger.warning("Trying to save, but not all necesary fields are filled.")
             messagebox.showinfo(title="Pflichtfelder ausfuellen", message="Bitte fuellen Sie alle Felder die mit einem * markiert sind aus.")
         else:
-            # Code to save changes / create new book
-            app_context.logger.info("Saving book: ")
+            if self.id == -1:
+                app_context.logger.info("Creating new book...")
+            else:
+                # Code to save changes / create new book
+                app_context.logger.info(f"Saving book: {self.id}")
 
             title = self.edit.title.get()
-            app_context.logger.info(f"\tTitle: {title}")
+            app_context.logger.debug(f"\tTitle: {title}")
 
             author_ids = self.edit.authors.get()
             authors = []
-            all_authors = fetch_authors()
-            for author in fetch_authors():
-                if author.id in author_ids:
-                    authors.append(author.name)
-            app_context.logger.info(f"\tAutoren: {authors} (Ids: {author_ids})")
+            for id in author_ids:
+                author = fetch_author(id)
+                authors.append(author.getName())
+            app_context.logger.debug(f"\tAutoren: {authors} (Ids: {author_ids})")
+
+            language = self.edit.language.get()
+            app_context.logger.debug(f"\tSprache: {language}")
 
             publisher = self.edit.publisher.get()
-            app_context.logger.info(f"\tVerlag: {publisher}")
+            app_context.logger.debug(f"\tVerlag: {publisher}")
 
             isbn = self.edit.isbn.get()
-            app_context.logger.info(f"\tISBN: {isbn}")
+            app_context.logger.debug(f"\tISBN: {isbn}")
 
             edition = self.edit.edition.get()
-            app_context.logger.info(f"\tAuflage: {edition}")
+            app_context.logger.debug(f"\tAuflage: {edition}")
 
             year = self.edit.year.get()
-            app_context.logger.info(f"\tJahr: {year}")
+            app_context.logger.debug(f"\tJahr: {year}")
 
             book_type = self.edit.type_select.get()
             type_nr = fetch_book_type_id(book_type)
-            app_context.logger.info(f"\tBuchtyp: {book_type} (Typ Nr. {type_nr})")
+            app_context.logger.debug(f"\tBuchtyp: {book_type} (Typ Nr. {type_nr})")
 
             tags = self.edit.tags.get().replace("; ", ";").split(";")
-            app_context.logger.info(f"\tKategorien: {tags}")
+            app_context.logger.debug(f"\tKategorien: {tags}")
 
             book_room = self.edit.room.get()
             room_nr = fetch_room_id(book_room)
-            app_context.logger.info(f"\tRaum: {book_room} (Raum Nr. {room_nr})")
+            app_context.logger.debug(f"\tRaum: {book_room} (Raum Nr. {room_nr})")
 
             shelf = self.edit.shelf.get()
-            app_context.logger.info(f"\tRegal: {shelf}")
+            app_context.logger.debug(f"\tRegal: {shelf}")
 
             lend = self.edit.lend_var.get()
-            app_context.logger.info(f"\tVerliehen: {"ja" if lend else "nein"} (lend_var: {lend})")
+            lend_str = "ja" if lend else "nein"
+            app_context.logger.debug(f"\tVerliehen: {lend_str} (lend_var: {lend})")
 
             lend_to = self.edit.lend_to.get()
             if lend_to != "":
-                app_context.logger.info(f"\tVerliehen an: {lend_to}")
+                app_context.logger.debug(f"\tVerliehen an: {lend_to}")
 
-            book = Book(id=self.id, title=title, author_ids=author_ids, publisher=publisher, isbn=isbn, edition=edition, year=year, type=type_nr, tags=tags, room=room_nr, shelf=shelf, lend=lend, lend_to=lend_to)
+            book = Book(id=self.id, title=title, author_ids=author_ids, publisher=publisher, isbn=isbn, edition=edition, year=year, book_type=type_nr, tags=tags, room=room_nr, shelf=shelf, lend=lend, lend_to=lend_to, language=language)
 
             if self.id != -1:
                 response = edit_book(self.id, book)

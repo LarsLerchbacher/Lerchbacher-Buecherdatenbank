@@ -15,7 +15,8 @@
 
 
 import app_context
-from tkinter import Label, Button
+from database import get_author_count, get_book_count
+from tkinter import Label, Button, Frame
 from UI.Tab import Tab
 from UI.Book.RecentBooksWidget import RecentBooksWidget
 from UI.Author.RecentAuthorsWidget import RecentAuthorsWidget
@@ -28,6 +29,18 @@ class OverviewTab(Tab):
 
         self.header_label = Label(self.inner_frame, text='Lerchbacher Bücherdatenbank', font="Arial 25 bold")
         self.header_label.pack(padx=0, pady=10)
+
+        self.statsFrame = Frame(self.inner_frame)
+        self.statsFrame.pack(padx=0, pady=10)
+
+        self.statsHeader = Label(self.statsFrame, text="Statistiken", font="Arial 16 bold")
+        self.statsHeader.pack()
+
+        self.statsBooks = Label(self.statsFrame, text="Anzahl an Büchern: ")
+        self.statsBooks.pack()
+
+        self.statsAuthors = Label(self.statsFrame, text="Anzahl an Autoren: ")
+        self.statsAuthors.pack()
 
         self.recentBooks = RecentBooksWidget(self.inner_frame)
         self.recentBooks.pack(padx=0, pady=10)
@@ -43,9 +56,16 @@ class OverviewTab(Tab):
         self.label.pack()
         self.button.pack()
 
+        self.update()
+
     def update(self):
         self.recentBooks.update()
         self.recentAuthors.update()
+
+        numBooks = get_book_count()
+        numAuthors = get_author_count()
+        self.statsBooks.config(text=f"Anzahl an Büchern: {numBooks}")
+        self.statsAuthors.config(text=f"Anzahl an Autoren: {numAuthors}")
 
 
     def open_user_manual(self):
