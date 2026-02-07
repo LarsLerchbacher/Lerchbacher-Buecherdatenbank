@@ -14,9 +14,16 @@
 #
 
 
-from database import fetch_author_ids, fetch_authors, fetch_book_ids, fetch_books, fetch_book_type_id, fetch_book_types, fetch_book_type_ids, fetch_rooms, fetch_room_id, fetch_room_ids, prepare_db
+import app_context
+import csv
+from database import fetch_author, fetch_author_ids, fetch_authors, \
+    fetch_book, fetch_book_ids, fetch_books, \
+    fetch_book_type, fetch_book_type_id, fetch_book_types, fetch_book_type_ids, \
+    fetch_room, fetch_rooms, fetch_room_id, fetch_room_ids, \
+    prepare_db
 from datetime import date
 from tkinter import *
+from tkinter.filedialog import asksaveasfilename
 from UI.Author.AuthorWidget import AuthorWidget
 from UI.Book.BookWidget import BookWidget
 from UI.BookType.TypeWidget import TypeWidget
@@ -76,8 +83,12 @@ class SearchTab(Tab):
         #
         # The search button
         #
-        self.searchButton = Button(self.inner_frame, text="Suchen", command=self.search)
-        self.searchButton.pack(padx=0, pady=10)
+        self.buttonFrame = Frame(self.inner_frame)
+        self.buttonFrame.pack(padx=0, pady=10)
+        self.searchButton = Button(self.buttonFrame, text="Suchen", command=self.search)
+        self.searchButton.grid(row=0, column=0)
+        self.exportButton = Button(self.buttonFrame, text="Ergebnisse exportieren (CSV)", command=self.export, state=DISABLED)
+        self.exportButton.grid(row=0, column=1, padx=10)
 
 
         #
@@ -210,6 +221,8 @@ class SearchTab(Tab):
 
         self.filterBooks.update()
 
+        self.exportButton.config(state=DISABLED)
+
         # Then show the ones needed for the current selection
         match self.selectVar.get():
             case "1":
@@ -271,6 +284,9 @@ class SearchTab(Tab):
                 room.destroy()
         self.resultRooms = []
 
+        if self.selectVar.get() != "1":
+            self.exportButton.config(state=ACTIVE)
+
         match self.selectVar.get():
             case "1":
                 # Get the search value
@@ -304,6 +320,7 @@ class SearchTab(Tab):
                         if child.winfo_exists():
                             child.destroy()
                     room.destroy()
+
                 self.resultRooms = []
 
 
@@ -315,57 +332,52 @@ class SearchTab(Tab):
                 all_rooms = fetch_rooms()
                 all_room_ids = fetch_room_ids()
 
-                if search_value != "":
-                    # Search the books
-                    for book in all_books:
-                        if search_value in book.title:
-                            self.resultBooks.append(BookWidget(self.resultBooksFrame, book.id))
+                # Search the books
+                for book in all_books:
+                    if search_value in book.title:
+                        self.resultBooks.append(BookWidget(self.resultBooksFrame, book.id))
 
-                    # Display the found books
-                    for bookWidget in self.resultBooks:
-                        bookWidget.pack(pady=20)
-
-
-                    # Sound the authors
-                    for author in all_authors:
-                        if search_value in author.getName():
-                            self.resultAuthors.append(AuthorWidget(self.resultAuthorsFrame, author.id))
-
-                    # Display the found authors
-                    for authorWidget in self.resultAuthors:
-                        authorWidget.pack(pady=20)
-
-                    
-                    # Search the book types
-                    for index, book_type in enumerate(all_types):
-                        if search_value in book_type:
-                            id = fetch_book_type_id(book_type)
-                            self.resultTypes.append(TypeWidget(self.resultTypesFrame, id))
-
-                    # Display the found book types
-                    for typeWidget in self.resultTypes:
-                        typeWidget.pack(pady=20)
+                # Display the found books
+                for bookWidget in self.resultBooks:
+                    bookWidget.pack(pady=20)
 
 
-                    # Search the rooms
-                    for index, room in enumerate(all_rooms):
-                        if search_value in room:
-                            id = all_room_ids[index]
-                            self.resultRooms.append(RoomWidget(self.resultRoomsFrame, id))
+                # Sound the authors
+                for author in all_authors:
+                    if search_value in author.getName():
+                        self.resultAuthors.append(AuthorWidget(self.resultAuthorsFrame, author.id))
 
-                    # Display the found rooms
-                    for roomWidget in self.resultRooms:
-                        roomWidget.pack(pady=20)
+                # Display the found authors
+                for authorWidget in self.resultAuthors:
+                    authorWidget.pack(pady=20)
 
-                    # Show the results
-                    self.resultBooksFrame.pack(pady=10)
-                    self.resultAuthorsFrame.pack(pady=10)
-                    self.resultTypesFrame.pack(pady=10)
-                    self.resultRoomsFrame.pack(pady=10)
+                
+                # Search the book types
+                for index, book_type in enumerate(all_types):
+                    if search_value in book_type:
+                        id = fetch_book_type_id(book_type)
+                        self.resultTypes.append(TypeWidget(self.resultTypesFrame, id))
 
-                # If the search bar is empty, update the display
-                else:
-                    self.update()
+                # Display the found book types
+                for typeWidget in self.resultTypes:
+                    typeWidget.pack(pady=20)
+
+
+                # Search the rooms
+                for index, room in enumerate(all_rooms):
+                    if search_value in room:
+                        id = all_room_ids[index]
+                        self.resultRooms.append(RoomWidget(self.resultRoomsFrame, id))
+
+                # Display the found rooms
+                for roomWidget in self.resultRooms:
+                    roomWidget.pack(pady=20)
+
+                # Show the results
+                self.resultBooksFrame.pack(pady=10)
+                self.resultAuthorsFrame.pack(pady=10)
+                self.resultTypesFrame.pack(pady=10)
+                self.resultRoomsFrame.pack(pady=10)
 
             case "2":
                 # Searching for books
@@ -478,6 +490,7 @@ class SearchTab(Tab):
                 # Display the results
                 self.resultBooksFrame.pack(pady=10)
 
+            # Searching for authors
             case "3":
                 for author in self.resultAuthors:
                     for child in author.winfo_children():
@@ -512,6 +525,7 @@ class SearchTab(Tab):
 
                 self.resultAuthorsFrame.pack(pady=10)
 
+            # Searching for book types
             case "4":
                 for book_type in self.resultTypes:
                     for child in book_type.winfo_children():
@@ -532,7 +546,7 @@ class SearchTab(Tab):
 
                 self.resultTypesFrame.pack(pady=10)
 
-
+            # Searching for rooms
             case "5":
                 for room in self.resultRooms:
                     for child in room.winfo_children():
@@ -552,4 +566,69 @@ class SearchTab(Tab):
                     roomWidget.pack(pady=20)
 
                 self.resultRoomsFrame.pack(pady=10)
+
+
+    # Exports search results of detail searches (not general search) to a CSV file
+    def export(self):
+        app_context.logger.debug("Preparing data for CSV export")
+        match self.selectVar.get():
+            case "2":
+                data = [
+                        ["ID", "Titel", "Verlag", "ISBN", "Auflage", "Jahr", "Typ", "Kategorien",
+                         "Raum", "Regal", "Verliehen", "Verliehen an","Sprache"]
+                ]
+
+                for bookWidget in self.resultBooks:
+                    book = fetch_book(bookWidget.id)
+                    book_data = str(book).split(",, ")
+                    book_data[2] = ", ".join(eval(book_data[2]))
+                    book_data[8] = ", ".join(eval(book_data[8]))
+                    book_data[7] = fetch_room(book_data[7])
+                    book_data[9] = fetch_book_type(book_data[9])
+                    book_data[11] = "Ja" if book_data[11] == "1" else "Nein"
+                    data.append(book_data)
+
+            case "3":
+                data = [["ID", "Vorname", "Nachname"]]
+
+                for authorWidget in self.resultAuthors:
+                    author = fetch_author(authorWidget.id)
+                    author_data = str(author).split(",, ")
+                    data.append(author_data)
+
+            case "4":
+                data = [["ID", "Name"]]
+
+                db, cur = prepare_db()
+
+                for typeWidget in self.resultTypes:
+                    type_data = cur.execute("SELECT * FROM types WHERE type_id = ?;", (typeWidget.id,)).fetchall()[0]
+                    data.append(type_data)
+
+                cur.close()
+                db.close()
+
+            case "5":
+                data = [["ID", "Name"]]
+
+                db, cur = prepare_db()
+
+                for roomWidget in self.resultRooms:
+                    room_data = cur.execute("SELECT * FROM rooms WHERE room_id = ?;", (roomWidget.id,)).fetchall()[0]
+                    data.append(room_data)
+
+                cur.close()
+                db.close()
+
+        if self.selectVar.get() != "1":
+            filename = asksaveasfilename(filetypes=[("CSV Liste", "*.csv"), ("Textdatei", "*.txt")])
+            if filename:
+                with open(filename, mode="w", newline="") as file:
+                    app_context.logger.info("Exporting search results to '" + filename + "'")
+                    writer = csv.writer(file)
+                    writer.writerows(data)
+
+
+
+
 

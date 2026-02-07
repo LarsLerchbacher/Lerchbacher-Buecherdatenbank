@@ -80,8 +80,8 @@ class Book:
         self.lend_to = lend_to
 
     def __str__(self):
-        authors = [fetch_author(id).name for id in self.author_ids]
-        return f"{self.id} {self.title} {authors} {self.publisher} {self.isbn} {self.edition} {self.year} {self.book_type} {self.tags} {self.room} {self.shelf} {self.lend} {self.lend_to} {self.language}"
+        authors = [fetch_author(id).getName() for id in self.author_ids]
+        return f"{self.id},, {self.title},, {authors},, {self.publisher},, {self.isbn},, {self.edition},, {self.year},, {self.book_type},, {self.tags},, {self.room},, {self.shelf},, {self.lend},, {self.lend_to},, {self.language}"
 
 
 class Author:
@@ -101,7 +101,7 @@ class Author:
         self.lastName = lastName
 
     def __str__(self) -> str:
-        return f"{self.firstName} {self.lastName} {self.id} {self.firstName} {self.lastName}"
+        return f"{self.id},, {self.firstName},, {self.lastName}"
 
     def getName(self) -> str:
         return self.firstName + " " + self.lastName
