@@ -29,8 +29,8 @@ class AuthorEditToplevel(Toplevel):
         else:
             app_context.logger.info("Opening empty author editing dialog")
         
-        self.fnLabel = Label(self, text="First name: ")
-        self.lnLabel = Label(self, text="Last name: ")
+        self.fnLabel = Label(self, text="Vorname: ")
+        self.lnLabel = Label(self, text="Nachname: ")
         self.firstName = Entry(self, width=50)
         self.lastName = Entry(self, width=50)
 
