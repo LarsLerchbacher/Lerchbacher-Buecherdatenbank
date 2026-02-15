@@ -81,7 +81,7 @@ def run_update_112_to_120():
     cur.execute("UPDATE books SET book_language = 'Unbekannt';")
 
     app_context.logger.debug("Creating database version table...")
-    cur.execute("CREATE Table dbVersion (id INTEGER PRIMARY KEY, Version VARCHAR);")
+    cur.execute("CREATE Table dbVersion (id INTEGER PRIMARY KEY, version VARCHAR);")
 
     db.commit()
 

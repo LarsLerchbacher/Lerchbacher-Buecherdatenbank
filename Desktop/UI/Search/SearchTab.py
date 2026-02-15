@@ -574,7 +574,7 @@ class SearchTab(Tab):
         match self.selectVar.get():
             case "2":
                 data = [
-                        ["ID", "Titel", "Verlag", "ISBN", "Auflage", "Jahr", "Typ", "Kategorien",
+                        ["ID", "Titel", "Autoren", "Verlag", "ISBN", "Auflage", "Jahr", "Typ", "Stichwörter",
                          "Raum", "Regal", "Verliehen", "Verliehen an","Sprache"]
                 ]
 
@@ -583,8 +583,8 @@ class SearchTab(Tab):
                     book_data = str(book).split(",, ")
                     book_data[2] = ", ".join(eval(book_data[2]))
                     book_data[8] = ", ".join(eval(book_data[8]))
-                    book_data[7] = fetch_room(book_data[7])
-                    book_data[9] = fetch_book_type(book_data[9])
+                    book_data[9] = fetch_room(book_data[9])
+                    book_data[7] = fetch_book_type(book_data[7])
                     book_data[11] = "Ja" if book_data[11] == "1" else "Nein"
                     data.append(book_data)
 

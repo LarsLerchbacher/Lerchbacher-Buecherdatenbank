@@ -94,7 +94,7 @@ class BookEditWidget(Frame):
         self.tags_frame = Frame(self)
         self.tags_frame.pack(padx=20, pady=5)
 
-        self.tags_label = Label(self.tags_frame, text="Kategorien (durch ';' getrennt): ")
+        self.tags_label = Label(self.tags_frame, text="Stichwörter (durch ';' getrennt): ")
         self.tags = Entry(self.tags_frame, width=25)
         self.tags_label.grid(row=0, column=0)
         self.tags.grid(row=0, column=1)
