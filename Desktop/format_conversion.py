@@ -8,7 +8,8 @@ import sqlite3
 # Defines which database format versions each program version supports
 SUPPORTED_VERSIONS = \
 {
-    "1.2.0": ["1.2.0"]
+    "1.2.0": ["1.2.0"],
+    "1.2.1": ["1.2.0", "1.2.1"]
 }
 
 
