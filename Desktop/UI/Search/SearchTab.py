@@ -105,11 +105,11 @@ class SearchTab(Tab):
         # The filters for searching authors
         #
         self.filterAuthors = Frame(self.filterFrame)
-        self.fn_label = Label(self.filterAuthors, text="First name: ")
+        self.fn_label = Label(self.filterAuthors, text="Vorname: ")
         self.fn_entry = Entry(self.filterAuthors, width=30)
         self.fn_label.grid(row=0, column=0, padx=10, pady=10)
         self.fn_entry.grid(row=0, column=1, padx=10)        
-        self.ln_label = Label(self.filterAuthors, text="Last name: ")
+        self.ln_label = Label(self.filterAuthors, text="Nachname: ")
         self.ln_entry = Entry(self.filterAuthors, width=30)
         self.ln_label.grid(row=1, column=0, padx=10, pady=10)
         self.ln_entry.grid(row=1, column=1, padx=10)
