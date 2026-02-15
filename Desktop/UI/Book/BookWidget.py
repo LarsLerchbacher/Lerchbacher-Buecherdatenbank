@@ -57,7 +57,7 @@ class BookWidget(Frame):
         self.type = Label(self.details, text = 'Buchtyp: ')
         self.type.pack(pady = 5, padx = 50)
 
-        self.tags = Label(self.details, text = 'Kategorie(n): ')
+        self.tags = Label(self.details, text = 'Stichwörter: ')
         self.tags.pack(pady = 5, padx = 50)
 
         self.room = Label(self.details, text = 'Raum: ')
@@ -138,7 +138,7 @@ class BookWidget(Frame):
         while len(tag_loop) > 1:
             tag_string += f" {tag_loop.pop()};"
         tag_string += f" {tag_loop.pop()}"
-        self.tags.config(text = f'Kategorie(n): {tag_string}')
+        self.tags.config(text = f'Stichwörter: {tag_string}')
 
         self.room.config(text = f'Raum: {fetch_room(book.room)}')
 
