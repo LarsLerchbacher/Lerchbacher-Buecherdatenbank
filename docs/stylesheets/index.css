@@ -55,70 +55,15 @@ li {
 	margin-top: 0.5%;
 }
 
-code {
-	font-family: monospace;
-	color: #2c2c2c;
-	background-color: #f4f4f4;
-	padding-left: 5px;
-	padding-right: 5px;
-	padding-top: 2px;
-	padding-bottom: 2px;
-}
-
-.ul-code > li {
-	margin-top: 10px;
-	margin-bottom: 10px;
-}
-
-.code-display {
-	width: auto;
-	font-family: monospace;
-	color: #2c2c2c;
-	background-color: #f4f4f4;
-	padding-left: 1%;
-	padding-right: 1%;
-	padding-top: 1%;
-	padding-bottom: 1%;
-	margin-left: 40%;
-	margin-right: 40%;
-}
-
-img {
-	width: 90%;
-	margin-left: 5%;
-}
-
-.top {
-	display: block;
-	position: fixed;
-	bottom: 1%;
-	right: 1%;
-	z-index: 99;
-	color: black;
-	background-color: #d9d9d9;
-	border: 2px solid #d9d9d9;
-	border-radius: 1rem;
-	text-decoration: none;
-	font-size: 32px;
-	padding-left: 0.75%;
-	padding-right: 0.75%;
-	padding-top: 0.5%;
-}
-
-.top:hover {
-	background-color:  #bfbfbf;
-	border-color:  #bfbfbf;
-}
-
 a {
+	display: inline-block;
 	text-decoration: none;
 	color: white;
 	background-color: #cc0000;
 	border: 2px solid #cc0000;
+	padding: 2%;
 	border-radius: 2.5rem;
-	padding-left: 0.25%;
-	padding-right: 0.25%;
-	transition: width 4s, height 4s;
+	transition: all 0.5s;
 }
 
 a:hover {
@@ -126,13 +71,13 @@ a:hover {
 	background-color: #ff0000;
 	border-color: #00ff00;
 	border-color: #ff0000;
-	font-size: 1.1em;
-	line-height: 1.0em;
+	transform: scale(1.2);
 }
 
 .centered {
 	display: flex;
 	justify-content: center;
+	flex-wrap: wrap;
 }
 
 .current {
@@ -160,16 +105,6 @@ a:hover {
 	background-color: lightgrey;
 	border-color: lightgrey;
 	color: black;
-}
-
-.home-button {
-	font-size: 1.5rem;
-	padding: 0.6%;
-}
-
-.home-button:hover {
-	font-size: 2rem;
-	line-height: 2rem;
 }
 
 .spacing-left {
