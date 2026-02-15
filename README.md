@@ -1,9 +1,13 @@
 
 Lerchbacher Bücherdatenbank
 ============================
+![Sprache: Python](https://img.shields.io/badge/Sprache-Python-blue)
+![UI Bibliothek: Tkinter](https://img.shields.io/badge/UI_Bibliothek-Tkinter-lightgrey)
+![Datenbanksystem: SQLite3](https://img.shields.io/badge/Datenbanksystem-SQLite3-lightblue)
+![Codezeilen: Über 2000](https://img.shields.io/badge/Zeilen_Code-%C3%9Cber_2000-green)
 
 ## Über dieses Projekt
-Dies ist ein Bücherverwaltungssystem, welche in zwei grosse Teile aufgespalten ist: die Desktop Applikation und die Website.
+Dies ist ein Bücherverwaltungssystem, welche in zwei große Teile aufgespalten ist: die Desktop Applikation und die Website.
 
 Ich mache dieses Projekt hauptsächlich für meine Familie, allerdings werde ich dieses Repo veröffentlichen, um es anderen Menschen zugänglich zu machen.
 Feature-Requests werden nur von meiner Familie und Freunden akzeptiert. 
@@ -12,21 +16,21 @@ Feature-Requests werden nur von meiner Familie und Freunden akzeptiert.
 Ein öffentlicher Release als kompilierte Version (.exe Datei) ist nicht möglich, da das Projekt in seiner Abhängigkeitskette einige Packages/Module/Bibliotheken unter nicht mit der AGPL kompatiblen Linzenzen hat. Beim kompilieren würden diese miteingebaut werden. Da ich diese aber nicht verteilen darf, muss ich leider darauf verzichten.
 
 
-Ausser Fehlerbehebungen werden wahrscheinlich kaum Updates veröffentlicht werden, da ich auch an anderen Projekten arbeite, und das auch nur in meiner Freizeit.
+Ausser Fehlerbehebungen werden wahrscheinlich kaum Updates veröffentlicht werden (dachte ich zumindest, meine Familie hat sich bisher eine MENGE Änderungen gewünscht), da ich auch an anderen Projekten arbeite, und das auch nur in meiner Freizeit.
 
-Alle Fehler oder mögliche Sicherheitslücken können über Github Issues gemeldet werden, wofür ich sehr dankbar wäre wenn diese gemeldet werden.
+Alle Fehler oder mögliche Sicherheitslücken können über Github Issues gemeldet werden, wofür ich sehr dankbar wäre.
 
 Es ist auch möglich, dass dieses Projekt umschriebene Umlaute (ae, ue, oe) enthält, da ich normalerweise das US Tastaturlayout benutze und nicht immer zum deutschen wechseln kann und will.
 
 
 **Bitte seid so nett und ignoriert meinen fürchterlichen Code-Stil in diesem Projekt. Einige Teile sind schon sehr alt. Damals wusste ich noch nichts über
-die Konventionen für sauberen Code... Ich habe versucht, den Code vor dem Release möglichst gut auszubessern und besser zu strukturieren (nur Desktop Version).**
+die Konventionen für sauberen Code... Ich versuche immer wieder, Code-Teile auszubessern, wenn mir diese besonders stark aufallen (etwa SQL Statements mit f-Strings anstellen von prepared statements).**
 
 
 ### Die Desktop Applikation
 Die Desktop Applikation ist der Kern des Systems, mit seiner Hilfe werden Bücher und Autoren verwaltet. Sie beinhaltet ebenfalls eine Suchfunktion.
 
-Alle Aenderungen werden automatisch nach dem abschliessen der Aktion (Erstellen, Bearbeiten, Löschen) gespeichert.
+Alle Änderungen werden automatisch nach dem abschliessen der Aktion (Erstellen, Bearbeiten, Löschen) gespeichert.
 
 Die Desktop Applikation kann für Einzelanwender ohne die Website Version oder einen Server genutzt werden, da die Datenbank nur eine lokale Datei ist. Bei mehreren
 Nutzern empfiehlt es sich, die Applikation samt Dateien und Ordnern in einen Netzwerk-/Cloudordner zu verschieben, da die Datenbank somit für alle Nutzer synchron bleibt.
@@ -44,16 +48,15 @@ Die Website enthält KEINE Möglichkeiten zur Erstellung, Bearbeitung oder Lösc
 
 
 ## Lizenz
-Dieses Projekt und alle enthaltenen Dateien werden unter der GNU AGPL-v3 zur Verfügung gestellt.
+Dieses Projekt und alle enthaltenen Dateien, ausgenommen der Dateien im docs Verzeichnis und allen seinen Subverzeichnissen, werden unter der GNU AGPL-v3 zur Verfügung gestellt.
 Genauere Infos finden sich an den Anfängen der Quellcode-Dateien und ebenfalls in der LICENSE Datei.
+
+Die Dokumentation, inklusive aller HTML, CSS und Javascript Dateien im docs Verzeichnis und allen seinen Subverzeichissen, wird unter der
+Creative Commons Attribution-NonCommercial 4.0 International License (CC BY-NC 4.0) zur Verfügung gestellt.
 
 
 ## Organisation
-Ja, ich weiss. Dieses Repo ist nicht sehr gut organisiert. Ich habe nur einen einzigen Branch für alle Commits (inzwischen auch eine für Releases).
+Ja, dieses Repo ist leider nicht sehr gut organisiert. Ich versuche es zu verbessern, aber es ist inzwischen sehr groß geworden.
+Ich weiß nicht wieso, aber ich habe zuerst gelernt, Pull-Requests zu verwenden und erst später, wie man Merges mit der git CLI macht. Ich werde ab Version 1.2.1 wahrscheinlich auf letzteres umsteigen.
 
-Das hat den Grund, dass dies eines der ersten meiner Git Repos überhaupt ist. Inzwischen habe ich auch gelernt, wie man Branches und PRs verwendet.
-
-Dieses Repo umzustrukturieren wäre allerdings sehr aufwendig gewesen, und das Verschieben von Commits in andere Branches führt bei mir meistens immer noch zu Chaos. Daher werde ich es einfach so 
-weiterführen wie bisher.
-
-Und bitte ignoriert meinen fürchterlichen Commit Stil in den Anfängen des Projekts. Die (meisten) Infos zu den Aenderungen dieser Commits finden sich in der Datei Changelog.md, welche nur in älteren Versionen existiert.
+Und bitte ignoriert meinen fürchterlichen Commit Stil in den Anfängen des Projekts. Dieses Repo ist eines meiner ersten überhaupt. Damals wusste ich nicht wirklich, wie man Commits beyeichnen soll. Die (meisten) Infos zu den Änderungen dieser Commits finden sich in der Datei Changelog.md, welche nur in älteren Versionen existiert.
