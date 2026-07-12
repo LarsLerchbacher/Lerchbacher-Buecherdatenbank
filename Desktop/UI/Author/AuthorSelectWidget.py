@@ -14,7 +14,7 @@
 #
 
 
-from database import fetch_author, fetch_author_by_name, fetch_authors
+from database import fetch_author, fetch_author_by_name, fetch_authors, search_authors 
 from tkinter import *
 
 
@@ -123,9 +123,8 @@ class AuthorSelectWidget(Frame):
 
     def search(self, *args):
         self.available_list.delete(0, END)
-        self.authors = fetch_authors()
+        self.authors = search_authors(self.searchVar.get())
 
         for author in self.authors:
-            if self.searchVar.get() in author.name:
-                self.available_list.insert(END, author.getName())
+            self.available_list.insert(END, author.getName())
 
