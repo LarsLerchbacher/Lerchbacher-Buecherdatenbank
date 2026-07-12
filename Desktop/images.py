@@ -49,24 +49,31 @@ def download_cover(book):
     """Function that downloads the cover of a book if available"""
     app_context.logger.info("Downloading cover...")
     try:
-        response = requests.get(f"https://covers.openlibrary.org/b/isbn/{book.isbn}-L.jpg")
+        url_target = f"https://www.googleapis.com/books/v1/volumes?q=isbn:{book.isbn}" 
+        app_context.logger.debug(f"Requesting cover URL from : {url_target}")
+        response = requests.get(url_target)
+        cover_url = response.json()["items"][0]["volumeInfo"]["imageLinks"]["thumbnail"]
+        app_context.logger.debug(f"Cover available at: {cover_url}")
+        cover = requests.get(cover_url)
+
 
         # If the request got redirected (cover did exist)
-        if len(response.history) > 1:
-            file = open(f"./img/{book.id}.jpg", mode="wb+")
-            file.write(response.content)
-            file.close()
-            app_context.logger.info("Successfully downloaded cover!")
-            app_context.mainWindow.update()
+        #if len(response.history) > 1:
+        file = open(f"./img/{book.id}.jpg", mode="wb+")
+        file.write(cover.content)
+        file.close()
+        app_context.logger.info("Successfully downloaded cover!")
+        app_context.mainWindow.update()
 
         # Cover did not exist
-        else:
-            app_context.logger.info("Could not download cover (does not exist)")
+        #else:
+        #    app_context.logger.info("Could not download cover (does not exist)")
 
     # An error occured
     except Exception as e:
-        app_context.logger.info("Could not download cover")
-        app_context.logger.error(e)
+        if str(e) == "'imageLinks'":
+            e = "no cover link found"
+        app_context.logger.error(f"Could not download cover: {e}")
 
 
 def get_image(book):
