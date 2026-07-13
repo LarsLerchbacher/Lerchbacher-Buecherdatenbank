@@ -71,8 +71,8 @@ class App(CTk):
         
     def on_configure(self, event):
         self.update_idletasks()
-        for child in widget.winfo_children():
-            force_redraw(child)
+        for child in self.winfo_children():
+            child.update()
 
     def refresh(self):
         self.overviewTab.refresh()

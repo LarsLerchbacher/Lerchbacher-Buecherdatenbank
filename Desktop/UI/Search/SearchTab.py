@@ -619,7 +619,7 @@ class SearchTab(Tab):
                 db.close()
 
         if self.selectVar.get() != "1":
-            filename = asksaveasfilename(style='Mini', title="Select file for CSV export")
+            filename = asksaveasfilename(style='Mini', title="Datei für den CSV Exportauswählen")
             if filename:
                 with open(filename, mode="w", newline="") as file:
                     app_context.logger.info("Exporting search results to '" + filename + "'")
