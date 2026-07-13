@@ -160,6 +160,39 @@ def fetch_authors() -> list[Author]:
     return authors
 
 
+def search_authors(string: str) -> list[Author]:
+    """
+    ### Function fetch_authors
+
+    **Use:** Gets all authors that contain the given str
+
+    **Returns:** A list of all authors stored in the database file
+
+    **Parameters:**
+    - string: the string to search for
+    """
+
+    # The db connections is initialized
+    db, cur = prepare_db()
+
+    # Fetches all the author from the db
+    authors = cur.execute("SELECT * FROM authors WHERE firstName LIKE ? OR lastName LIKE ? ORDER BY lastName ASC;", (f"%{string}%", f"%{string}%")).fetchall()
+
+    # Closes the cursor
+    cur.close()
+
+    # Closes the db connection
+    db.close()
+
+    # Loops through all authors in the authors list
+    for index in range(0, len(authors)):
+        author = authors[index]
+        # Updates the list element at the current index to a new Author object with all the data filled in
+        authors[index] = Author(id=author[0], firstName=author[1], lastName=author[2])
+    # Returns the fetched and converted authors
+    return authors
+
+
 def delete_author(id) -> bool:
     """
     ### Function delete_author
