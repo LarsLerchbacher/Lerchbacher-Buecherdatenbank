@@ -31,7 +31,7 @@ from UI.Room.RoomWidget import RoomWidget
 from UI.Tab import Tab
 from UI.Search.SearchFilterAll import SearchFilterAll
 from UI.Search.SearchFilterBooks import SearchFilterBooks
-from CTkFileDialog import asksaveasfilename 
+from tkinter.filedialog import asksaveasfilename 
 
 
 class SearchTab(Tab):
@@ -619,7 +619,7 @@ class SearchTab(Tab):
                 db.close()
 
         if self.selectVar.get() != "1":
-            filename = asksaveasfilename(style='Mini', title="Datei für den CSV Exportauswählen")
+            filename = asksaveasfilename(title="Datei für den CSV Exportauswählen", filetypes=[("CSV Liste", "*.csv"), ("Alle Dateien", "*.*")])
             if filename:
                 with open(filename, mode="w", newline="") as file:
                     app_context.logger.info("Exporting search results to '" + filename + "'")

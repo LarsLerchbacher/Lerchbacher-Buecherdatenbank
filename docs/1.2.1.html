@@ -1,114 +1,104 @@
 <!DOCTYPE html>
-
 <html lang="de">
-
-	<head>
-	
-		<title>Version 1.2.1 - Benutzerhandbuch der Lerchbacher Bücherdatenbank</title>
-		<meta charset="UTF-8">
-		<link rel="stylesheet" href="stylesheets/style.css">
-		<link rel="stylesheet" href="stylesheets/table-of-contents.css">
-	
-	</head>
-	
-	<body>
-		<script src="scripts/scrolling.js"></script>
-	
-		<h1 id="top">Benutzerhandbuch der Lerchbacher Bücherdatenbank Version 1.2.1</h1>
-
-		<a class="home-button" href="index.html">Home</a>
-		
-		<br>
-		
-		<h2>Inhaltsübersicht</h2>
-		
-		<div class="toc">
-			<ol>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lerchbacher Bücherdatenbank - Version 1.2.1</title>
+    <link rel="stylesheet" href="stylesheets/index.css">
+    <link rel="stylesheet" href="stylesheets/table-of-contents.css">
+</head>
+<body>
+    <header>
+        <h1>Lerchbacher Bücherdatenbank - Version 1.2.1</h1>
+    </header>
+    <main>
+        <a href="index.html" class="home-link">Zurück zur Übersicht</a>
+        <h2>Inhaltsübersicht</h2>
+        <div class="toc">
+            <ol>
 				<li>
-					<button onclick="scrollToElement('general')">Allgemein</button>
+					<a href="#general">Allgemein</a>
 					<ol>
-						<li><button onclick="scrollToElement('changes')">Änderungen zur Vorgängerversion</button></li>
+						<li><a href="#changes">Änderungen zur Vorgängerversion</a></li>
 					</ol>
 				</li>
 				<li>
-					<button onclick="scrollToElement('installation')">Installation</button>
+					<a href="#installation">Installation</a>
 					<ol>
-						<li><button onclick="scrollToElement('dependencies')">Abhängigkeiten</button></li>
-						<li><button onclick="scrollToElement('installation-steps')">Installationsschritte</button></li>
+						<li><a href="#dependencies">Abhängigkeiten</a></li>
+						<li><a href="#installation-steps">Installationsschritte</a></li>
 						<li>
-							<button onclick="scrollToElement('add-start-method')">Startmöglichkeit hinzufügen</button>
+							<a href="#add-start-method">Startmöglichkeit hinzufügen</a>
 							<ol>
-								<li><button onclick="scrollToElement('windows')">Windows</button></li>
-								<li><button onclick="scrollToElement('linux')">Linux</button></li>
+								<li><a href="#windows">Windows</a></li>
+								<li><a href="#linux">Linux</a></li>
 							</ol>
 						</li>
 						
 					</ol>
 				</li>
-				<li><button onclick="scrollToElement('overview')">Übersicht</button></li>
+				<li><a href="#overview">Übersicht</a></li>
 				<li>
-					<button onclick="scrollToElement('books')">Bücher</button>
+					<a href="#books">Bücher</a>
 					<ol>
 						<li>
-							<button onclick="scrollToElement('book-edit')">Bearbeitungs-Dialog</button>
+							<a href="#book-edit">Bearbeitungs-Dialog</a>
 							<ol>
-								<li><button onclick="scrollToElement('book-edit-title')">Titel</button></li>
-								<li><button onclick="scrollToElement('book-edit-authors')">Autoren</button></li>
-								<li><button onclick="scrollToElement('book-edit-language')">Sprache</button></li>
-								<li><button onclick="scrollToElement('book-edit-publisher')">Verlag</button></li>
-								<li><button onclick="scrollToElement('book-edit-isbn')">ISBN</button></li>
-								<li><button onclick="scrollToElement('book-edit-edition')">Auflage</button></li>
-								<li><button onclick="scrollToElement('book-edit-type')">Typ</button></li>
-								<li><button onclick="scrollToElement('book-edit-tags')">Kategorien</button></li>
-								<li><button onclick="scrollToElement('book-edit-room')">Raum</button></li>
-								<li><button onclick="scrollToElement('book-edit-lend')">Verliehen</button></li>
-								<li><button onclick="scrollToElement('book-edit-lend-to')">Verliehen an</button></li>
-								<li><button onclick="scrollToElement('book-edit-buttons')">Knöpfe</button></li>
+								<li><a href="#book-edit-title">Titel</a></li>
+								<li><a href="#book-edit-authors">Autoren</a></li>
+								<li><a href="#book-edit-language">Sprache</a></li>
+								<li><a href="#book-edit-publisher">Verlag</a></li>
+								<li><a href="#book-edit-isbn">ISBN</a></li>
+								<li><a href="#book-edit-edition">Auflage</a></li>
+								<li><a href="#book-edit-type">Typ</a></li>
+								<li><a href="#book-edit-tags">Kategorien</a></li>
+								<li><a href="#book-edit-room">Raum</a></li>
+								<li><a href="#book-edit-lend">Verliehen</a></li>
+								<li><a href="#book-edit-lend-to">Verliehen an</a></li>
+								<li><a href="#book-edit-buttons">Knöpfe</a></li>
 							</ol>
 						</li>
 					</ol>
 				</li>
 				<li>
-					<button onclick="scrollToElement('authors')">Autoren</button>
+					<a href="#authors">Autoren</a>
 					<ol>
 						<li>
-							<button onclick="scrollToElement('author-edit')">Bearbeitungs-Dialog</button>
+							<a href="#author-edit">Bearbeitungs-Dialog</a>
 							<ol>
-								<li><button onclick="scrollToElement('author-edit-first-name')">Vorname</button></li>
-								<li><button onclick="scrollToElement('author-edit-last-name')">Nachname</button></li>
-								<li><button onclick="scrollToElement('author-edit-buttons')">Knöpfe</button></li>
+								<li><a href="#author-edit-first-name">Vorname</a></li>
+								<li><a href="#author-edit-last-name">Nachname</a></li>
+								<li><a href="#author-edit-buttons">Knöpfe</a></li>
 							</ol>
 						</li>	
 					</ol>
 				</li>
 				<li>
-					<button onclick="scrollToElement('book-types')">Buchtypen</button>
+					<a href="#book-types">Buchtypen</a>
 					<ol>
-						<li><button onclick="scrollToElement('type-edit')">Bearbeitungs-Dialog</button></li>
+						<li><a href="#type-edit">Bearbeitungs-Dialog</a></li>
 					</ol>
 				</li>
 				<li>
-					<button onclick="scrollToElement('rooms')">Räume</button>
+					<a href="#rooms">Räume</a>
 					<ol>
-						<li><button onclick="scrollToElement('room-edit')">Bearbeitungs-Dialog</button></li>
+						<li><a href="#room-edit">Bearbeitungs-Dialog</a></li>
 					</ol>
 				</li>
 				<li>
-					<button onclick="scrollToElement('search')">Suche</button>
+					<a href="#search">Suche</a>
 					<ol>
-						<li><button onclick="scrollToElement('search-general')">Alle</button></li>
-						<li><button onclick="scrollToElement('search-books')">Bücher</button></li>
-						<li><button onclick="scrollToElement('search-authors')">Autoren</button></li>
-						<li><button onclick="scrollToElement('search-book-types')">Buchtypen</button></li>
-						<li><button onclick="scrollToElement('search-rooms')">Räume</button></li>
+						<li><a href="#search-general">Alle</a></li>
+						<li><a href="#search-books">Bücher</a></li>
+						<li><a href="#search-authors">Autoren</a></li>
+						<li><a href="#search-book-types">Buchtypen</a></li>
+						<li><a href="#search-rooms">Räume</a></li>
 					</ol>
 				</li>
 			</ol>
-		</div>
-		
-		<br>
-		
-		<h2 id="general">1. Allgemein</h2>
+        </div>
+
+        <h2 id="general">1. Allgemein</h2>
 		
 		<p>Dieses Handbuch bezieht sich momentan nur auf die Desktop Version. Die Webseite wird hinzugefügt werden, wenn ich sie entwickelt habe.</p>
 	
@@ -122,24 +112,20 @@
 		
 		<div class="text-list">
 			<ol>
-		
-				<li><button onclick="scrollToElement('overview')">Übersicht</button></li>
+				<li><a href="#overview">Übersicht</a></li>
 				
-				<li><button onclick="scrollToElement('books')">Bücher</button></li>
+				<li><a href="#books">Bücher</a></li>
 				
-				<li><button onclick="scrollToElement('authors')">Autoren</button></li>
+				<li><a href="#authors">Autoren</a></li>
 				
-				<li><button onclick="scrollToElement('book-types')">Buchtypen</button></li>
+				<li><a href="#book-types">Buchtypen</a></li>
 				
-				<li><button onclick="scrollToElement('rooms')">Räume</button></li>
+				<li><a href="#rooms">Räume</a></li>
 				
-				<li><button onclick="scrollToElement('search')">Suche</button></li>
-		
-		</ol>
+				<li><a href="#search">Suche</a></li>
+            </ol>
 		</div>
 		
-		<br>
-
 		<h3 id="changes">Änderungen zur Vorgängerversion</h3>
 
 		<p>
@@ -304,7 +290,7 @@
 		
 		<h4 id="book-edit-type">Typ</h4>
 		
-		<p>Dieses Feld speichert den Buchtypen des Buches. Dieser kann aus der Liste gewählt werden, die beim Klicken auf den kleinen Pfeil rechts angezeigt wird. Bitte prüfen Sie vor Erstellen des Buches, ob der gewünschte Buchtyp bereits existiert (<button onclick="scrollToElement('book-types)">6. Buchtypen</button>"') Das Feld verfügt ausserdem über eine Autovervollständigung für die möglichen Buchtypen. Sie können also den Anfang eines Typen eingeben und bekommen einen Vorschlag zur Vervollständigung.</p>
+		<p>Dieses Feld speichert den Buchtypen des Buches. Dieser kann aus der Liste gewählt werden, die beim Klicken auf den kleinen Pfeil rechts angezeigt wird. Bitte prüfen Sie vor Erstellen des Buches, ob der gewünschte Buchtyp bereits existiert (<a href="#book-types)">6. Buchtypen</a>"') Das Feld verfügt ausserdem über eine Autovervollständigung für die möglichen Buchtypen. Sie können also den Anfang eines Typen eingeben und bekommen einen Vorschlag zur Vervollständigung.</p>
 		
 		<img src="img/1.2.1/book-edit-type.png">
 		
@@ -316,7 +302,7 @@
 		
 		<h4 id="book-edit-room">Raum</h4>
 		
-		<p>Dieses Feld speichert den Raum des Buches. Dieser kann aus der Liste gewählt werden, die beim Klicken auf den kleinen Pfeil rechts angezeigt wird. Bitte prüfen Sie vor Erstellen des Buches, ob der gewünschte Raum bereits existiert (<button onclick="scrollToElement('rooms)">7. Räume</button>"') Das Feld verfügt ausserdem über eine Autovervollständigung für die möglichen Räume. Sie können also den Anfang eines Raumes eingeben und bekommen einen Vorschlag zur Vervollständigung.</p>
+		<p>Dieses Feld speichert den Raum des Buches. Dieser kann aus der Liste gewählt werden, die beim Klicken auf den kleinen Pfeil rechts angezeigt wird. Bitte prüfen Sie vor Erstellen des Buches, ob der gewünschte Raum bereits existiert (<a href="#rooms)">7. Räume</a>"') Das Feld verfügt ausserdem über eine Autovervollständigung für die möglichen Räume. Sie können also den Anfang eines Raumes eingeben und bekommen einen Vorschlag zur Vervollständigung.</p>
 		
 		<img src="img/1.2.1/book-edit-room.png">
 		
@@ -420,14 +406,14 @@
 		
 		<h3 id="search-books">Bücher</h3>
 		
-		<p>Diese Option lässt Sie nach Büchern suchen. Die Suchfelder, die hier angezeigt werden, sind eine Kopie des <button onclick="scrollToElement('book-edit">Bearbeitungs-Dialoges für Bücher</button>, abgesehen vom "Verliehen')" Feld.<br>
+		<p>Diese Option lässt Sie nach Büchern suchen. Die Suchfelder, die hier angezeigt werden, sind eine Kopie des <a href="#book-edit">Bearbeitungs-Dialoges für Bücher</a>, abgesehen vom "Verliehen')" Feld.<br>
 		Dieses wurde durch ein Textfeld mit Autovervollständigung ersetzt (Ja, Nein).</p>
 		
 		<img src="img/1.2.1/search-books.png">
 		
 		<h3 id="search-authors">Autoren</h3>
 		
-		<p>Diese Option lässt Sie nach Autoren suchen. Die Suchfelder, die hier angezeigt werden, sind eine Kopie des <button onclick="scrollToElement('author-edit')">Bearbeitungs-Dialoges für Autoren</button>.</p>
+		<p>Diese Option lässt Sie nach Autoren suchen. Die Suchfelder, die hier angezeigt werden, sind eine Kopie des <a href="#author-edit">Bearbeitungs-Dialoges für Autoren</a>.</p>
 		
 		<img src="img/1.2.1/search-authors.png">
 		
@@ -442,9 +428,13 @@
 		<p>Hier können Sie nach Räumen suchen, die den Inhalt des Eingabefelds in ihrem Titel haben.</p>
 		
 		<img src="img/1.2.1/search-rooms.png">
-		
-		<button class="top" onclick="scrollToTop()">^</button>
-	
-	</body>
 
+    </main>
+    <footer>
+        <p>© 2025–2026 Lars Lerchbacher. Lizenziert unter der GNU AGPL, Version 3 oder (nach Ihrer Wahl) einer späteren Version.<br>
+Dieses Programm kommt OHNE JEGLICHE GEWÄHRLEISTUNG.</p>
+    </footer>
+    <button onclick="scrollToTop()" id="toTopButton" class="to-top-button" title="Nach oben">Nach oben</button>
+    <script src="scripts/scrolling.js"></script><script src="scripts/toc-scrolling.js"></script>
+</body>
 </html>

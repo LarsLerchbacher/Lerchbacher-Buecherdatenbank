@@ -52,9 +52,11 @@ class OverviewTab(Tab):
         self.versionCTkLabel.pack()
 
         self.label = CTkLabel(self, text="Brauchen Sie Hilfe? Hier können Sie das ")
-        self.button = CTkButton(self, text="Benutzerhandbuch öffnen", command=self.open_user_manual)
+        self.helpButton = CTkButton(self, text="Benutzerhandbuch öffnen", command=self.open_user_manual)
+        self.sourceButton = CTkButton(self, text="Hier kommen Sie zum Quellcode dieser Applikation", command=self.open_source)
         self.label.pack()
-        self.button.pack()
+        self.helpButton.pack(pady=10)
+        self.sourceButton.pack()
 
         self.refresh()
 
@@ -70,3 +72,6 @@ class OverviewTab(Tab):
 
     def open_user_manual(self):
         webbrowser.open(f"https://LarsLerchbacher.github.io/Lerchbacher-Buecherdatenbank/{app_context.version}.html")
+
+    def open_source(self):
+        webbrowser.open("https://github.com/LarsLerchbacher/Lerchbacher-Buecherdatenbank")
