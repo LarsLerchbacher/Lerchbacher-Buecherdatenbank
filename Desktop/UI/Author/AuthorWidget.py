@@ -38,7 +38,7 @@ class AuthorWidget(CTkFrame):
         self.firstName.grid(row=0, column=0, padx=100, pady=5)
         self.lastName.grid(row=1, column=0, padx=100, pady=5)
         self.buttonCTkFrame.grid(row=2, column=0)
-        self.editCTkButton.grid(row=0, column=1, pady=10)
+        self.editCTkButton.grid(row=0, column=1, pady=10, padx=10)
         self.deleteCTkButton.grid(row=0, column=2, padx=10, pady=10)
 
 

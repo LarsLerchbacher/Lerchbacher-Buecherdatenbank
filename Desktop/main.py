@@ -176,7 +176,7 @@ def init_files() -> None:
 
         cur.execute("CREATE TABLE dbVersion (id INTEGER PRIMARY KEY AUTOINCREMENT, version VARCHAR(5));")
 
-        cur.execute("INSERT INTO dbVersion (id, version) VALUES (0, '1.2.0');");
+        cur.execute("INSERT INTO dbVersion (id, version) VALUES (0, '?');", (app_context.version,));
 
         # Commiting the changes
         db.commit()
@@ -213,7 +213,7 @@ def main() -> None:
 if __name__ == "__main__":
 
     # Setting the application's version that is displayed
-    app_context.version = "1.2.1" 
+    app_context.version = "2.0.0" 
 
     # Init the logger and check for any flags
     init_logger()

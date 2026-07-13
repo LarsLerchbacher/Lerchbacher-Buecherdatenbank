@@ -159,7 +159,7 @@ class BookWidget(CTkFrame):
         self.details.pack()
 
         self.button.configure(text = 'Weniger anzeigen', command = self.shrink)
-        self.edit.grid(row = 0, column = 1)
+        self.edit.grid(row = 0, column = 1, padx=10)
         self.delete.grid(row = 0, column = 2, padx = 10)
         self.button_frame.pack(pady = 10)
 

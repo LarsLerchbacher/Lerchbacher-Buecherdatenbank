@@ -32,7 +32,7 @@ class RoomWidget(CTkFrame):
         self.deleteCTkButton = CTkButton(self, text="Löschen", command=self.delete)
 
         self.label.grid(row=0, column=0, padx=10, pady=30)
-        self.editCTkButton.grid(row=0, column=1)
+        self.editCTkButton.grid(row=0, column=1, padx=10)
         self.deleteCTkButton.grid(row=0, column=2, padx=10)
 
         self.refresh()

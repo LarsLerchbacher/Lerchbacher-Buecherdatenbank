@@ -77,18 +77,18 @@ class SearchTab(Tab):
         #  The frame in which the filter options for the above selected option appear
         #
         self.filterCTkFrame = CTkFrame(self, fg_color="transparent")
-        self.filterCTkFrame.pack(padx=0, pady=10, expand=True, fill="both")
+        self.filterCTkFrame.pack(padx=10, pady=10, expand=True, fill="both")
 
 
         #
         # The search button
         #
         self.buttonCTkFrame = CTkFrame(self, fg_color="transparent")
-        self.buttonCTkFrame.pack(padx=0, pady=10)
+        self.buttonCTkFrame.pack(padx=10, pady=10)
         self.searchCTkButton = CTkButton(self.buttonCTkFrame, text="Suchen", command=self.search)
-        self.searchCTkButton.grid(row=0, column=0)
+        self.searchCTkButton.grid(row=10, column=0)
         self.exportCTkButton = CTkButton(self.buttonCTkFrame, text="Ergebnisse exportieren (CSV)", command=self.export, state=DISABLED)
-        self.exportCTkButton.grid(row=0, column=1, padx=10)
+        self.exportCTkButton.grid(row=10, column=1, padx=10)
 
 
         #
