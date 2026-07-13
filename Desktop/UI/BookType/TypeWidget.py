@@ -17,40 +17,42 @@
 import app_context
 from database import delete_book_type, fetch_book_type
 import sys
-from tkinter import *
-from tkinter import messagebox
+from customtkinter import *
+from CTkMessagebox import CTkMessagebox
 from UI.BookType.TypeEditToplevel import TypeEditToplevel
 
 
-class TypeWidget(Frame):
+class TypeWidget(CTkFrame):
     def __init__(self, parent, id, *args, **kwargs):
-        super().__init__(parent, relief=SUNKEN, bd=1, *args, **kwargs)
+        super().__init__(parent, *args, **kwargs)
 
         self.id = id
         
-        self.label = Label(self, text="Name: ", width=30)
-        self.editButton = Button(self, text="Bearbeiten", command=lambda: TypeEditToplevel(self.id))
-        self.deleteButton = Button(self, text="Löschen", command=self.delete)
+        self.label = CTkLabel(self, text="Name: ", width=30)
+        self.editCTkButton = CTkButton(self, text="Bearbeiten", command=lambda: TypeEditToplevel(self.id))
+        self.deleteCTkButton = CTkButton(self, text="Löschen", command=self.delete)
 
         self.label.grid(row=0, column=0, padx=10, pady=30)
-        self.editButton.grid(row=0, column=1)
-        self.deleteButton.grid(row=0, column=2, padx=10)
+        self.editCTkButton.grid(row=0, column=1)
+        self.deleteCTkButton.grid(row=0, column=2, padx=10)
 
-        self.update()
+        self.refresh()
 
-    def update(self):
+    def refresh(self):
         book_type = fetch_book_type(self.id)
 
         self.label.configure(text="Name: " + book_type)
 
     def delete(self):
         book_type = fetch_book_type(self.id)
-        decision = messagebox.askquestion("Bestätigen", f"Möchten Sie den Buchtypen {book_type} wirklich löschen?\n\n" +
+        decision = CTkMessagebox(
+                                    title="Bestätigen",
+                                    message=f"Möchten Sie den Buchtypen {book_type} wirklich löschen?\n\n" +
                                           "Alle Bücher die diesen Buchtypen in ihren Daten enthalten werden statdessen unbekannt anzeigen.\n\n" + 
-                                          "Diese Aktion kann NICHT rückgängig gemacht werden!"\
-                                         )
-        if decision == "yes":
+                                          "Diese Aktion kann NICHT rückgängig gemacht werden!",
+                                    icon="question", option_1="Nein", option_2="Ja").get()
+        if decision == "Ja":
             app_context.logger.info(f"Deleting type with id {self.id}...")
             delete_book_type(self.id)
-            app_context.mainWindow.update()
+            app_context.mainWindow.refresh()
 

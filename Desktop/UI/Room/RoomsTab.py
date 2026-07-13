@@ -14,7 +14,7 @@
 #
 
 
-from tkinter import Button, Label
+from customtkinter import CTkButton, CTkLabel
 from UI.Room.AllRoomsWidget import AllRoomsWidget
 from UI.Room.RoomEditToplevel import RoomEditToplevel
 from UI.Tab import Tab
@@ -24,15 +24,15 @@ class RoomsTab(Tab):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
     
-        self.header_label = Label(self.inner_frame, text="Räume", font="Arial 25 bold")
+        self.header_label = CTkLabel(self, text="Räume", font=("Arial", 25, "bold"))
         self.header_label.pack(padx=0, pady=10)
 
-        self.create_button = Button(self.inner_frame, text='Neuen Raum hinzufügen', command=lambda: RoomEditToplevel(-1))
+        self.create_button = CTkButton(self, text='Neuen Raum hinzufügen', command=lambda: RoomEditToplevel(-1))
         self.create_button.pack(padx=0, pady=5)
 
-        self.rooms = AllRoomsWidget(self.inner_frame)
+        self.rooms = AllRoomsWidget(self)
         self.rooms.pack(padx=0, pady=5)
 
-    def update(self):
-        self.rooms.update()
+    def refresh(self):
+        self.rooms.refresh()
 

@@ -16,11 +16,11 @@
 
 import app_context
 from database import Author, create_author, edit_author, fetch_author
-from tkinter import *
-from tkinter.messagebox import showerror
+from customtkinter import *
+from CTkMessagebox import CTkMessagebox
 
 
-class AuthorEditToplevel(Toplevel):
+class AuthorEditToplevel(CTkToplevel):
     def __init__(self, id: int, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.id = id
@@ -29,34 +29,37 @@ class AuthorEditToplevel(Toplevel):
         else:
             app_context.logger.info("Opening empty author editing dialog")
         
-        self.fnLabel = Label(self, text="Vorname: ")
-        self.lnLabel = Label(self, text="Nachname: ")
-        self.firstName = Entry(self, width=50)
-        self.lastName = Entry(self, width=50)
+        self.fnCTkLabel = CTkLabel(self, text="Vorname: ")
+        self.lnCTkLabel = CTkLabel(self, text="Nachname: ")
+        self.firstName = CTkEntry(self)
+        self.lastName = CTkEntry(self)
 
-        self.fnLabel.grid(row=0, column=0, padx=10, pady=10)
-        self.firstName.grid(row=0, column=1, padx=10)
-        self.lnLabel.grid(row=1, column=0, padx=10, pady=10)
-        self.lastName.grid(row=1, column=1, padx=10)
+        self.fnCTkLabel.grid(row=0, column=0, padx=10, pady=10, sticky="w")
+        self.firstName.grid(row=0, column=1, padx=10, sticky="ew")
+        self.lnCTkLabel.grid(row=1, column=0, padx=10, pady=10, sticky="w")
+        self.lastName.grid(row=1, column=1, padx=10, sticky="ew")
+        
+        # Configure grid weights
+        self.grid_columnconfigure(1, weight=1)
 
-        self.buttonFrame = Frame(self)
-        self.buttonFrame.grid(row=3, column=0, columnspan=2, padx=20, pady=20)
+        self.buttonCTkFrame = CTkFrame(self)
+        self.buttonCTkFrame.grid(row=3, column=0, columnspan=2, padx=20, pady=20)
 
-        self.saveButton = Button(self.buttonFrame, text='Speichern', command=self.save)
-        self.cancelButton = Button(self.buttonFrame, text='Abbrechen', command=self.cancel)
-        self.saveButton.grid(row=0, column=0)
-        self.cancelButton.grid(row=0, column=1, padx=10)
+        self.saveCTkButton = CTkButton(self.buttonCTkFrame, text='Speichern', command=self.save)
+        self.cancelCTkButton = CTkButton(self.buttonCTkFrame, text='Abbrechen', command=self.cancel)
+        self.saveCTkButton.grid(row=0, column=0)
+        self.cancelCTkButton.grid(row=0, column=1, padx=10)
 
         self.firstName.focus_set()
         self.bind("<Return>", lambda e: self.save())
 
         if self.id != -1:
-            self.update()
+            self.refresh()
 
-    def update(self):
+    def refresh(self):
         author = fetch_author(self.id)
         if not type(author) == Author:
-            showerror("ERROR", "Autor nicht gefunden!")
+            CTkMessagebox(title="ERROR", message="Autor nicht gefunden!", icon="error")
         else:
             self.firstName.delete(0, END)
             self.lastName.delete(0, END)
@@ -74,20 +77,20 @@ class AuthorEditToplevel(Toplevel):
             response = edit_author(self.id, new_author)
             if response != "OK":
                 app_context.logger.error(f"Speichern nicht möglich!\n{response}")
-                showerror(title="Speichern nicht möglich!", message=response)
+                CTkMessagebox(title="Speichern nicht möglich!", message=response, icon="error")
             else:
                 app_context.logger.info("Erfolgreich gespeichert!")
-                app_context.mainWindow.update()
+                app_context.mainWindow.refresh()
                 self.destroy()
         else:
             new_author = Author(-1, firstName, lastName)
             response = create_author(new_author)
             if response != "OK":
                 app_context.logger.info(f"Speicher nicht möglich\n{response}")
-                showerror(title="Speichern nicht möglich!", message=response)
+                CTkMessagebox(title="Speichern nicht möglich!", message=response, icon="error")
             else:
                 app_context.logger.info("Erfolgreich gespeichert!")
-                app_context.mainWindow.update()
+                app_context.mainWindow.refresh()
                 self.destroy()
 
 

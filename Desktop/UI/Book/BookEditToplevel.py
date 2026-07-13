@@ -17,13 +17,13 @@
 import app_context
 from database import Book, create_book, edit_book, fetch_author, fetch_authors, fetch_authors_for_book, fetch_book, fetch_book_type, fetch_book_type_id, fetch_book_types, fetch_room, fetch_room_id, fetch_rooms
 from images import update_image
-from tkinter import *
-from tkinter import messagebox
+from customtkinter import *
+from CTkMessagebox import CTkMessagebox
 from UI.Author.AuthorEditToplevel import AuthorEditToplevel
 from UI.Book.BookEditWidget import BookEditWidget
 
 
-class BookEditToplevel(Toplevel):
+class BookEditToplevel(CTkToplevel):
     def __init__(self, id, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -33,24 +33,24 @@ class BookEditToplevel(Toplevel):
         else:
             app_context.logger.info("Opening empty book editing dialog")
 
-        self.columnconfigure(index=0, weight=1)
-        self.columnconfigure(index=1, weight=1)
-        self.columnconfigure(index=2, weight=1)
-        self.columnconfigure(index=3, weight=1)
+        self.columnconfigure(index=0)
+        self.columnconfigure(index=1)
+        self.columnconfigure(index=2)
+        self.columnconfigure(index=3)
 
         self.edit = BookEditWidget(self)
-        self.edit.pack()
+        self.edit.pack(expand=True, fill="both")
 
-        self.edit.lend.config(command=self.edit.update_lend_to)
+        self.edit.lend.configure(command=self.edit.update_lend_to)
 
-        self.createButton = Button(self.edit.authors, text="Autor hinzufügen", command=self.create_author)
-        self.createButton.grid(row=0, column=3)
+        self.createCTkButton = CTkButton(self.edit.authors, text="Autor hinzufügen", command=self.create_author)
+        self.createCTkButton.grid(row=0, column=3)
 
-        self.button_frame = Frame(self)
+        self.button_frame = CTkFrame(self)
         self.button_frame.pack(padx=20, pady=5)
 
-        self.save_button = Button(self.button_frame, text='Speichern', command=self.save)
-        self.cancel_button = Button(self.button_frame, text='Abbrechen', command=self.cancel)
+        self.save_button = CTkButton(self.button_frame, text='Speichern', command=self.save)
+        self.cancel_button = CTkButton(self.button_frame, text='Abbrechen', command=self.cancel)
         self.save_button.grid(row=0, column=0)
         self.cancel_button.grid(row=0, column=1, padx=10)
 
@@ -58,9 +58,9 @@ class BookEditToplevel(Toplevel):
         self.bind("<Return>", lambda e: self.save())
 
         if self.id != -1:
-            self.update()
+            self.refresh()
 
-    def update(self):
+    def refresh(self):
         book = fetch_book(self.id)
 
         self.edit.title.delete(0, END)
@@ -87,7 +87,7 @@ class BookEditToplevel(Toplevel):
         self.edit.year.set(book.year)
 
         self.all_types = fetch_book_types()
-        self.edit.type_select.config(completevalues=self.all_types)
+        self.edit.type_select.configure(values=self.all_types)
 
         self.edit.type_select.set(fetch_book_type(book.book_type))
 
@@ -109,7 +109,7 @@ class BookEditToplevel(Toplevel):
     def save(self):
         if not self.edit.check_is_filled():
             app_context.logger.warning("Trying to save, but not all necesary fields are filled.")
-            messagebox.showinfo(title="Pflichtfelder ausfuellen", message="Bitte fuellen Sie alle Felder die mit einem * markiert sind aus.")
+            CTkMessagebox(title="Pflichtfelder ausfuellen", message="Bitte fuellen Sie alle Felder die mit einem * markiert sind aus.")
         else:
             if self.id == -1:
                 app_context.logger.info("Creating new book...")
@@ -170,19 +170,19 @@ class BookEditToplevel(Toplevel):
                 response = edit_book(self.id, book)
                 if response != "OK":
                     app_context.logger.info(f"Speicher nicht möglich\n{response}")
-                    messagebox.showerror(title="Speichern nicht möglich!", message=response)
+                    CTkMessagebox(title="Speichern nicht möglich!", message=response, icon="error")
                 else:
                     app_context.logger.info("Erfolgreich gespeichert!")
 
                     update_image(book)
 
-                    app_context.mainWindow.update()
+                    app_context.mainWindow.refresh()
                     self.destroy()
             else:
                 response = create_book(book)
                 if type(response) == str:
                     app_context.logger.info(f"Speicher nicht möglich\n{response}")
-                    messagebox.showerror(title="Speichern nicht möglich!", message=response)
+                    CTkMessagebox(title="Speichern nicht möglich!", message=response, icon="error")
                 else:
                     self.id = response
                     book.id = response
@@ -190,7 +190,7 @@ class BookEditToplevel(Toplevel):
 
                     update_image(book)
 
-                    app_context.mainWindow.update()
+                    app_context.mainWindow.refresh()
                     self.destroy()
 
 

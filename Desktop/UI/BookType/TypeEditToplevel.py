@@ -16,37 +16,37 @@
 
 import app_context
 from database import create_book_type, edit_book_type, fetch_book_type
-from tkinter import *
+from customtkinter import *
 
 
-class TypeEditToplevel(Toplevel):
+class TypeEditToplevel(CTkToplevel):
     def __init__(self, id, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         self.id = id
 
-        self.label = Label(self, text="Name: ")
-        self.entry = Entry(self, width=30)
+        self.label = CTkLabel(self, text="Name: ")
+        self.entry = CTkEntry(self)
 
-        self.buttonFrame = Frame(self)
+        self.buttonCTkFrame = CTkFrame(self)
 
-        self.saveButton = Button(self.buttonFrame, text="Speichern", command=self.save)
-        self.cancelButton = Button(self.buttonFrame, text="Abbrechen", command=self.cancel)
+        self.saveCTkButton = CTkButton(self.buttonCTkFrame, text="Speichern", command=self.save)
+        self.cancelCTkButton = CTkButton(self.buttonCTkFrame, text="Abbrechen", command=self.cancel)
 
         self.label.grid(row=0, column=0, padx=10, pady=10)
         self.entry.grid(row=0, column=1, padx=10)
-        self.buttonFrame.grid(row=1, columnspan=2, padx=10, pady=10)
+        self.buttonCTkFrame.grid(row=1, columnspan=2, padx=10, pady=10)
 
-        self.saveButton.grid(row=0, column=0, padx=10)
-        self.cancelButton.grid(row=0, column=1)
+        self.saveCTkButton.grid(row=0, column=0, padx=10)
+        self.cancelCTkButton.grid(row=0, column=1)
 
         self.entry.focus_set()
         self.bind("<Return>", lambda e: self.save())
 
         if id != -1:
-            self.update()
+            self.refresh()
 
-    def update(self):
+    def refresh(self):
         book_type = fetch_book_type(self.id)
 
         self.entry.delete(0, END)
@@ -58,20 +58,20 @@ class TypeEditToplevel(Toplevel):
             response = edit_book_type(self.id, book_type)
             if response != "OK":
                 app_context.logger.error(f"Speichern nicht möglich!\n{response}")
-                showerror(title="Speichern nicht möglich!", message=response)
+                CTkMessagebox(title="Speichern nicht möglich!", message=response, icon="error")
             else:
                 app_context.logger.info("Erfolgreich gespeichert")
-                app_context.mainWindow.update()
+                app_context.mainWindow.refresh()
                 self.destroy()
 
         else:
             response = create_book_type(book_type)
             if response != "OK":
                 app_context.logger.error(f"Speichern nicht möglich!\n{response}")
-                showerror(title="Speichern nicht möglich!", message=response)
+                CTkMessagebox(title="Speichern nicht möglich!", message=response, icon="error")
             else:
                 app_context.logger.info(f"Created (book) type with name {book_type}")
-                app_context.mainWindow.update()
+                app_context.mainWindow.refresh()
                 self.destroy()
 
 

@@ -16,11 +16,12 @@
 
 import app_context
 from database import fetch_book_type_ids
-from tkinter import Frame
+from customtkinter import CTkFrame
 from UI.BookType.TypeWidget import TypeWidget
 
-class AllTypesWidget(Frame):
+class AllTypesWidget(CTkFrame):
     def __init__(self, parent, *args, **kwargs):
+        kwargs.setdefault("fg_color", "transparent")
         super().__init__(parent, *args, **kwargs)
 
         app_context.logger.info("Creating 'all book_types widget'")
@@ -29,9 +30,9 @@ class AllTypesWidget(Frame):
 
         self.type_widgets = []
 
-        self.update()
+        self.refresh()
 
-    def update(self):
+    def refresh(self):
 
         app_context.logger.info("Updating 'all book_types widget'")
 

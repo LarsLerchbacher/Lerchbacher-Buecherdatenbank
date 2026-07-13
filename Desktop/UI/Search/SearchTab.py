@@ -22,7 +22,7 @@ from database import fetch_author, fetch_author_ids, fetch_authors, \
     fetch_room, fetch_rooms, fetch_room_id, fetch_room_ids, \
     prepare_db
 from datetime import date
-from tkinter import *
+from customtkinter import *
 from tkinter.filedialog import asksaveasfilename
 from UI.Author.AuthorWidget import AuthorWidget
 from UI.Book.BookWidget import BookWidget
@@ -31,7 +31,7 @@ from UI.Room.RoomWidget import RoomWidget
 from UI.Tab import Tab
 from UI.Search.SearchFilterAll import SearchFilterAll
 from UI.Search.SearchFilterBooks import SearchFilterBooks
-
+from CTkFileDialog import asksaveasfilename 
 
 
 class SearchTab(Tab):
@@ -41,86 +41,86 @@ class SearchTab(Tab):
         #
         # The header of the tab
         #
-        self.header_label = Label(self.inner_frame, text="Suche", font="Arial 25 bold")
+        self.header_label = CTkLabel(self, text="Suche", font=("Arial", 25, "bold"))
         self.header_label.pack(padx=0, pady=10)
 
         
         #
         # Selection widget to choose between search for: everything, books, authors, book types or rooms
         #
-        self.selectFrame = Frame(self.inner_frame)
-        self.selectFrame.pack(padx=0, pady=10)
+        self.selectCTkFrame = CTkFrame(self, fg_color="transparent")
+        self.selectCTkFrame.pack(padx=0, pady=10)
 
-        self.selectVar = StringVar(self.selectFrame, "1")
-        self.selectVar.trace_add("write", self.update)
+        self.selectVar = StringVar(self.selectCTkFrame, "1")
+        self.selectVar.trace_add("write", self.refresh)
 
-        self.selectLabel = Label(self.selectFrame, text="Suche nach: ")
-        self.selectLabel.grid(row=0, columnspan=5, pady=10)
+        self.selectCTkLabel = CTkLabel(self.selectCTkFrame, text="Suche nach: ")
+        self.selectCTkLabel.grid(row=0, columnspan=5, pady=10)
 
-        self.selectAll = Radiobutton(self.selectFrame, text="Alles", value=1, variable=self.selectVar)
+        self.selectAll = CTkRadioButton(self.selectCTkFrame, text="Alles", value=1, variable=self.selectVar)
         self.selectAll.grid(row=1, column=0, padx=5)
 
-        self.selectBooks = Radiobutton(self.selectFrame, text="Bücher", value=2, variable=self.selectVar)
+        self.selectBooks = CTkRadioButton(self.selectCTkFrame, text="Bücher", value=2, variable=self.selectVar)
         self.selectBooks.grid(row=1, column=1, padx=5)
         
-        self.selectAuthors = Radiobutton(self.selectFrame, text="Autoren", value=3, variable=self.selectVar)
+        self.selectAuthors = CTkRadioButton(self.selectCTkFrame, text="Autoren", value=3, variable=self.selectVar)
         self.selectAuthors.grid(row=1, column=2, padx=5)
 
-        self.selectTypes = Radiobutton(self.selectFrame, text="Buchtypen", value=4, variable=self.selectVar)
+        self.selectTypes = CTkRadioButton(self.selectCTkFrame, text="Buchtypen", value=4, variable=self.selectVar)
         self.selectTypes.grid(row=1, column=3, padx=5)
 
-        self.selectRooms = Radiobutton(self.selectFrame, text="Räume", value=5, variable=self.selectVar)
+        self.selectRooms = CTkRadioButton(self.selectCTkFrame, text="Räume", value=5, variable=self.selectVar)
         self.selectRooms.grid(row=1, column=4, padx=5)
 
 
         #
         #  The frame in which the filter options for the above selected option appear
         #
-        self.filterFrame = Frame(self.inner_frame)
-        self.filterFrame.pack(padx=0, pady=10)
+        self.filterCTkFrame = CTkFrame(self, fg_color="transparent")
+        self.filterCTkFrame.pack(padx=0, pady=10, expand=True, fill="both")
 
 
         #
         # The search button
         #
-        self.buttonFrame = Frame(self.inner_frame)
-        self.buttonFrame.pack(padx=0, pady=10)
-        self.searchButton = Button(self.buttonFrame, text="Suchen", command=self.search)
-        self.searchButton.grid(row=0, column=0)
-        self.exportButton = Button(self.buttonFrame, text="Ergebnisse exportieren (CSV)", command=self.export, state=DISABLED)
-        self.exportButton.grid(row=0, column=1, padx=10)
+        self.buttonCTkFrame = CTkFrame(self)
+        self.buttonCTkFrame.pack(padx=0, pady=10)
+        self.searchCTkButton = CTkButton(self.buttonCTkFrame, text="Suchen", command=self.search)
+        self.searchCTkButton.grid(row=0, column=0)
+        self.exportCTkButton = CTkButton(self.buttonCTkFrame, text="Ergebnisse exportieren (CSV)", command=self.export, state=DISABLED)
+        self.exportCTkButton.grid(row=0, column=1, padx=10)
 
 
         #
         # The filters for searching everything
         #
-        self.filterAll = SearchFilterAll(self.filterFrame)
+        self.filterAll = SearchFilterAll(self.filterCTkFrame)
 
         #
         # The filters for searching for books
         #
-        self.filterBooks = SearchFilterBooks(self.filterFrame)
+        self.filterBooks = SearchFilterBooks(self.filterCTkFrame)
         
         #
         # The filters for searching authors
         #
-        self.filterAuthors = Frame(self.filterFrame)
-        self.fn_label = Label(self.filterAuthors, text="Vorname: ")
-        self.fn_entry = Entry(self.filterAuthors, width=30)
+        self.filterAuthors = CTkFrame(self.filterCTkFrame)
+        self.fn_label = CTkLabel(self.filterAuthors, text="Vorname: ")
+        self.fn_entry = CTkEntry(self.filterAuthors)
         self.fn_label.grid(row=0, column=0, padx=10, pady=10)
         self.fn_entry.grid(row=0, column=1, padx=10)        
-        self.ln_label = Label(self.filterAuthors, text="Nachname: ")
-        self.ln_entry = Entry(self.filterAuthors, width=30)
+        self.ln_label = CTkLabel(self.filterAuthors, text="Nachname: ")
+        self.ln_entry = CTkEntry(self.filterAuthors)
         self.ln_label.grid(row=1, column=0, padx=10, pady=10)
         self.ln_entry.grid(row=1, column=1, padx=10)
 
         #
         # The filters for searching for book types
         #
-        self.filterTypes = Frame(self.filterFrame)
+        self.filterTypes = CTkFrame(self.filterCTkFrame)
 
-        self.type_label = Label(self.filterTypes, text="Name: ")
-        self.type_entry = Entry(self.filterTypes, width=30)
+        self.type_label = CTkLabel(self.filterTypes, text="Name: ")
+        self.type_entry = CTkEntry(self.filterTypes)
         self.type_label.grid(row=0, column=0, padx=10, pady=10)
         self.type_entry.grid(row=0, column=1, padx=10)
 
@@ -128,10 +128,10 @@ class SearchTab(Tab):
         #
         # The filters for searching for rooms
         #
-        self.filterRooms = Frame(self.filterFrame)
+        self.filterRooms = CTkFrame(self.filterCTkFrame)
 
-        self.room_label = Label(self.filterRooms, text="Name: ")
-        self.room_entry = Entry(self.filterRooms, width=30)
+        self.room_label = CTkLabel(self.filterRooms, text="Name: ")
+        self.room_entry = CTkEntry(self.filterRooms)
         self.room_label.grid(row=0, column=0, padx=10, pady=10)
         self.room_entry.grid(row=0, column=1, padx=10)
 
@@ -140,30 +140,30 @@ class SearchTab(Tab):
         # The results for each category
         #
         self.resultBooks = []
-        self.resultBooksFrame = Frame(self.inner_frame)
-        self.resultBooksHeader = Label(self.resultBooksFrame, text="Bücher", font="Arial 18 bold")
+        self.resultBooksCTkFrame = CTkFrame(self, fg_color="transparent")
+        self.resultBooksHeader = CTkLabel(self.resultBooksCTkFrame, text="Bücher", font=("Arial", 18, "bold"))
         self.resultBooksHeader.pack()
-        self.resultBooksFrame.pack(pady=10)
+        self.resultBooksCTkFrame.pack(pady=10)
 
         self.resultAuthors = []
-        self.resultAuthorsFrame = Frame(self.inner_frame)
-        self.resultAuthorsHeader = Label(self.resultAuthorsFrame, text="Autoren", font="Arial 18 bold")
+        self.resultAuthorsCTkFrame = CTkFrame(self, fg_color="transparent")
+        self.resultAuthorsHeader = CTkLabel(self.resultAuthorsCTkFrame, text="Autoren", font=("Arial", 18, "bold"))
         self.resultAuthorsHeader.pack()
 
         self.resultTypes = []
-        self.resultTypesFrame = Frame(self.inner_frame)
-        self.resultTypesHeader = Label(self.resultTypesFrame, text="Buchtypen", font="Arial 18 bold")
+        self.resultTypesCTkFrame = CTkFrame(self, fg_color="transparent")
+        self.resultTypesHeader = CTkLabel(self.resultTypesCTkFrame, text="Buchtypen", font=("Arial", 18, "bold"))
         self.resultTypesHeader.pack()
 
         self.resultRooms = []
-        self.resultRoomsFrame = Frame(self.inner_frame)
-        self.resultRoomsHeader = Label(self.resultRoomsFrame, text="Räume", font="Arial 18 bold")
+        self.resultRoomsCTkFrame = CTkFrame(self, fg_color="transparent")
+        self.resultRoomsHeader = CTkLabel(self.resultRoomsCTkFrame, text="Räume", font=("Arial", 18, "bold"))
         self.resultRoomsHeader.pack()
 
-        self.update()
+        self.refresh()
 
 
-    def update(self, *args):
+    def refresh(self, *args):
         # Remove all shown filters
         self.filterAll.pack_forget()
         self.filterBooks.pack_forget()
@@ -171,10 +171,10 @@ class SearchTab(Tab):
         self.filterTypes.pack_forget()
         self.filterRooms.pack_forget()
         # And all shown results
-        self.resultBooksFrame.pack_forget()
-        self.resultAuthorsFrame.pack_forget()
-        self.resultTypesFrame.pack_forget()
-        self.resultRoomsFrame.pack_forget()
+        self.resultBooksCTkFrame.pack_forget()
+        self.resultAuthorsCTkFrame.pack_forget()
+        self.resultTypesCTkFrame.pack_forget()
+        self.resultRoomsCTkFrame.pack_forget()
         
 
         for book in self.resultBooks:
@@ -206,22 +206,22 @@ class SearchTab(Tab):
         self.resultRooms = []
 
 
-        for child in self.resultBooksFrame.winfo_children():
-            if type(child) != Label:
+        for child in self.resultBooksCTkFrame.winfo_children():
+            if type(child) != CTkLabel:
                 child.destroy()
-        for child in self.resultAuthorsFrame.winfo_children():
-            if type(child) != Label:
+        for child in self.resultAuthorsCTkFrame.winfo_children():
+            if type(child) != CTkLabel:
                 child.destroy()
-        for child in self.resultTypesFrame.winfo_children():
-            if type(child) != Label:
+        for child in self.resultTypesCTkFrame.winfo_children():
+            if type(child) != CTkLabel:
                 child.destroy()
-        for child in self.resultRoomsFrame.winfo_children():
-            if type(child) != Label:
+        for child in self.resultRoomsCTkFrame.winfo_children():
+            if type(child) != CTkLabel:
                 child.destroy()
 
-        self.filterBooks.update()
+        self.filterBooks.refresh()
 
-        self.exportButton.config(state=DISABLED)
+        self.exportCTkButton.configure(state=DISABLED)
 
         # Then show the ones needed for the current selection
         match self.selectVar.get():
@@ -229,31 +229,29 @@ class SearchTab(Tab):
                 # Everything
                 self.all_types = fetch_book_types()
                 self.all_rooms = fetch_rooms()
-                self.filterBooks.authors.update()
                 self.filterAll.pack()
 
             case "2":
                 # Books
                 self.all_types = fetch_book_types()
                 self.all_rooms = fetch_rooms()
-                self.filterBooks.authors.update()
-                self.filterBooks.pack()
-                self.resultBooksFrame.pack(pady=10)
+                self.filterBooks.pack(expand=True, fill="both")
+                self.resultBooksCTkFrame.pack(pady=10)
 
             case "3":
                 # Authors
                 self.filterAuthors.pack()
-                self.resultAuthorsFrame.pack(pady=10)
+                self.resultAuthorsCTkFrame.pack(pady=10)
             
             case "4":
                 # Book types
                 self.filterTypes.pack()
-                self.resultTypesFrame.pack(pady=10)
+                self.resultTypesCTkFrame.pack(pady=10)
 
             case "5":
                 # Rooms
                 self.filterRooms.pack()
-                self.resultRoomsFrame.pack(pady=10)
+                self.resultRoomsCTkFrame.pack(pady=10)
 
     def search(self):
         for book in self.resultBooks:
@@ -285,7 +283,7 @@ class SearchTab(Tab):
         self.resultRooms = []
 
         if self.selectVar.get() != "1":
-            self.exportButton.config(state=ACTIVE)
+            self.exportCTkButton.configure(state=ACTIVE)
 
         match self.selectVar.get():
             case "1":
@@ -335,7 +333,7 @@ class SearchTab(Tab):
                 # Search the books
                 for book in all_books:
                     if search_value in book.title:
-                        self.resultBooks.append(BookWidget(self.resultBooksFrame, book.id))
+                        self.resultBooks.append(BookWidget(self.resultBooksCTkFrame, book.id))
 
                 # Display the found books
                 for bookWidget in self.resultBooks:
@@ -345,7 +343,7 @@ class SearchTab(Tab):
                 # Sound the authors
                 for author in all_authors:
                     if search_value in author.getName():
-                        self.resultAuthors.append(AuthorWidget(self.resultAuthorsFrame, author.id))
+                        self.resultAuthors.append(AuthorWidget(self.resultAuthorsCTkFrame, author.id))
 
                 # Display the found authors
                 for authorWidget in self.resultAuthors:
@@ -356,7 +354,7 @@ class SearchTab(Tab):
                 for index, book_type in enumerate(all_types):
                     if search_value in book_type:
                         id = fetch_book_type_id(book_type)
-                        self.resultTypes.append(TypeWidget(self.resultTypesFrame, id))
+                        self.resultTypes.append(TypeWidget(self.resultTypesCTkFrame, id))
 
                 # Display the found book types
                 for typeWidget in self.resultTypes:
@@ -367,17 +365,17 @@ class SearchTab(Tab):
                 for index, room in enumerate(all_rooms):
                     if search_value in room:
                         id = all_room_ids[index]
-                        self.resultRooms.append(RoomWidget(self.resultRoomsFrame, id))
+                        self.resultRooms.append(RoomWidget(self.resultRoomsCTkFrame, id))
 
                 # Display the found rooms
                 for roomWidget in self.resultRooms:
                     roomWidget.pack(pady=20)
 
                 # Show the results
-                self.resultBooksFrame.pack(pady=10)
-                self.resultAuthorsFrame.pack(pady=10)
-                self.resultTypesFrame.pack(pady=10)
-                self.resultRoomsFrame.pack(pady=10)
+                self.resultBooksCTkFrame.pack(pady=10)
+                self.resultAuthorsCTkFrame.pack(pady=10)
+                self.resultTypesCTkFrame.pack(pady=10)
+                self.resultRoomsCTkFrame.pack(pady=10)
 
             case "2":
                 # Searching for books
@@ -472,7 +470,7 @@ class SearchTab(Tab):
                 db, cur = prepare_db()
 
                 if len(conditions) > 0:
-                    book_ids = [ row[0] for row in cur.execute("SELECT book_id FROM books WHERE " + "AND".join(conditions) + ";", tuple(params)).fetchall() ]
+                    book_ids = [ row[0] for row in cur.execute("SELECT book_id FROM books WHERE " + " AND ".join(conditions) + ";", tuple(params)).fetchall() ]
                 else:
                     book_ids = fetch_book_ids()
 
@@ -480,7 +478,7 @@ class SearchTab(Tab):
                 db.close()
 
                 for book_id in book_ids:
-                    self.resultBooks.append(BookWidget(self.resultBooksFrame, book_id))
+                    self.resultBooks.append(BookWidget(self.resultBooksCTkFrame, book_id))
                 
 
                 # Pack the book widgets
@@ -488,7 +486,7 @@ class SearchTab(Tab):
                     bookWidget.pack(pady=20)
 
                 # Display the results
-                self.resultBooksFrame.pack(pady=10)
+                self.resultBooksCTkFrame.pack(pady=10)
 
             # Searching for authors
             case "3":
@@ -518,12 +516,12 @@ class SearchTab(Tab):
                     authorIDs = fetch_author_ids()
 
                 for id in authorIDs:
-                    self.resultAuthors.append(AuthorWidget(self.resultAuthorsFrame, id))
+                    self.resultAuthors.append(AuthorWidget(self.resultAuthorsCTkFrame, id))
 
                 for authorWidget in self.resultAuthors:
                     authorWidget.pack(pady=20)
 
-                self.resultAuthorsFrame.pack(pady=10)
+                self.resultAuthorsCTkFrame.pack(pady=10)
 
             # Searching for book types
             case "4":
@@ -539,12 +537,12 @@ class SearchTab(Tab):
                 ids = [ row[0] for row in cur.execute("SELECT type_id FROM types WHERE type_name LIKE ?;", ("%" + self.type_entry.get() + "%",)).fetchall() ]
 
                 for id in ids:
-                    self.resultTypes.append(TypeWidget(self.resultTypesFrame, id))
+                    self.resultTypes.append(TypeWidget(self.resultTypesCTkFrame, id))
 
                 for typeWidget in self.resultTypes:
                     typeWidget.pack(pady=20)
 
-                self.resultTypesFrame.pack(pady=10)
+                self.resultTypesCTkFrame.pack(pady=10)
 
             # Searching for rooms
             case "5":
@@ -560,12 +558,12 @@ class SearchTab(Tab):
                 ids = [ row[0] for row in cur.execute("SELECT room_id FROM rooms WHERE room_name LIKE ?;", ("%" + self.room_entry.get() + "%",)).fetchall() ]
 
                 for id in ids:
-                        self.resultRooms.append(RoomWidget(self.resultRoomsFrame, id))
+                        self.resultRooms.append(RoomWidget(self.resultRoomsCTkFrame, id))
 
                 for roomWidget in self.resultRooms:
                     roomWidget.pack(pady=20)
 
-                self.resultRoomsFrame.pack(pady=10)
+                self.resultRoomsCTkFrame.pack(pady=10)
 
 
     # Exports search results of detail searches (not general search) to a CSV file
@@ -621,14 +619,9 @@ class SearchTab(Tab):
                 db.close()
 
         if self.selectVar.get() != "1":
-            filename = asksaveasfilename(filetypes=[("CSV Liste", "*.csv"), ("Textdatei", "*.txt")])
+            filename = asksaveasfilename(style='Mini', title="Select file for CSV export")
             if filename:
                 with open(filename, mode="w", newline="") as file:
                     app_context.logger.info("Exporting search results to '" + filename + "'")
                     writer = csv.writer(file)
                     writer.writerows(data)
-
-
-
-
-

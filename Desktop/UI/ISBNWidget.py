@@ -14,11 +14,12 @@
 #
 
 
-from tkinter import *
+from customtkinter import *
 
 
-class ISBNWidget(Entry):
+class ISBNWidget(CTkEntry):
     def __init__(self, *args, **kwargs):
+        kwargs.setdefault("fg_color", "transparent")
         super().__init__(*args, **kwargs)
         self.bind("<KeyRelease>", self.format)
 

@@ -14,16 +14,16 @@
 #
 
 
-from tkinter import Entry, Frame, Label
+from customtkinter import CTkEntry, CTkFrame, CTkLabel
 
 
-class SearchFilterAll(Frame):
+class SearchFilterAll(CTkFrame):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.label = Label(self, text="Suchbegriff: ")
-        self.label.grid(row=0, column=0)
+        self.label = CTkLabel(self, text="Suchbegriff: ")
+        self.label.grid(row=0, column=0, padx=10, pady=10)
         
-        self.entry = Entry(self, width=80)
-        self.entry.grid(row=0, column=1)
+        self.entry = CTkEntry(self, width=80)
+        self.entry.grid(row=0, column=1, padx=10)
 

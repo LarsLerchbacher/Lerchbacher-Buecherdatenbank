@@ -16,41 +16,45 @@
 
 import app_context
 from database import delete_room, fetch_room
-from tkinter import *
-from tkinter import messagebox
+from customtkinter import *
+from CTkMessagebox import CTkMessagebox
 from UI.Room.RoomEditToplevel import RoomEditToplevel
 
 
-class RoomWidget(Frame):
+class RoomWidget(CTkFrame):
     def __init__(self, parent, id, *args, **kwargs):
-        super().__init__(parent, relief=SUNKEN, bd=1, *args, **kwargs)
+        super().__init__(parent, *args, **kwargs)
 
         self.id = id
         
-        self.label = Label(self, text="Name: ", width=30)
-        self.editButton = Button(self, text="Bearbeiten", command=lambda: RoomEditToplevel(self.id))
-        self.deleteButton = Button(self, text="Löschen", command=self.delete)
+        self.label = CTkLabel(self, text="Name: ", width=30)
+        self.editCTkButton = CTkButton(self, text="Bearbeiten", command=lambda: RoomEditToplevel(self.id))
+        self.deleteCTkButton = CTkButton(self, text="Löschen", command=self.delete)
 
         self.label.grid(row=0, column=0, padx=10, pady=30)
-        self.editButton.grid(row=0, column=1)
-        self.deleteButton.grid(row=0, column=2, padx=10)
+        self.editCTkButton.grid(row=0, column=1)
+        self.deleteCTkButton.grid(row=0, column=2, padx=10)
 
-        self.update()
+        self.refresh()
 
-    def update(self):
+    def refresh(self):
         room = fetch_room(self.id)
 
         self.label.configure(text="Name: "+room)
 
     def delete(self):
         room = fetch_room(self.id)
-        decision = messagebox.askquestion("Bestätigen", f"Möchten Sie den Raum {room} wirklich löschen?\n\n" +
+        decision = CTkMessagebox(
+                                        title="Bestätigen",
+                                        message=f"Möchten Sie den Raum {room} wirklich löschen?\n\n" +
                                           "Alle Bücher die diesen Raum in ihren Daten enthalten werden statdessen unbekannt anzeigen.\n\n" + 
-                                          "Diese Aktion kann NICHT rückgängig gemacht werden!"\
-                                         )
-        if decision == "yes":
+                                          "Diese Aktion kann NICHT rückgängig gemacht werden!",
+                                        icon="question",
+                                        option_1="Nein", option_2="Ja"
+                                        ).get()
+        if decision == "Ja":
             app_context.logger.info(f"Deleting room with id {self.id}...")
             delete_room(self.id)
-            app_context.mainWindow.update()
+            app_context.mainWindow.refresh()
 
 

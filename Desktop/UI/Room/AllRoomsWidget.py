@@ -16,12 +16,13 @@
 
 import app_context
 from database import fetch_room_ids
-from tkinter import Frame
+from customtkinter import CTkFrame
 from UI.Room.RoomWidget import RoomWidget
 
 
-class AllRoomsWidget(Frame):
+class AllRoomsWidget(CTkFrame):
     def __init__(self, parent, *args, **kwargs):
+        kwargs.setdefault("fg_color", "transparent")
         super().__init__(parent, *args, **kwargs)
 
         app_context.logger.info("Creating 'all rooms widget'")
@@ -30,9 +31,9 @@ class AllRoomsWidget(Frame):
 
         self.room_widgets = []
 
-        self.update()
+        self.refresh()
 
-    def update(self):
+    def refresh(self):
 
         app_context.logger.info("Updating 'all rooms widget'")
 

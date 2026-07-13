@@ -16,8 +16,7 @@
 
 import app_context
 from database import fetch_rooms, fetch_book_types
-from tkinter import Frame, Label
-from ttkwidgets.autocomplete import AutocompleteCombobox
+from customtkinter import CTkFrame, CTkLabel, CTkComboBox
 from UI.Book.BookEditWidget import BookEditWidget
 
 
@@ -25,23 +24,22 @@ class SearchFilterBooks(BookEditWidget):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.title_label.config(text="Titel: ")
-        self.authors_label.config(text="Autoren: ")
-        self.type_label.config(text="Typ: ")
-        self.room_label.config(text="Raum: ")
+        self.title_label.configure(text="Titel: ")
+        self.authors_label.configure(text="Autoren: ")
+        self.type_label.configure(text="Typ: ")
+        self.room_label.configure(text="Raum: ")
 
-        self.lend = AutocompleteCombobox(self.lend_frame, completevalues=["Ja", "Nein"], width=25, postcommand=self.update)
+        self.lend = CTkComboBox(self.lend_frame, values=["Ja", "Nein"], command=self.refresh)
         self.lend.grid(row=0, column=1)
 
-        self.lend.bind("<<ComboboxSelected>>", self.update_lend_to)
+        self.lend.bind("<<CTkComboBoxSelected>>", self.update_lend_to)
     
-    def update(self):
+    def refresh(self):
         app_context.logger.info("Updating Search filters for books")
-        self.authors.update()
         self.all_rooms = fetch_rooms()
         self.all_types = fetch_book_types()
-        self.room.config(completevalues=self.all_rooms)
-        self.type_select.config(completevalues=self.all_types)
+        self.room.configure(values=self.all_rooms)
+        self.type_select.configure(values=self.all_types)
 
 
     def update_lend_to(self, event_object):
