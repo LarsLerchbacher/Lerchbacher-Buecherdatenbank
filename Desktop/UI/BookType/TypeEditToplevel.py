@@ -28,7 +28,7 @@ class TypeEditToplevel(CTkToplevel):
         self.label = CTkLabel(self, text="Name: ")
         self.entry = CTkEntry(self)
 
-        self.buttonCTkFrame = CTkFrame(self)
+        self.buttonCTkFrame = CTkFrame(self, fg_color="transparent")
 
         self.saveCTkButton = CTkButton(self.buttonCTkFrame, text="Speichern", command=self.save)
         self.cancelCTkButton = CTkButton(self.buttonCTkFrame, text="Abbrechen", command=self.cancel)

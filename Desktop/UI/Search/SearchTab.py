@@ -83,7 +83,7 @@ class SearchTab(Tab):
         #
         # The search button
         #
-        self.buttonCTkFrame = CTkFrame(self)
+        self.buttonCTkFrame = CTkFrame(self, fg_color="transparent")
         self.buttonCTkFrame.pack(padx=0, pady=10)
         self.searchCTkButton = CTkButton(self.buttonCTkFrame, text="Suchen", command=self.search)
         self.searchCTkButton.grid(row=0, column=0)

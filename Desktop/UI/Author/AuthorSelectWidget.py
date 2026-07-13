@@ -45,7 +45,7 @@ class AuthorSelectWidget(CTkFrame):
         self.available_list.grid(row=1, column=0)
         self.used_list.grid(row=1, column=3)
 
-        self.button_frame = CTkFrame(self)
+        self.button_frame = CTkFrame(self, fg_color="transparent")
         self.button_frame.grid(row=1, column=2)
 
         self.select = CTkButton(self.button_frame, text='>', command=self.select)

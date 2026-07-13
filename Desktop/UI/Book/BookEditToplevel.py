@@ -27,6 +27,8 @@ class BookEditToplevel(CTkToplevel):
     def __init__(self, id, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+        self.minsize(600, 800)
+
         self.id = id
         if self.id != -1:
             app_context.logger.info(f"Opening book editing dialog for book with id {self.id}")
@@ -46,7 +48,7 @@ class BookEditToplevel(CTkToplevel):
         self.createCTkButton = CTkButton(self.edit.authors, text="Autor hinzufügen", command=self.create_author)
         self.createCTkButton.grid(row=0, column=3)
 
-        self.button_frame = CTkFrame(self)
+        self.button_frame = CTkFrame(self, fg_color="transparent")
         self.button_frame.pack(padx=20, pady=5)
 
         self.save_button = CTkButton(self.button_frame, text='Speichern', command=self.save)

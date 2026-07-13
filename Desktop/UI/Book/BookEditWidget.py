@@ -17,7 +17,6 @@
 from database import fetch_book_types, fetch_rooms
 from customtkinter import *
 from CTkSpinbox import CTkSpinbox
-from ttkwidgets.autocomplete import AutocompleteCombobox
 from UI.Author.AuthorSelectWidget import AuthorSelectWidget
 from UI.ISBNWidget import ISBNWidget
 

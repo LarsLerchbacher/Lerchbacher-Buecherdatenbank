@@ -42,7 +42,7 @@ class AuthorEditToplevel(CTkToplevel):
         # Configure grid weights
         self.grid_columnconfigure(1, weight=1)
 
-        self.buttonCTkFrame = CTkFrame(self)
+        self.buttonCTkFrame = CTkFrame(self, fg_color="transparent")
         self.buttonCTkFrame.grid(row=3, column=0, columnspan=2, padx=20, pady=20)
 
         self.saveCTkButton = CTkButton(self.buttonCTkFrame, text='Speichern', command=self.save)
