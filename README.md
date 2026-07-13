@@ -2,7 +2,7 @@
 Lerchbacher Bücherdatenbank
 ============================
 ![Sprache: Python](https://img.shields.io/badge/Sprache-Python-blue)
-![UI Bibliothek: Tkinter](https://img.shields.io/badge/UI_Bibliothek-Tkinter-lightgrey)
+![UI Bibliothek: Tkinter](https://img.shields.io/badge/UI_Bibliothek-customkinter-blue)
 ![Datenbanksystem: SQLite3](https://img.shields.io/badge/Datenbanksystem-SQLite3-lightblue)
 ![Codezeilen: Über 2000](https://img.shields.io/badge/Zeilen_Code-%C3%9Cber_2000-green)
 
