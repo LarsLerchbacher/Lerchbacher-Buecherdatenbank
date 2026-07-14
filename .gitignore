@@ -28,3 +28,5 @@ venv\*
 
 Web\__pycache__
 Web/__pycache__
+
+output
