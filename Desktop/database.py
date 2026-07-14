@@ -25,7 +25,7 @@ from datetime import date, datetime
 from images import get_image
 import requests
 from sqlite3 import *
-from os import remove
+import os
 
 
 #
