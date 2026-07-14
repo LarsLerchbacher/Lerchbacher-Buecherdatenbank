@@ -169,7 +169,7 @@ def init_files() -> None:
 
         cur.execute("CREATE TABLE dbVersion (id INTEGER PRIMARY KEY AUTOINCREMENT, version VARCHAR(5));")
 
-        cur.execute("INSERT INTO dbVersion (id, version) VALUES (0, '?');", (app_context.version,));
+        cur.execute("INSERT INTO dbVersion (id, version) VALUES (0, ?);", (app_context.version,));
 
         # Commiting the changes
         db.commit()
