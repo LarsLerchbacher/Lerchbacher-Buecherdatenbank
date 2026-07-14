@@ -1,6 +1,6 @@
 #
 #   The Lerchbacher book database project
-#   © Lars Lerchbacher 2025
+#   © Lars Lerchbacher 2025-2026
 #
 #   This file is part of the Lerchbacher book database
 #
