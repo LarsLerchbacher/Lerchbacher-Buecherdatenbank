@@ -136,75 +136,21 @@
 					<li>Die Website-Version des Projekts wurde entfernt, da diese nie fertig gestellt wurde</li>
 					<li>Die Abhängigkeiten wurden in <code>Desktop/requirements.txt</code> verschoben.</li>
 					<li>Die Dokumentation wurde überarbeitet</li>
+					<li>Die Logging Funktion des Programms wurde verbessert</li>
+					<li>Ein Icon wurde hinzugefügt</li>
+					<li>Beim Löschen eines Buches wird ab sofort das zugehörige Cover mitgelöscht</li>
 				</ul>
 			</div>
 		</p>
 				
 		<h2>2. Installation</h2>
 		
-		<h3 id="dependencies">Abhängigkeiten:</h3>
-		
-		<div class="text-list">
-			<ul>
-				<li>Der Quellcode der Applikation</li>
-				<li>Python (getestet mit Version 3.13.1)</li>
-				<li>Eine Python virtual environment, kurz venv</li>
-				<li>Die Python Packete aus der Desktop/requirements.txt Datei</li>
-			</ul>
-		</div>
-		
-		<h3 id="installation-steps">Installationsschritte:</h3>
-		
-		<p>Laden Sie Python herunter, wenn Sie es nicht bereits installiert haben. Getestet wurde das Programm mit Version 3.13.1.<br>
-		Linux Benutzer sollten Python über den Packetmanager iher Distribution installieren.<br>
+		<p>Ich freue mich, verkünden zu dürfen, dass ab dieser Version (2.0.0) <b>KOMPILIERTE VERSIONEN</b> des Programms zur Verfügung gestellt werden. Nach einer zweiter Prüfung aller Lizenen der Abhängigkeiten dieses Projekts habe ich bemerkt, dass nun alle Abhängigkeiten unter mit der AGPL v3 kompatiblen Lizenzen veröffentlicht wurden. Damit steht der Bereitstellung von vorkompilierten Versionen der Applikation nichts mehr im Wege.<br><br>
+		Diese Änderungen bedeuten auch, dass die Installation deutlich einfacher wird. Installieren können Sie das Programm nun wie folgt:
+		- Laden Sie die .zip or .tar.xz Datei für Ihr Betriebssystem herunter
+		- Extrahieren Sie diese in einen Ordner, der nun Ihre Bücherdatenbank beinhalten soll (oder in den Ordner mit der Vorgängerversion). Wählen Sie hierbei Ersetzen aus um die vorherige Version zu überschreiben, sollten Sie die Frage bekommen, was Sie mit diesen Dateien machen möchten.
+		- Fertig! Nun können Sie das Proramm über die ausführbare "Lerchbacher Bücherdatenbank"(.exe auf Windows) starten.
 
-		Für Windows Benutzer befindet sich der Download auf <a href="https://www.python.org">der offiziellen Seite der Python Software Foundation</a>.<br>
-		<b>WICHTIG für Windows Benutzer: aktivieren Sie bei der Installation die Option Python zum PATH hinzufügen (add python to PATH)!</b></p>
-		
-		<p>Entscheiden Sie sich für einen Installationsordner für die Applikation. Soll die Datenbank von mehrern Benutzer verwendet werden, empfiehlt es sich, als Installationsordner einen geteilten Netzwerk- oder Cloudordner zu verweden. Beispielsweise ein Netzlaufwerk oder ein Gruppenordner in Nextcloud (meine Wahl).</p>
-		
-		<p>Dann sollten Sie eine Ordner namens <code>src</code> im Installationsordner erstellen. Dieser wird als Speicherort für den Quellcode dienen.</p>
-		
-			<p>Laden Sie nun den Quellcode herunter. Dafür haben Sie folgenden Möglichkeiten:</p>
-			<div class="text-list">
-				<ul>
-					<li>Sie können das "Sourcecode.zip" Archiv des zu installierenden Releases herunterladen und in den <code>src</code> Ordner entzippen. ODER</li>
-					<li>Sie können (wenn Sie mit Softwareentwicklungstools vertraut sind) mithilfe von Git das Repository des Projektes (<a href="https://github.com/LarsLerchbacher/Lerchbacher-Buecherdatenbank">hier</a>) in den <code>src</code> Ordner klonen und den Commit des zu installierenden Releases auschecken.</li>
-				</ul>
-			</div>
-			
-			<p>Als nächstes öffnen Sie den <code>src</code> Ordner im Terminal (Windows: CMD oder Terminal auf Windows 11) und erstellen eine virtuelle Umgebung für Python:</p>
-
-		<p>Das funktioniert folgendermassen: <code>python -m venv NAME</code>, wobei Sie <code>NAME</code> mit dem gewünschten Namen der virtuellen Umgebung ersetzen. Standard ist (zumindest für mich) <code>venv</code> oder <code>env</code>.</p>
-		
-		<p>Nun müssen Sie die Packete aus der <code>Desktop/requirements.txt</code> Datei installiert werden. Am einfachsten geht das mit dem Befehl <code>NAME\Scripts\pip.exe install -r requirements-Desktop.txt</code> auf Windows und <code>NAME/bin/pip install -r requirements-Desktop.txt</code> auf Linux. Achten Sie wieder darauf, NAME mit dem von Ihnen gewählten Namen zu ersetzen<br>Windows benutzer können ihr Terminal/ ihre CMD jetzt schliessen.</p>
-		
-		<h3 id="add-start-method">Startmöglichkeit hinzufügen</h3>
-		
-		<p>Als nächstes sollten wir Ihnen eine Möglichkeit geben, die Applikation einfacher zu starten. Auf Windows wäre das etwas eine Verknüpfung, auf Linux ein Script für ihre Shell.</p>
-		
-		<h4 id="windows">Windows</h4>
-		
-		<p>Öffnen Sie zunächst den Installationsordner im Explorer und machen einen Rechtsklick auf eine leere Fläche. Wählen Sie nun <code>Neu -> Verknüpfung</code> aus. Geben Sie nun den Pfad des Installationsordners ein (Sie können ihn aus der Addressleiste oben im Explorer kopieren) ein und fügen Sie folgendes hinzu: <code>src\NAME\Scripts\pythonw.exe</code>. Klicken Sie auf weiter und wahelen Sie einen Namen wie <code>Lerchbacher Bücherdatenbank</code>.</p>
-		
-		<p>Machen Sie nun einen Rechtsklick auf die neue Verknüpfung und wählen Sie "Eigenschaften". Nun müssen wir zwei Kleinigkeiten ändern:</p>
-		<p>Als erstes wenden wir uns dem Ziel zu: fügen Sie am Ende der Zeile, ausserhalb der Anführungszeichen, folgendes hinzu: <code> src\Desktop\main.py</code>.</p>
-		<p>Danach ändern wir etwas in Ausfüheren in: ersetzen Sie <code>src\NAME\Scripts\</code> durch <code>src\Desktop</code>.</p>
-		
-		<p>Jetzt sollten Sie in der Lage sein, die Applikation über die Verknüpfung zu starten.</p>
-		
-		<h4 id="linux">Linux</h4>
-		
-		<p>Unter Linux ist meine Empfehlung, ein einfaches Skript für Ihre Shell zu schreiben, dass die Applikation startet. Dieses sollte sich direkt im Installationsordner befinden. Ich kenne mich nicht gut mit den verschiedenen Shells aus, deshalb könnte es sein, dass mein Beispiel bei Ihnen nicht funktioniert. In dem Fall, fragen Sie bitte eine Person, die sich mit der Shell auskennt, ob sie ihnen helfen kann. Ersetzen Sie ausserdem SHELL durch ihre Shell und NAME durch den Namen der venv.</p>
-		
-		<p class="code-display">#!/bin/SHELL<br>
-		src/NAME/bin/python src/Desktop/main.py
-		</p>
-		
-		<p>Zum Schluss müssen Sie das Skript noch ausfürbar machen. Das funktioniert mit dem Befehl <code>chmod +x SKRIPT</code>, wobei SKRIPT der Name des Skripts ist.</p>
-		
-		<br>
-		
 		<h2 id="overview">3. Übersicht</h2>
 		
 		<p>Der Übersicht Tab zeigt die Anzahl der Bücher und Autoren in der Datenbank sowie die 12 zuletzt hinzugefügten Bücher und Autoren an. Ebenfalls finden Sie hier eine Anzeige der aktuell installierten Version, sowie den Link zum zur Version passenden Handbuch.</p>
