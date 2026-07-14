@@ -25,6 +25,7 @@ from datetime import date, datetime
 from images import get_image
 import requests
 from sqlite3 import *
+from os import remove
 
 
 #
@@ -32,10 +33,8 @@ from sqlite3 import *
 #
 # Constants:
 #   DATABASE - is used to store the filename for the database file
-#   SECURITY_KEY - stores the security key that is used to authenticate an admin when deleting something
 #
 DATABASE = "database.sqlite"
-SECURITY_KEY = "Alpha Delta Omicron 37 45 Blau"
 
 
 
@@ -140,24 +139,30 @@ def fetch_authors() -> list[Author]:
     """
 
     # The db connections is initialized
+    app_context.logger.info("Fetching all authors from the database")
     db, cur = prepare_db()
 
-    # Fetches all the author from the db
-    authors = cur.execute("SELECT * FROM authors ORDER BY lastName ASC;").fetchall()
+    try:
+        # Fetches all the author from the db
+        authors = cur.execute("SELECT * FROM authors ORDER BY lastName ASC;").fetchall()
+        
+        # Closes the cursor
+        cur.close()
 
-    # Closes the cursor
-    cur.close()
+        # Closes the db connection
+        db.close()
 
-    # Closes the db connection
-    db.close()
-
-    # Loops through all authors in the authors list
-    for index in range(0, len(authors)):
-        author = authors[index]
-        # Updates the list element at the current index to a new Author object with all the data filled in
-        authors[index] = Author(id=author[0], firstName=author[1], lastName=author[2])
-    # Returns the fetched and converted authors
-    return authors
+        # Loops through all authors in the authors list
+        for index in range(0, len(authors)):
+            author = authors[index]
+            # Updates the list element at the current index to a new Author object with all the data filled in
+            authors[index] = Author(id=author[0], firstName=author[1], lastName=author[2])
+        # Returns the fetched and converted authors
+        app_context.logger.debug(f"Fetched {len(authors)} authors")
+        return authors
+    except Exception as e:
+        app_context.logger.error(f"Failed to fetch authors: {e}")
+        raise
 
 
 def search_authors(string: str) -> list[Author]:
@@ -405,29 +410,34 @@ def fetch_books() -> list[Book]:
     """
 
     # Initializes the db connection
+    app_context.logger.info("Fetching all books from the database")
     db, cur = prepare_db()
 
-    # Fetches all books stored in the Database
-    books = cur.execute("SELECT * FROM books ORDER BY book_title ASC;").fetchall()
+    try:
+        # Fetches all books stored in the Database
+        books = cur.execute("SELECT * FROM books ORDER BY book_title ASC;").fetchall()
 
-    new_books = []
+        new_books = []
 
-    # Converts each book into a Book object
-    for index in range(0, len(books)):
-        book = books[index]
-        authorIDs = cur.execute("SELECT abAuthorID FROM author_books WHERE abBookID = ?;", (book[0],)).fetchall()
-        new_books.append(Book(id=book[0], title=book[1], author_ids=authorIDs, publisher=book[2], isbn=book[3], edition=book[4], year=book[5], book_type=book[6], tags=eval(book[7]),
-                              room=book[8], shelf=book[9], lend=book[10], lend_to=book[11], language=book[12]))
+        # Converts each book into a Book object
+        for index in range(0, len(books)):
+            book = books[index]
+            authorIDs = cur.execute("SELECT abAuthorID FROM author_books WHERE abBookID = ?;", (book[0],)).fetchall()
+            new_books.append(Book(id=book[0], title=book[1], author_ids=authorIDs, publisher=book[2], isbn=book[3], edition=book[4], year=book[5], book_type=book[6], tags=eval(book[7]),
+                                  room=book[8], shelf=book[9], lend=book[10], lend_to=book[11], language=book[12]))
 
 
-    # Closes the cursor
-    cur.close()
+        # Closes the cursor
+        cur.close()
 
-    # Closes the database connection
-    db.close()
-    # Returns all found books
-
-    return new_books
+        # Closes the database connection
+        db.close()
+        # Returns all found books
+        app_context.logger.debug(f"Fetched {len(new_books)} books")
+        return new_books
+    except Exception as e:
+        app_context.logger.error(f"Failed to fetch books: {e}")
+        raise
 
 def fetch_book_ids() -> list[int]:
 
@@ -456,34 +466,39 @@ def create_book(book:Book) -> str | int:
     """
 
     # Initializes the db connection
+    app_context.logger.info(f"Creating a new book: {book.title}")
     db, cur = prepare_db()
 
-    authors_existing = True
-    for id in book.author_ids:
-        if not fetch_author(id):
-            return f"Autor mit der ID {id} existier nicht!"
-       
-    # Creates the book with the provided parameters
-    cur.execute(f"INSERT INTO books (book_title, book_publisher, book_isbn, book_edition, book_year, book_type, book_tags, book_room, book_shelf, book_lend, lend_to, book_language) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);", (book.title, book.publisher, book.isbn, book.edition, book.year, book.book_type, str(book.tags), book.room, book.shelf, book.lend, book.lend_to, book.language))
+    try:
+        authors_existing = True
+        for id in book.author_ids:
+            if not fetch_author(id):
+                return f"Autor mit der ID {id} existier nicht!"
+        
+        # Creates the book with the provided parameters
+        cur.execute(f"INSERT INTO books (book_title, book_publisher, book_isbn, book_edition, book_year, book_type, book_tags, book_room, book_shelf, book_lend, lend_to, book_language) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);", (book.title, book.publisher, book.isbn, book.edition, book.year, book.book_type, str(book.tags), book.room, book.shelf, book.lend, book.lend_to, book.language))
 
-    # get the id of the newest entry
-    id = cur.lastrowid
+        # get the id of the newest entry
+        id = cur.lastrowid
 
-    for author in book.author_ids:
-        cur.execute("INSERT INTO author_books (abAuthorID, abBookID) VALUES (?, ?);", (author, id))
+        for author in book.author_ids:
+            cur.execute("INSERT INTO author_books (abAuthorID, abBookID) VALUES (?, ?);", (author, id))
 
+        # Commits the changes to the db
+        db.commit()
+      
+        # Closes the cursor
+        cur.close()
 
-    # Commits the changes to the db
-    db.commit()
- 
-    # Closes the cursor
-    cur.close()
+        # Closes the db connection
+        db.close()
 
-    # Closes the db connection
-    db.close()
-
-    # Returns True, because the book was successfully created
-    return id
+        # Returns True, because the book was successfully created
+        app_context.logger.info(f"Successfully created book with ID: {id}")
+        return id
+    except Exception as e:
+        app_context.logger.error(f"Failed to create book: {e}")
+        raise
 
 
 def delete_book(book_id:int) -> bool:
@@ -502,9 +517,19 @@ def delete_book(book_id:int) -> bool:
 
     # If a book with the provided name does exist
     if fetch_book(book_id):
+        
+        app_context.logger.info(f"Deleting book with id {book_id}") 
 
         # Initializes db connection
         db, cur = prepare_db()
+        
+        try:
+            isbn = cur.execute("SELECT isbn FROM books WHERE book_id = ?;", (book_id,)).fetchone()[0]
+            app_context.logger.info(f"Deleting cover for book with isbn {isbn}")
+            os.remove(os.path.join(os.curdir), "img", isbn)
+            app_context.logger.info("Successfully deleted cover!")
+        except Exception as e:
+            app_context.logger.error(f"An error occurred while deleting the cover: {e}")
 
         # Deletes the book from the db
         cur.execute(f"DELETE FROM books WHERE book_id = ?;", (book_id,))
@@ -517,11 +542,14 @@ def delete_book(book_id:int) -> bool:
 
         # Closes the db connection
         db.close()
+        
+        app_context.logger.info("Successfully deleted book")
 
         # Returns True because the book was successfully deleted
         return True
 
     else:
+        app_context.logger.warn("Could not delete book: doesn't exist.")
 
         # Returns False, because the book couldn't be deleted
         return False
@@ -546,36 +574,42 @@ def edit_book(book_id:int, new:Book) -> str:
         return f"Das Buch mit der ID {book_id} existiert nicht!"
 
     # Initializes the db connection
+    app_context.logger.info(f"Editing book with ID: {book_id}")
     db, cur = prepare_db()
 
-    old = fetch_book(book_id)
+    try:
+        old = fetch_book(book_id)
 
-    # Transfere authors
-    for author in old.author_ids:
-        if not author in new.author_ids:
-            cur.execute("DELETE FROM author_books WHERE abAuthorID = ? AND abBookID = ?;", (author, old.id))
+        # Transfere authors
+        for author in old.author_ids:
+            if not author in new.author_ids:
+                cur.execute("DELETE FROM author_books WHERE abAuthorID = ? AND abBookID = ?;", (author, old.id))
 
-    for author in new.author_ids:
-        if not author in old.author_ids:
-            cur.execute("INSERT INTO author_books (abAuthorID, abBookID) VALUES (?, ?);", (author, new.id))    # Updates the book
+        for author in new.author_ids:
+            if not author in old.author_ids:
+                cur.execute("INSERT INTO author_books (abAuthorID, abBookID) VALUES (?, ?);", (author, new.id))    # Updates the book
 
-    cur.execute(f"""
+        cur.execute(f"""
 UPDATE books
 SET book_title = ?, book_publisher = ?, book_isbn = ?, book_edition = ?, book_year = ?, book_type = ?, book_tags = ?, book_room = ?, book_shelf = ?, book_lend = ?, lend_to = ?, book_language = ?
 WHERE book_id = ?;
     """, (new.title, new.publisher, new.isbn, new.edition, new.year, new.book_type, str(new.tags), new.room, new.shelf, new.lend, new.lend_to, new.language, book_id))
 
-    # Commits the changes to the db
-    db.commit()
+        # Commits the changes to the db
+        db.commit()
 
-    # Closes the cursor
-    cur.close()
+        # Closes the cursor
+        cur.close()
 
-    # Closes the db connection
-    db.close()
+        # Closes the db connection
+        db.close()
 
-    # Returns True because the book was edited successfully
-    return "OK"
+        # Returns True because the book was edited successfully
+        app_context.logger.info(f"Successfully edited book with ID: {book_id}")
+        return "OK"
+    except Exception as e:
+        app_context.logger.error(f"Failed to edit book: {e}")
+        raise
 
 
 def fetch_book(book_id:int) -> Book|bool:
@@ -593,20 +627,26 @@ def fetch_book(book_id:int) -> Book|bool:
     """
 
     # Initializes the db connection
+    app_context.logger.debug(f"Fetching book with ID: {book_id}")
     db, cur = prepare_db()
 
-    # Fetches one book from the db where the id is equals to the book_id parameter
-    book = cur.execute(f"SELECT * FROM books WHERE book_id = ?;", (book_id, )).fetchone()
+    try:
+        # Fetches one book from the db where the id is equals to the book_id parameter
+        book = cur.execute(f"SELECT * FROM books WHERE book_id = ?;", (book_id, )).fetchone()
 
-    authorIDs = [ row[0] for row in cur.execute("SELECT abAuthorID FROM author_books WHERE abBookID = ?;", (book_id,)).fetchall() ]
+        authorIDs = [ row[0] for row in cur.execute("SELECT abAuthorID FROM author_books WHERE abBookID = ?;", (book_id,)).fetchall() ]
 
 
-    # Turns the fetched book into a Book object
-    new_book = Book(id=book[0], title=book[1], author_ids=authorIDs, publisher=book[2], isbn=book[3], edition=book[4],
-                year=book[5], book_type=book[6], tags=eval(book[7]), room=book[8], shelf=book[9], lend=book[10], lend_to=book[11], language=book[12])
+        # Turns the fetched book into a Book object
+        new_book = Book(id=book[0], title=book[1], author_ids=authorIDs, publisher=book[2], isbn=book[3], edition=book[4],
+                    year=book[5], book_type=book[6], tags=eval(book[7]), room=book[8], shelf=book[9], lend=book[10], lend_to=book[11], language=book[12])
 
-    # Returns the found book
-    return new_book
+        # Returns the found book
+        app_context.logger.debug(f"Successfully fetched book with ID: {book_id}")
+        return new_book
+    except Exception as e:
+        app_context.logger.error(f"Failed to fetch book with ID {book_id}: {e}")
+        raise
 
 
 def fetch_book_by_isbn(isbn:str) -> Book:
@@ -623,72 +663,100 @@ def fetch_book_by_isbn(isbn:str) -> Book:
     """
 
     # Initializes the db connection
+    app_context.logger.debug(f"Fetching book by ISBN: {isbn}")
     db, cur = prepare_db()
 
-    # Fetches one book from the db where the title is equals to the name parameter
-    book = cur.execute(f"SELECT * FROM books WHERE book_isbn = ?;", (isbn,)).fetchone()
-    
-    authorIDs = cur.execute("SELECT abAuthorID FROM author_books WHERE abBookID = ?;", (book[0],)).fetchall()
+    try:
+        # Fetches one book from the db where the title is equals to the name parameter
+        book = cur.execute(f"SELECT * FROM books WHERE book_isbn = ?;", (isbn,)).fetchone()
+        
+        authorIDs = cur.execute("SELECT abAuthorID FROM author_books WHERE abBookID = ?;", (book[0],)).fetchall()
 
-    # Turns the fetched book into a Book object
-    book = Book(id=book[0], title=book[1], author_ids=authorIDs, publisher=book[2], isbn=book[3], edition=book[4],
-                year=book[5], book_type=book[6], tags=eval(book[7]), room=book[8], shelf=book[9], lend=book[10], lend_to=book[11])
+        # Turns the fetched book into a Book object
+        book = Book(id=book[0], title=book[1], author_ids=authorIDs, publisher=book[2], isbn=book[3], edition=book[4],
+                    year=book[5], book_type=book[6], tags=eval(book[7]), room=book[8], shelf=book[9], lend=book[10], lend_to=book[11])
 
-    # Returns the found book
-    return book
+        # Returns the found book
+        app_context.logger.debug(f"Successfully fetched book by ISBN: {isbn}")
+        return book
+    except Exception as e:
+        app_context.logger.error(f"Failed to fetch book by ISBN {isbn}: {e}")
+        raise
 
 
 def fetch_book_types() -> list[str]:
+    app_context.logger.info("Fetching all book types from the database")
     db, cur = prepare_db()
-    raw_types = cur.execute("SELECT * FROM types;").fetchall()
-    book_types = []
+    try:
+        raw_types = cur.execute("SELECT * FROM types;").fetchall()
+        book_types = []
 
-    for raw_type in raw_types:
-        book_types.append(raw_type[1])
+        for raw_type in raw_types:
+            book_types.append(raw_type[1])
 
-    cur.close()
-    db.close()
+        cur.close()
+        db.close()
 
-    return book_types
+        app_context.logger.debug(f"Fetched {len(book_types)} book types")
+        return book_types
+    except Exception as e:
+        app_context.logger.error(f"Failed to fetch book types: {e}")
+        raise
 
 
 def fetch_book_type_ids() -> list[str]:
+    app_context.logger.info("Fetching all book type IDs from the database")
     db, cur = prepare_db()
-    raw_types = cur.execute("SELECT * FROM types;").fetchall()
-    type_ids = []
+    try:
+        raw_types = cur.execute("SELECT * FROM types;").fetchall()
+        type_ids = []
 
-    for raw_type in raw_types:
-        type_ids.append(raw_type[0])
+        for raw_type in raw_types:
+            type_ids.append(raw_type[0])
 
-    cur.close()
-    db.close()
+        cur.close()
+        db.close()
 
-    return type_ids 
+        app_context.logger.debug(f"Fetched {len(type_ids)} book type IDs")
+        return type_ids
+    except Exception as e:
+        app_context.logger.error(f"Failed to fetch book type IDs: {e}")
+        raise 
 
 def fetch_book_type_id(name) -> int:
+    app_context.logger.debug(f"Fetching book type ID for: {name}")
     db, cur = prepare_db()
-    id = cur.execute(f"SELECT * FROM types WHERE type_name == ?;", (name,)).fetchone()[0]
+    try:
+        id = cur.execute(f"SELECT * FROM types WHERE type_name == ?;", (name,)).fetchone()[0]
 
-    cur.close()
-    db.close()
+        cur.close()
+        db.close()
 
-    return id
+        app_context.logger.debug(f"Successfully fetched book type ID for: {name}")
+        return id
+    except Exception as e:
+        app_context.logger.error(f"Failed to fetch book type ID for {name}: {e}")
+        raise
 
 
 def fetch_book_type(type_id) -> str:
+    app_context.logger.debug(f"Fetching book type for ID: {type_id}")
     db, cur = prepare_db()
     try:
         name = cur.execute(f"SELECT * FROM types WHERE type_id == ?", (type_id,)).fetchone()[1]
     except Exception as e:
         name = "Unbekannt"
+        app_context.logger.error(f"Failed to fetch book type for ID {type_id}: {e}")
 
     cur.close()
     db.close()
 
+    app_context.logger.debug(f"Successfully fetched book type for ID: {type_id}")
     return name
 
 
 def edit_book_type(type_id: int, new_type_name: str) -> str:
+    app_context.logger.info(f"Editing book type with ID: {type_id}")
     db, cur = prepare_db()
 
     try:
@@ -697,13 +765,15 @@ def edit_book_type(type_id: int, new_type_name: str) -> str:
         cur.close()
         db.close()
 
+        app_context.logger.info(f"Successfully edited book type with ID: {type_id}")
+        return "OK"
     except Exception as e:
+        app_context.logger.error(f"Failed to edit book type with ID {type_id}: {e}")
         return e
-    
-    return "OK"
 
 
 def create_book_type(type_name: str) -> str:
+    app_context.logger.info(f"Creating new book type: {type_name}")
     db, cur = prepare_db()
 
     try:
@@ -711,10 +781,12 @@ def create_book_type(type_name: str) -> str:
         db.commit()
         cur.close()
         db.close()
-    except Exception as e:
-        return e
 
-    return "OK"
+        app_context.logger.info(f"Successfully created book type: {type_name}")
+        return "OK"
+    except Exception as e:
+        app_context.logger.error(f"Failed to create book type {type_name}: {e}")
+        return e
 
 def delete_book_type(type_id: int):
     db, cur = prepare_db()
@@ -732,57 +804,79 @@ def delete_book_type(type_id: int):
 
 
 def fetch_rooms() -> list[str]:
+    app_context.logger.info("Fetching all rooms from the database")
     db, cur = prepare_db()
-    raw_rooms = cur.execute("SELECT * FROM rooms;").fetchall()
-    rooms = []
+    try:
+        raw_rooms = cur.execute("SELECT * FROM rooms;").fetchall()
+        rooms = []
 
-    for raw_room in raw_rooms:
-        rooms.append(raw_room[1])
+        for raw_room in raw_rooms:
+            rooms.append(raw_room[1])
 
-    cur.close()
-    db.close()
+        cur.close()
+        db.close()
 
-    return rooms
+        app_context.logger.debug(f"Fetched {len(rooms)} rooms")
+        return rooms
+    except Exception as e:
+        app_context.logger.error(f"Failed to fetch rooms: {e}")
+        raise
 
 
 def fetch_room_ids() -> list[str]:
+    app_context.logger.info("Fetching all room IDs from the database")
     db, cur = prepare_db()
-    raw_rooms = cur.execute("SELECT * FROM rooms;").fetchall()
-    room_ids = []
+    try:
+        raw_rooms = cur.execute("SELECT * FROM rooms;").fetchall()
+        room_ids = []
 
-    for raw_room in raw_rooms:
-        room_ids.append(raw_room[0])
+        for raw_room in raw_rooms:
+            room_ids.append(raw_room[0])
 
-    cur.close()
-    db.close()
+        cur.close()
+        db.close()
 
-    return room_ids
+        app_context.logger.debug(f"Fetched {len(room_ids)} room IDs")
+        return room_ids
+    except Exception as e:
+        app_context.logger.error(f"Failed to fetch room IDs: {e}")
+        raise
 
 
 def fetch_room_id(name) -> int:
+    app_context.logger.debug(f"Fetching room ID for: {name}")
     db, cur = prepare_db()
-    id = cur.execute(f"SELECT * FROM rooms WHERE room_name == ?;", (name,)).fetchone()[0]
-    cur.close()
-    db.close()
-    
-    return id
+    try:
+        id = cur.execute(f"SELECT * FROM rooms WHERE room_name == ?;", (name,)).fetchone()[0]
+        cur.close()
+        db.close()
+
+        app_context.logger.debug(f"Successfully fetched room ID for: {name}")
+        return id
+    except Exception as e:
+        app_context.logger.error(f"Failed to fetch room ID for {name}: {e}")
+        raise
 
 
 
 def fetch_room(room_id) -> str:
+    app_context.logger.debug(f"Fetching room for ID: {room_id}")
     db, cur = prepare_db()
     try:
         name = cur.execute(f"SELECT * FROM rooms WHERE room_id == ?;", (room_id,)).fetchone()[1]
     except Exception as e:
         name = "Unbekannt"
+        app_context.logger.error(f"Failed to fetch room for ID {room_id}: {e}")
 
     cur.close()
     db.close()
 
+    app_context.logger.debug(f"Successfully fetched room for ID: {room_id}")
     return name
 
 
 def edit_room(room_id: int, new_room_name: str) -> str:
+    app_context.logger.info(f"Editing room with ID: {room_id}")
     db, cur = prepare_db()
 
     try:
@@ -791,13 +885,15 @@ def edit_room(room_id: int, new_room_name: str) -> str:
         cur.close()
         db.close()
 
+        app_context.logger.info(f"Successfully edited room with ID: {room_id}")
+        return "OK"
     except Exception as e:
-        return e
-    
-    return "OK" 
+        app_context.logger.error(f"Failed to edit room with ID {room_id}: {e}")
+        return e 
 
 
 def create_room(room_name: str) -> str:
+    app_context.logger.info(f"Creating new room: {room_name}")
     db, cur = prepare_db()
 
     try:
@@ -805,13 +901,16 @@ def create_room(room_name: str) -> str:
         db.commit()
         cur.close()
         db.close()
-    except Exception as e:
-        return e
 
-    return "OK"
+        app_context.logger.info(f"Successfully created room: {room_name}")
+        return "OK"
+    except Exception as e:
+        app_context.logger.error(f"Failed to create room {room_name}: {e}")
+        return e
 
 
 def delete_room(room_id: int):
+    app_context.logger.info(f"Deleting room with ID: {room_id}")
     db, cur = prepare_db()
 
     try:
@@ -820,32 +919,41 @@ def delete_room(room_id: int):
         cur.close()
         db.close()
 
+        app_context.logger.info(f"Successfully deleted room with ID: {room_id}")
+        return "OK"
     except Exception as e:
+        app_context.logger.error(f"Failed to delete room with ID {room_id}: {e}")
         return e
-
-    return "OK"
 
 
 def get_author_count():
-
+    app_context.logger.info("Fetching author count from the database")
     db, cur = prepare_db()
+    try:
+        count = cur.execute("SELECT COUNT(author_id) FROM authors;").fetchone()[0]
 
-    count = cur.execute("SELECT COUNT(author_id) FROM authors;").fetchone()[0]
+        cur.close()
+        db.close()
 
-    cur.close()
-    db.close()
-
-    return count
+        app_context.logger.debug(f"Author count: {count}")
+        return count
+    except Exception as e:
+        app_context.logger.error(f"Failed to fetch author count: {e}")
+        raise
 
 
 def get_book_count():
-
+    app_context.logger.info("Fetching book count from the database")
     db, cur = prepare_db()
+    try:
+        count = cur.execute("SELECT COUNT(book_id) FROM books;").fetchone()[0]
 
-    count = cur.execute("SELECT COUNT(book_id) FROM books;").fetchone()[0]
+        cur.close()
+        db.close()
 
-    cur.close()
-    db.close()
-
-    return count
+        app_context.logger.debug(f"Book count: {count}")
+        return count
+    except Exception as e:
+        app_context.logger.error(f"Failed to fetch book count: {e}")
+        raise
 

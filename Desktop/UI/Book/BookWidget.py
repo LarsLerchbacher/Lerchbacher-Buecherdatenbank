@@ -101,7 +101,6 @@ class BookWidget(CTkFrame):
         self.author.configure(text="")
         if len(authors) > 1:
             while len(authors) > 2:
-                app_context.logger.debug(f"Length of author list: {len(authors)}")
                 self.author.configure(text = self.author.cget("text") + authors.pop().getName())
                 self.author.configure(text = self.author.cget("text") + ", ")
             self.author.configure(text = self.author.cget("text") + authors.pop().getName())

@@ -36,7 +36,7 @@ def update_image(book):
 
     # Check for a manually added cover
     if filename != "./img/noCover.png":            
-        app_context.logger.info("Existing found")
+        app_context.logger.debug("Existing cover found")
 
     # If none was found, download one
     else:
@@ -50,10 +50,8 @@ def download_cover(book):
     app_context.logger.info("Downloading cover...")
     try:
         url_target = f"https://www.googleapis.com/books/v1/volumes?q=isbn:{book.isbn}" 
-        app_context.logger.debug(f"Requesting cover URL from : {url_target}")
         response = requests.get(url_target, headers={"x-goog-api-key": "AIzaSyDuEts1XTeWZ0r-882BfQPM9pnUaS27xVs"})
         cover_url = response.json()["items"][0]["volumeInfo"]["imageLinks"]["thumbnail"]
-        app_context.logger.debug(f"Cover available at: {cover_url}")
         cover = requests.get(cover_url)
 
 

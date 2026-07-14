@@ -120,51 +120,25 @@ class BookEditToplevel(CTkToplevel):
                 app_context.logger.info(f"Saving book: {self.id}")
 
             title = self.edit.title.get()
-            app_context.logger.debug(f"\tTitle: {title}")
-
             author_ids = self.edit.authors.get()
             authors = []
             for id in author_ids:
                 author = fetch_author(id)
                 authors.append(author.getName())
-            app_context.logger.debug(f"\tAutoren: {authors} (Ids: {author_ids})")
-
             language = self.edit.language.get()
-            app_context.logger.debug(f"\tSprache: {language}")
-
             publisher = self.edit.publisher.get()
-            app_context.logger.debug(f"\tVerlag: {publisher}")
-
             isbn = self.edit.isbn.get()
-            app_context.logger.debug(f"\tISBN: {isbn}")
-
             edition = self.edit.edition.get()
-            app_context.logger.debug(f"\tAuflage: {edition}")
-
             year = self.edit.year.get()
-            app_context.logger.debug(f"\tJahr: {year}")
-
             book_type = self.edit.type_select.get()
             type_nr = fetch_book_type_id(book_type)
-            app_context.logger.debug(f"\tBuchtyp: {book_type} (Typ Nr. {type_nr})")
-
             tags = self.edit.tags.get().replace("; ", ";").split(";")
-            app_context.logger.debug(f"\tKategorien: {tags}")
-
             book_room = self.edit.room.get()
             room_nr = fetch_room_id(book_room)
-            app_context.logger.debug(f"\tRaum: {book_room} (Raum Nr. {room_nr})")
-
             shelf = self.edit.shelf.get()
-            app_context.logger.debug(f"\tRegal: {shelf}")
-
             lend = self.edit.lend_var.get()
             lend_str = "ja" if lend else "nein"
-            app_context.logger.debug(f"\tVerliehen: {lend_str} (lend_var: {lend})")
-
             lend_to = self.edit.lend_to.get()
-            if lend_to != "":
-                app_context.logger.debug(f"\tVerliehen an: {lend_to}")
 
             book = Book(id=self.id, title=title, author_ids=author_ids, publisher=publisher, isbn=isbn, edition=edition, year=year, book_type=type_nr, tags=tags, room=room_nr, shelf=shelf, lend=lend, lend_to=lend_to, language=language)
 

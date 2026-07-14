@@ -568,7 +568,7 @@ class SearchTab(Tab):
 
     # Exports search results of detail searches (not general search) to a CSV file
     def export(self):
-        app_context.logger.debug("Preparing data for CSV export")
+        app_context.logger.info("Preparing data for CSV export")
         match self.selectVar.get():
             case "2":
                 data = [

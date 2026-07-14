@@ -100,9 +100,6 @@ def init_files() -> None:
     """Function that checks for the necesary files and folders and creates/downloads them if necesary"""
     global logger
 
-    # Checking for the cache folder
-    logger.info("Checking for image folder...")
-    
     if not os.path.exists("./img"):
         logger.warning("No existing image folder found! Creating one...")
         os.mkdir("img")
@@ -111,9 +108,6 @@ def init_files() -> None:
         logger.info("Existing img folder found!")
 
     
-    # Checking for the noCover.png file
-    logger.info("Checking for noCover.png file...")
-
     if not os.path.exists("./img/noCover.png"):
         logger.warning("File not found! Downloading it...")
 
@@ -128,7 +122,6 @@ def init_files() -> None:
 
     
     # Checking for the database
-    logger.info("Checking for database...")
     if not os.path.exists("./database.sqlite"):
         logger.warning("No existing database found! Creating a new one...")
 
