@@ -1,5 +1,5 @@
 
-Lerchbacher Bücherdatenbank
+<img alt="Ein Bücherstapel mit den Buchstaben L und B darüber, das Logo das Programms. " src="Desktop/icon.ico">  Lerchbacher Bücherdatenbank
 ============================
 ![Sprache: Python](https://img.shields.io/badge/Sprache-Python-blue)
 ![UI Bibliothek: Tkinter](https://img.shields.io/badge/UI_Bibliothek-customkinter-blue)
