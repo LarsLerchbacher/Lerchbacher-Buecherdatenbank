@@ -69,11 +69,6 @@ class OverviewTab(Tab):
         self.statsBooks.configure(text=f"Anzahl an Büchern: {numBooks}")
         self.statsAuthors.configure(text=f"Anzahl an Autoren: {numAuthors}")
 
-        numBooks = get_book_count()
-        numAuthors = get_author_count()
-        self.statsBooks.config(text=f"Anzahl an Büchern: {numBooks}")
-        self.statsAuthors.config(text=f"Anzahl an Autoren: {numAuthors}")
-
 
     def open_user_manual(self):
         webbrowser.open(f"https://LarsLerchbacher.github.io/Lerchbacher-Buecherdatenbank/{app_context.version}.html")

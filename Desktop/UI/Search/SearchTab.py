@@ -87,8 +87,8 @@ class SearchTab(Tab):
         self.buttonCTkFrame.pack(padx=10, pady=10)
         self.searchCTkButton = CTkButton(self.buttonCTkFrame, text="Suchen", command=self.search)
         self.searchCTkButton.grid(row=10, column=0)
-        self.exportCTkButton = CTkButton(self.buttonCTkFrame, text="Ergebnisse exportieren (CSV)", command=self.export, state=DISABLED)
-        self.exportCTkButton.grid(row=10, column=1, padx=10)
+        self.exportButton = CTkButton(self.buttonCTkFrame, text="Ergebnisse exportieren (CSV)", command=self.export, state=DISABLED)
+        self.exportButton.grid(row=10, column=1, padx=10)
 
 
         #
@@ -220,10 +220,7 @@ class SearchTab(Tab):
                 child.destroy()
 
         self.filterBooks.refresh()
-
-        self.exportCTkButton.configure(state=DISABLED)
-
-        self.exportButton.config(state=DISABLED)
+        self.exportButton.configure(state=DISABLED)
 
         # Then show the ones needed for the current selection
         match self.selectVar.get():
@@ -285,7 +282,7 @@ class SearchTab(Tab):
         self.resultRooms = []
 
         if self.selectVar.get() != "1":
-            self.exportCTkButton.configure(state=ACTIVE)
+            self.exportButton.configure(state=ACTIVE)
 
         match self.selectVar.get():
             case "1":
