@@ -1,6 +1,6 @@
 #
 #   The Lerchbacher book database project
-#   © Lars Lerchbacher 2025
+#   © Lars Lerchbacher 2025-2026
 #
 #   This file is part of the Lerchbacher book database
 #
@@ -10,53 +10,48 @@
 #   The Lerchbacher book database is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 #   See the GNU Affero General Public License for more details.
 #
-#   You should have received a copy of the GNU Affero General Public License along with the Lerchabcher book database. If not, see <https://www.gnu.org/licenses/>. 
+#   You should have received a copy of the GNU Affero General Public License along with the Lerchabcher book database. If not, see <https://www.gnu.org/licenses/>.
 #
 
 
 from database import fetch_author, fetch_author_by_name, fetch_authors, search_authors 
-from tkinter import *
+from customtkinter import *
+from CTkListbox import CTkListbox
+from tkinter import StringVar 
 
 
-class AuthorSelectWidget(Frame):
+class AuthorSelectWidget(CTkFrame):
     def __init__(self, parent, used: list):
-        super().__init__(parent)
+        super().__init__(parent, fg_color="transparent")
 
-        self.columnconfigure(index=0, weight=1)
-        self.columnconfigure(index=1, weight=1)
-        self.columnconfigure(index=2, weight=1)
-        self.rowconfigure(index=0, weight=1)
-        self.rowconfigure(index=1, weight=1)
+        self.columnconfigure(index=0)
+        self.columnconfigure(index=1)
+        self.columnconfigure(index=2)
+        self.rowconfigure(index=0)
+        self.rowconfigure(index=1)
 
         self.searchVar = StringVar(self)
         self.searchVar.trace_add("write", self.search)
 
-        self.searchLabel = Label(self, text="Suche nach: ")
-        self.searchLabel.grid(row=0, column=0)
+        self.searchCTkLabel = CTkLabel(self, text="Suche nach: ")
+        self.searchCTkLabel.grid(row=0, column=0)
     
-        self.searchBox = Entry(self, textvariable=self.searchVar)
+        self.searchBox = CTkEntry(self, textvariable=self.searchVar)
         self.searchBox.grid(row=0, column=2)
 
-        #self.available_var = Variable(self, value=self.available)
-        self.available_list = Listbox(self, selectmode=MULTIPLE)
-        self.av_scrollbar = Scrollbar(self, orient="vertical", command=self.available_list.yview)
-
-        #self.used_var = Variable(self, value=self.used)
-        self.used_list = Listbox(self, selectmode=MULTIPLE)
-        self.used_scrollbar = Scrollbar(self, orient="vertical", command=self.used_list.yview)
+        self.available_list = CTkListbox(self, multiple_selection=True)
+        self.used_list = CTkListbox(self, multiple_selection=True)
 
         self.available_list.grid(row=1, column=0)
-        self.av_scrollbar.grid(row=1, column=1)
         self.used_list.grid(row=1, column=3)
-        self.used_scrollbar.grid(row=1, column=4)
 
-        self.button_frame = Frame(self)
+        self.button_frame = CTkFrame(self, fg_color="transparent")
         self.button_frame.grid(row=1, column=2)
 
-        self.select = Button(self.button_frame, text='>', command=self.select)
-        self.deselect = Button(self.button_frame, text='<', command=self.deselect)
-        self.select_all = Button(self.button_frame, text='>>', command=self.select_all)
-        self.deselect_all = Button(self.button_frame, text='<<', command=self.deselect_all)
+        self.select = CTkButton(self.button_frame, text='>', command=self.select)
+        self.deselect = CTkButton(self.button_frame, text='<', command=self.deselect)
+        self.select_all = CTkButton(self.button_frame, text='>>', command=self.select_all)
+        self.deselect_all = CTkButton(self.button_frame, text='<<', command=self.deselect_all)
 
         self.select.pack(padx=10, pady=5)
         self.deselect.pack(padx=10, pady=5)
@@ -79,27 +74,27 @@ class AuthorSelectWidget(Frame):
         selected = self.used_list.curselection()
         already_moved = 0
         for author in selected:
-            author_object = fetch_author_by_name(self.used_list.get(author - already_moved))
+            author_object = fetch_author_by_name(self.available_list(author - already_moved))
             self.available_list.insert(author_object.id, author_object.getName())
             self.used_list.delete(author - already_moved)
             already_moved += 1
 
     def select_all(self):
-        selected = self.available_list.get(0, END)
+        selected = self.available_list.get("all")
         for author in selected:
             author_object = fetch_author_by_name(author)
             self.used_list.insert(author_object.id, author_object.getName())
-        self.available_list.delete(0, END)
+        self.available_list.delete("all")
 
     def deselect_all(self):
-        selected = self.used_list.get(0, END)
+        selected = self.used_list.get("all")
         for author in selected:
             author_object = fetch_author_by_name(author)
             self.available_list.insert(author_object.id, author_object.getName())
-        self.used_list.delete(0, END)
+        self.used_list.delete("all")
 
     def get(self) -> list[int]:
-        names = self.used_list.get(0, END)
+        names = self.used_list.get("all")
         ids = []
         for name in names:
             author = fetch_author_by_name(name)
@@ -112,8 +107,8 @@ class AuthorSelectWidget(Frame):
 
     def set(self, used: list) -> None:
         self.authors = fetch_authors()
-        self.used_list.delete(0, END)
-        self.available_list.delete(0, END)
+        self.used_list.delete("all")
+        self.available_list.delete("all")
 
         for author in self.authors:
             if author.id in used:
@@ -122,9 +117,8 @@ class AuthorSelectWidget(Frame):
                 self.available_list.insert(author.id, author.getName())
 
     def search(self, *args):
-        self.available_list.delete(0, END)
+        self.available_list.delete("end")
         self.authors = search_authors(self.searchVar.get())
 
         for author in self.authors:
             self.available_list.insert(END, author.getName())
-

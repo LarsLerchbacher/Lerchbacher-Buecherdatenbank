@@ -1,6 +1,6 @@
 #
 #   The Lerchbacher book database project
-#   © Lars Lerchbacher 2025
+#   © Lars Lerchbacher 2025-2026
 #
 #   This file is part of the Lerchbacher book database
 #
@@ -16,24 +16,25 @@
 
 import app_context
 from database import fetch_books
-from tkinter import Frame, Label
+from customtkinter import CTkFrame, CTkLabel
 from UI.Book.BookWidget import BookWidget
 
-class RecentBooksWidget(Frame):
+class RecentBooksWidget(CTkFrame):
     def __init__(self, *args, **kwargs):
+        kwargs.setdefault("fg_color", "transparent")
         super().__init__(*args, **kwargs)
         app_context.logger.info("Creating 'recent books widget'")
         all_books = fetch_books()
         self.books = all_books[-12:]
 
-        self.header = Label(self, text="Neueste Bücher", font="Arial 14 bold")
+        self.header = CTkLabel(self, text="Neueste Bücher", font=("Arial", 14, "bold"))
         self.bookWidgets = []
 
         self.header.pack()
 
-        self.update()
+        self.refresh()
 
-    def update(self):
+    def refresh(self):
         app_context.logger.info("Updating 'recent books widget'")
         all_books = fetch_books()
         self.books = all_books[-12:]

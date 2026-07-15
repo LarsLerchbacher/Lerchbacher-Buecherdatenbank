@@ -1,6 +1,6 @@
 #
 #   The Lerchbacher book database project
-#   © Lars Lerchbacher 2025
+#   © Lars Lerchbacher 2025-2026
 #
 #   This file is part of the Lerchbacher book database
 #
@@ -15,8 +15,8 @@
 
 
 import app_context 
-from tkinter import Label, Tk
-from tkinter.ttk import Notebook
+from customtkinter import CTkLabel, CTk
+from customtkinter import CTkTabview
 from UI.Author.AuthorsTab import AuthorsTab
 from UI.Book.BooksTab import BooksTab
 from UI.BookType.TypesTab import TypesTab
@@ -25,7 +25,7 @@ from UI.Room.RoomsTab import RoomsTab
 from UI.Search.SearchTab import SearchTab
 
 
-class App(Tk):
+class App(CTk):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -37,34 +37,48 @@ class App(Tk):
         app_context.mainWindow = self
 
         app_context.logger.info("Creating tab control widget")
-        self.tabControl = Notebook(self)
+        self.tabControl = CTkTabview(self, fg_color="transparent")
         self.tabControl.pack(fill="both", expand=True)
 
+        self.tabControl.add('Übersicht')
+        self.tabControl.add('Bücher')
+        self.tabControl.add('Autoren')
+        self.tabControl.add('Buchtypen')
+        self.tabControl.add('Räume')
+        self.tabControl.add('Suche')
+        
         app_context.logger.info("Populating tab control widget")
-        self.overviewTab = OverviewTab(self.tabControl)
-        self.booksTab = BooksTab(self.tabControl)
-        self.authorsTab = AuthorsTab(self.tabControl)
-        self.typesTab = TypesTab(self.tabControl)
-        self.roomsTab = RoomsTab(self.tabControl)
-        self.searchTab = SearchTab(self.tabControl)
-
-        self.tabControl.add(self.overviewTab, text='Übersicht')
-        self.tabControl.add(self.booksTab, text='Bücher')
-        self.tabControl.add(self.authorsTab, text='Autoren')
-        self.tabControl.add(self.typesTab, text='Buchtypen')
-        self.tabControl.add(self.roomsTab, text='Räume')
-        self.tabControl.add(self.searchTab, text='Suche')
+        self.overviewTab = OverviewTab(self.tabControl.tab("Übersicht"))
+        self.booksTab = BooksTab(self.tabControl.tab("Bücher"))
+        self.authorsTab = AuthorsTab(self.tabControl.tab("Autoren"))
+        self.typesTab = TypesTab(self.tabControl.tab("Buchtypen"))
+        self.roomsTab = RoomsTab(self.tabControl.tab("Räume"))
+        self.searchTab = SearchTab(self.tabControl.tab("Suche"))
+        
+        self.overviewTab.pack(fill="both", expand=True)
+        self.booksTab.pack(fill="both", expand=True)
+        self.authorsTab.pack(fill="both", expand=True)
+        self.typesTab.pack(fill="both", expand=True)
+        self.roomsTab.pack(fill="both", expand=True)
+        self.searchTab.pack(fill="both", expand=True)
 
         app_context.logger.info("Successfully initialized main window")
+        
+        self.bind("<Configure>", self.on_configure)
+        self.minsize(800, 600)
 
         self.mainloop()
+        
+    def on_configure(self, event):
+        self.update_idletasks()
+        for child in self.winfo_children():
+            child.update()
 
-
-    def update(self):
-        self.overviewTab.update()
-        self.booksTab.update()
-        self.authorsTab.update()
-        self.searchTab.update()
-        self.typesTab.update()
-        self.roomsTab.update()
+    def refresh(self):
+        self.overviewTab.refresh()
+        self.booksTab.refresh()
+        self.authorsTab.refresh()
+        self.searchTab.refresh()
+        self.typesTab.refresh()
+        self.roomsTab.refresh()
 

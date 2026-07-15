@@ -1,6 +1,6 @@
 #
 #   The Lerchbacher book database project
-#   © Lars Lerchbacher 2025
+#   © Lars Lerchbacher 2025-2026
 #
 #   This file is part of the Lerchbacher book database
 #
@@ -10,13 +10,13 @@
 #   The Lerchbacher book database is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 #   See the GNU Affero General Public License for more details.
 #
-#   You should have received a copy of the GNU Affero General Public License along with the Lerchabcher book database. If not, see <https://www.gnu.org/licenses/>. 
+#   You should have received a copy of the GNU Affero General Public License along with the Lerchabcher book database. If not, see <https://www.gnu.org/licenses/>.
 #
 
 
 import app_context
 from database import get_author_count, get_book_count
-from tkinter import Label, Button, Frame
+from customtkinter import CTkLabel, CTkButton, CTkFrame
 from UI.Tab import Tab
 from UI.Book.RecentBooksWidget import RecentBooksWidget
 from UI.Author.RecentAuthorsWidget import RecentAuthorsWidget
@@ -27,40 +27,47 @@ class OverviewTab(Tab):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.header_label = Label(self.inner_frame, text='Lerchbacher Bücherdatenbank', font="Arial 25 bold")
+        self.header_label = CTkLabel(self, text='Lerchbacher Bücherdatenbank', font=("Arial", 25, "bold"))
         self.header_label.pack(padx=0, pady=10)
 
-        self.statsFrame = Frame(self.inner_frame)
-        self.statsFrame.pack(padx=0, pady=10)
+        self.stats_frame = CTkFrame(self, fg_color="transparent")
+        self.stats_frame.pack(padx=0, pady=10)
 
-        self.statsHeader = Label(self.statsFrame, text="Statistiken", font="Arial 16 bold")
+        self.statsHeader = CTkLabel(self.stats_frame, text="Statistiken", font=("Arial", 16, "bold"))
         self.statsHeader.pack()
 
-        self.statsBooks = Label(self.statsFrame, text="Anzahl an Büchern: ")
+        self.statsBooks = CTkLabel(self.stats_frame, text="Anzahl an Büchern: ")
         self.statsBooks.pack()
 
-        self.statsAuthors = Label(self.statsFrame, text="Anzahl an Autoren: ")
+        self.statsAuthors = CTkLabel(self.stats_frame, text="Anzahl an Autoren: ")
         self.statsAuthors.pack()
 
-        self.recentBooks = RecentBooksWidget(self.inner_frame)
+        self.recentBooks = RecentBooksWidget(self)
         self.recentBooks.pack(padx=0, pady=10)
 
-        self.recentAuthors = RecentAuthorsWidget(self.inner_frame)
+        self.recentAuthors = RecentAuthorsWidget(self)
         self.recentAuthors.pack(padx=0, pady=10)
 
-        self.versionLabel = Label(self.inner_frame, text="Version " + app_context.version)
-        self.versionLabel.pack()
+        self.versionCTkLabel = CTkLabel(self, text="Version " + app_context.version)
+        self.versionCTkLabel.pack()
 
-        self.label = Label(self.inner_frame, text="Brauchen Sie Hilfe? Hier können Sie das ")
-        self.button = Button(self.inner_frame, text="Benutzerhandbuch öffnen", command=self.open_user_manual)
+        self.label = CTkLabel(self, text="Brauchen Sie Hilfe? Hier können Sie das ")
+        self.helpButton = CTkButton(self, text="Benutzerhandbuch öffnen", command=self.open_user_manual)
+        self.sourceButton = CTkButton(self, text="Hier kommen Sie zum Quellcode dieser Applikation", command=self.open_source)
         self.label.pack()
-        self.button.pack()
+        self.helpButton.pack(pady=10)
+        self.sourceButton.pack()
 
-        self.update()
+        self.refresh()
 
-    def update(self):
-        self.recentBooks.update()
-        self.recentAuthors.update()
+    def refresh(self):
+        self.recentBooks.refresh()
+        self.recentAuthors.refresh()
+
+        numBooks = get_book_count()
+        numAuthors = get_author_count()
+        self.statsBooks.configure(text=f"Anzahl an Büchern: {numBooks}")
+        self.statsAuthors.configure(text=f"Anzahl an Autoren: {numAuthors}")
 
         numBooks = get_book_count()
         numAuthors = get_author_count()
@@ -71,3 +78,5 @@ class OverviewTab(Tab):
     def open_user_manual(self):
         webbrowser.open(f"https://LarsLerchbacher.github.io/Lerchbacher-Buecherdatenbank/{app_context.version}.html")
 
+    def open_source(self):
+        webbrowser.open("https://github.com/LarsLerchbacher/Lerchbacher-Buecherdatenbank")

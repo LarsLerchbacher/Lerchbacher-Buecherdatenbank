@@ -2,7 +2,7 @@
 Lerchbacher Bücherdatenbank
 ============================
 ![Sprache: Python](https://img.shields.io/badge/Sprache-Python-blue)
-![UI Bibliothek: Tkinter](https://img.shields.io/badge/UI_Bibliothek-Tkinter-lightgrey)
+![UI Bibliothek: Tkinter](https://img.shields.io/badge/UI_Bibliothek-customkinter-blue)
 ![Datenbanksystem: SQLite3](https://img.shields.io/badge/Datenbanksystem-SQLite3-lightblue)
 ![Codezeilen: Über 2000](https://img.shields.io/badge/Zeilen_Code-%C3%9Cber_2000-green)
 
@@ -13,9 +13,6 @@ Ich mache dieses Projekt hauptsächlich für meine Familie, allerdings werde ich
 Feature-Requests werden nur von meiner Familie und Freunden akzeptiert. 
 
 
-Ein öffentlicher Release als kompilierte Version (.exe Datei) ist nicht möglich, da das Projekt in seiner Abhängigkeitskette einige Packages/Module/Bibliotheken unter nicht mit der AGPL kompatiblen Linzenzen hat. Beim kompilieren würden diese miteingebaut werden. Da ich diese aber nicht verteilen darf, muss ich leider darauf verzichten.
-
-
 Ausser Fehlerbehebungen werden wahrscheinlich kaum Updates veröffentlicht werden (dachte ich zumindest, meine Familie hat sich bisher eine MENGE Änderungen gewünscht), da ich auch an anderen Projekten arbeite, und das auch nur in meiner Freizeit.
 
 Alle Fehler oder mögliche Sicherheitslücken können über Github Issues gemeldet werden, wofür ich sehr dankbar wäre.
@@ -24,7 +21,7 @@ Es ist auch möglich, dass dieses Projekt umschriebene Umlaute (ae, ue, oe) enth
 
 
 **Bitte seid so nett und ignoriert meinen fürchterlichen Code-Stil in diesem Projekt. Einige Teile sind schon sehr alt. Damals wusste ich noch nichts über
-die Konventionen für sauberen Code... Ich versuche immer wieder, Code-Teile auszubessern, wenn mir diese besonders stark aufallen (etwa SQL Statements mit f-Strings anstellen von prepared statements).**
+die Konventionen für sauberen Code... Ich versuche immer wieder, Code-Teile auszubessern, wenn mir diese besonders stark aufallen.**
 
 
 ### Die Desktop Applikation
@@ -59,4 +56,4 @@ Creative Commons Attribution-NonCommercial 4.0 International License (CC BY-NC 4
 Ja, dieses Repo ist leider nicht sehr gut organisiert. Ich versuche es zu verbessern, aber es ist inzwischen sehr groß geworden.
 Ich weiß nicht wieso, aber ich habe zuerst gelernt, Pull-Requests zu verwenden und erst später, wie man Merges mit der git CLI macht. Ich werde ab Version 1.2.1 wahrscheinlich auf letzteres umsteigen.
 
-Und bitte ignoriert meinen fürchterlichen Commit Stil in den Anfängen des Projekts. Dieses Repo ist eines meiner ersten überhaupt. Damals wusste ich nicht wirklich, wie man Commits beyeichnen soll. Die (meisten) Infos zu den Änderungen dieser Commits finden sich in der Datei Changelog.md, welche nur in älteren Versionen existiert.
+Und bitte ignoriert meinen fürchterlichen Commit Stil in den Anfängen des Projekts. Dieses Repo ist eines meiner ersten überhaupt. Damals wusste ich nicht wirklich, wie man Commits beyeichnen soll. Die (meisten) Infos zu den Änderungen dieser Commits finden sich in der Datei Changelog.md, welche nur in älteren Versionen existiert. Später habe ich das dann geändert und normale Commit-Messages verwendet.

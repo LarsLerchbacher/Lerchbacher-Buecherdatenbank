@@ -1,6 +1,6 @@
 #
 #   The Lerchbacher book database project
-#   © Lars Lerchbacher 2025
+#   © Lars Lerchbacher 2025-2026
 #
 #   This file is part of the Lerchbacher book database
 #
@@ -14,7 +14,7 @@
 #
 
 
-from tkinter import Button, Label
+from customtkinter import CTkButton, CTkLabel
 from UI.Author.AllAuthorsWidget import AllAuthorsWidget
 from UI.Author.AuthorEditToplevel import AuthorEditToplevel
 from UI.Tab import Tab
@@ -24,15 +24,15 @@ class AuthorsTab(Tab):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.header_label = Label(self.inner_frame, text="Autoren", font="Arial 25 bold")
+        self.header_label = CTkLabel(self, text="Autoren", font=("Arial", 25, "bold"))
         self.header_label.pack(padx=0, pady=10)
 
-        self.create_button = Button(self.inner_frame, text='Neuen Author hinzufügen', command=lambda: AuthorEditToplevel(-1))
+        self.create_button = CTkButton(self, text='Neuen Author hinzufügen', command=lambda: AuthorEditToplevel(-1))
         self.create_button.pack(padx=0, pady=5)
 
-        self.authors = AllAuthorsWidget(self.inner_frame)
+        self.authors = AllAuthorsWidget(self)
         self.authors.pack(padx=0, pady=5)
 
-    def update(self):
-        self.authors.update()
+    def refresh(self):
+        self.authors.refresh()
 

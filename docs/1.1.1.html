@@ -1,108 +1,102 @@
 <!DOCTYPE html>
-
 <html lang="de">
-
-	<head>
-	
-		<title>Version 1.1.1 - Benutzerhandbuch der Lerchbacher Bücherdatenbank</title>
-		<meta charset="UTF-8">
-		<link rel="stylesheet" href="stylesheets/style.css">
-		<link rel="stylesheet" href="stylesheets/table-of-contents.css">
-	
-	</head>
-	
-	<body>
-	
-		<h1 id="top">Benutzerhandbuch der Lerchbacher Bücherdatenbank Version 1.1.1</h1>
-
-		<a class="home-button" href="index.html">Home</a>
-		
-		<br>
-		
-		<h2>Inhaltsübersicht</h2>
-		
-		<div class="toc">
-			<ol>
-				<li><a href="#general">Allgemein</a></li>
-				<li>
-					<a href="#installation">Installation</a>
-					<ol>
-						<li><a href="#dependencies">Abhängigkeiten</a></li>
-						<li><a href="#installation-steps">Installationsschritte</a></li>
-						<li>
-							<a href="#add-start-method">Startmöglichkeit hinzufügen</a>
-							<ol>
-								<li><a href="#windows">Windows</a></li>
-								<li><a href="#linux">Linux</a></li>
-							</ol>
-						</li>
-						
-					</ol>
-				</li>
-				<li><a href="#overview">Übersicht</a></li>
-				<li>
-					<a href="#books">Bücher</a>
-					<ol>
-						<li>
-							<a href="#book-edit">Bearbeitungs-Dialog</a>
-							<ol>
-								<li><a href="#book-edit-title">Titel</a></li>
-								<li><a href="#book-edit-authors">Autoren</a></li>
-								<li><a href="#book-edit-publisher">Verlag</a></li>
-								<li><a href="#book-edit-isbn">ISBN</a></li>
-								<li><a href="#book-edit-edition">Auflage</a></li>
-								<li><a href="#book-edit-type">Typ</a></li>
-								<li><a href="#book-edit-tags">Kategorien</a></li>
-								<li><a href="#book-edit-room">Raum</a></li>
-								<li><a href="#book-edit-lend">Verliehen</a></li>
-								<li><a href="#book-edit-lend-to">Verliehen an</a></li>
-								<li><a href="#book-edit-buttons">Knöpfe</a></li>
-							</ol>
-						</li>
-					</ol>
-				</li>
-				<li>
-					<a href="#authors">Autoren</a>
-					<ol>
-						<li>
-							<a href="#author-edit">Bearbeitungs-Dialog</a>
-							<ol>
-								<li><a href="#author-edit-name">Name</a></li>
-								<li><a href="#author-edit-country">Land</a></li>
-								<li><a href="#author-edit-dob">Geburtsdatum</a></li>
-								<li><a href="#author-edit-dod">Sterbedatum</a></li>
-								<li><a href="#author-edit-npw">Nobelpreisträger</a></li>
-								<li><a href="#author-edit-buttons">Knöpfe</a></li>
-							</ol>
-						</li>	
-					</ol>
-				</li>
-				<li>
-					<a href="#book-types">Buchtypen</a>
-					<ol>
-						<li><a href="#type-edit">Bearbeitungs-Dialog</a></li>
-					</ol>
-				</li>
-				<li>
-					<a href="#rooms">Räume</a>
-					<ol>
-						<li><a href="#room-edit">Bearbeitungs-Dialog</a></li>
-					</ol>
-				</li>
-				<li>
-					<a href="#search">Suche</a>
-					<ol>
-						<li><a href="#search-general">Alle</a></li>
-						<li><a href="#search-books">Bücher</a></li>
-						<li><a href="#search-authors">Autoren</a></li>
-						<li><a href="#search-book-types">Buchtypen</a></li>
-						<li><a href="#search-rooms">Räume</a></li>
-					</ol>
-				</li>
-			</ol>
-		</div>
-		
-		<br>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lerchbacher Bücherdatenbank - Version 1.1.1</title>
+    <link rel="stylesheet" href="stylesheets/index.css">
+    <link rel="stylesheet" href="stylesheets/table-of-contents.css">
+</head>
+<body>
+    <header>
+        <h1>Lerchbacher Bücherdatenbank - Version 1.1.1</h1>
+    </header>
+    <main>
+        <a href="index.html" class="home-link">Zurück zur Übersicht</a>
+        <h2>Inhaltsübersicht</h2>
+        <div class="toc">
+            <div class="toc">
+                <ol>
+                    <li><a href="#general">Allgemein</a></li>
+                    <li>
+                        <a href="#installation">Installation</a>
+                        <ol>
+                            <li><a href="#dependencies">Abhängigkeiten</a></li>
+                            <li><a href="#installation-steps">Installationsschritte</a></li>
+                            <li>
+                                <a href="#add-start-method">Startmöglichkeit hinzufügen</a>
+                                <ol>
+                                    <li><a href="#windows">Windows</a></li>
+                                    <li><a href="#linux">Linux</a></li>
+                                </ol>
+                            </li>
+                            
+                        </ol>
+                    </li>
+                    <li><a href="#overview">Übersicht</a></li>
+                    <li>
+                        <a href="#books">Bücher</a>
+                        <ol>
+                            <li>
+                                <a href="#book-edit">Bearbeitungs-Dialog</a>
+                                <ol>
+                                    <li><a href="#book-edit-title">Titel</a></li>
+                                    <li><a href="#book-edit-authors">Autoren</a></li>
+                                    <li><a href="#book-edit-publisher">Verlag</a></li>
+                                    <li><a href="#book-edit-isbn">ISBN</a></li>
+                                    <li><a href="#book-edit-edition">Auflage</a></li>
+                                    <li><a href="#book-edit-type">Typ</a></li>
+                                    <li><a href="#book-edit-tags">Kategorien</a></li>
+                                    <li><a href="#book-edit-room">Raum</a></li>
+                                    <li><a href="#book-edit-lend">Verliehen</a></li>
+                                    <li><a href="#book-edit-lend-to">Verliehen an</a></li>
+                                    <li><a href="#book-edit-buttons">Knöpfe</a></li>
+                                </ol>
+                            </li>
+                        </ol>
+                    </li>
+                    <li>
+                        <a href="#authors">Autoren</a>
+                        <ol>
+                            <li>
+                                <a href="#author-edit">Bearbeitungs-Dialog</a>
+                                <ol>
+                                    <li><a href="#author-edit-name">Name</a></li>
+                                    <li><a href="#author-edit-country">Land</a></li>
+                                    <li><a href="#author-edit-dob">Geburtsdatum</a></li>
+                                    <li><a href="#author-edit-dod">Sterbedatum</a></li>
+                                    <li><a href="#author-edit-npw">Nobelpreisträger</a></li>
+                                    <li><a href="#author-edit-buttons">Knöpfe</a></li>
+                                </ol>
+                            </li>	
+                        </ol>
+                    </li>
+                    <li>
+                        <a href="#book-types">Buchtypen</a>
+                        <ol>
+                            <li><a href="#type-edit">Bearbeitungs-Dialog</a></li>
+                        </ol>
+                    </li>
+                    <li>
+                        <a href="#rooms">Räume</a>
+                        <ol>
+                            <li><a href="#room-edit">Bearbeitungs-Dialog</a></li>
+                        </ol>
+                    </li>
+                    <li>
+                        <a href="#search">Suche</a>
+                        <ol>
+                            <li><a href="#search-general">Alle</a></li>
+                            <li><a href="#search-books">Bücher</a></li>
+                            <li><a href="#search-authors">Autoren</a></li>
+                            <li><a href="#search-book-types">Buchtypen</a></li>
+                            <li><a href="#search-rooms">Räume</a></li>
+                        </ol>
+                    </li>
+                </ol>
+            </div>
+        </div>
+        <br>
 		
 		<h2 id="general">1. Allgemein</h2>
 		
@@ -112,7 +106,7 @@
 		
 		<p>Die Eingaben werden zwar im UTF-8 Format gespeichert, <b>es sollten dennoch keine Unicode Zeichen, wie Emojis, eingefügt werden</b>, da dies die Applikation zum Absturz bringt (Python kann Unicode Zeichen nicht richtig darstellen). Sonderzeichen ihrer Anzeigesprache (wie die deutschen Umlaute) scheinen dennoch zu funktionieren.</p>
 		
-		<p>Sollten Fehler auftreten, befinden sich weiter Informationen dazu in der log.txt Datei, die von der Applikation automatisch angelegt wird. Diese ist vor allem für den Entwickler zur Fehlerbehebung sehr hilfreich. <b>Bitte beachten Sie, das die Datei beim erneuten Start der Applikation überschrieben wird.</b> Sollten Sie also einem Fehler begegnen, kopieren Sie sich bitte die log.txt Datei, wenn Sie den Fehler auch auf Github melden wollen. Ich würde mich sehr darüber freün und natürlich versuchen ihn zu beheben.</p>
+		<p>Sollten Fehler auftreten, befinden sich weiter Informationen dazu in der log.txt Datei, die von der Applikation automatisch angelegt wird. Diese ist vor allem für den Entwickler zur Fehlerbehebung sehr hilfreich. <b>Bitte beachten Sie, das die Datei beim erneuten Start der Applikation überschrieben wird.</b> Sollten Sie also einem Fehler begegnen, kopieren Sie sich bitte die log.txt Datei, wenn Sie den Fehler auch auf Github melden wollen. Ich würde mich sehr darüber freuen und natürlich versuchen ihn zu beheben.</p>
 		
 		<p>Die folgenden Tabs sind momentan enthalten:</p>
 		
@@ -201,9 +195,9 @@
 		
 		<br>
 		
-		<h2 id="overview">3. übersicht</h2>
+		<h2 id="overview">3. Übersicht</h2>
 		
-		<p>Der übersicht Tab zeigt die 12 zuletzt hinzugefügten Bücher und Autoren an. </p>
+		<p>Der Übersicht Tab zeigt die 12 zuletzt hinzugefügten Bücher und Autoren an. </p>
 		
 		<img src="img/1.1.1/overview.png">
 		
@@ -435,9 +429,11 @@
 		<p>Hier können Sie nach Räumen suchen, die den Inhalt des Eingabefelds in ihrem Titel haben.</p>
 		
 		<img src="img/1.1.1/search-rooms.png">
-		
-		<a class="top" href="">^</button>
-	
-	</body>
-
+    </main>
+    <footer>
+        <p>© 2025–2026 Lars Lerchbacher. Diese Dokumentation ist lizenziert unter der Creative Commons Attribution-NonCommercial 4.0 International License (CC BY-NC 4.0).</p>
+    </footer>
+    <button onclick="scrollToTop()" id="toTopButton" class="to-top-button" title="Nach oben">Nach oben</button>
+    <script src="scripts/scrolling.js"></script><script src="scripts/toc-scrolling.js"></script>
+</body>
 </html>

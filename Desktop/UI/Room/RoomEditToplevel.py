@@ -1,6 +1,6 @@
 #
 #   The Lerchbacher book database project
-#   © Lars Lerchbacher 2025
+#   © Lars Lerchbacher 2025-2026
 #
 #   This file is part of the Lerchbacher book database
 #
@@ -16,37 +16,37 @@
 
 import app_context
 from database import create_room, edit_room, fetch_room
-from tkinter import *
+from customtkinter import *
 
 
-class RoomEditToplevel(Toplevel):
+class RoomEditToplevel(CTkToplevel):
     def __init__(self, id, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         self.id = id
 
-        self.label = Label(self, text="Name: ")
-        self.entry = Entry(self, width=30)
+        self.label = CTkLabel(self, text="Name: ")
+        self.entry = CTkEntry(self)
 
-        self.buttonFrame = Frame(self)
+        self.buttonCTkFrame = CTkFrame(self, fg_color="transparent")
 
-        self.saveButton = Button(self.buttonFrame, text="Speichern", command=self.save)
-        self.cancelButton = Button(self.buttonFrame, text="Abbrechen", command=self.cancel)
+        self.saveCTkButton = CTkButton(self.buttonCTkFrame, text="Speichern", command=self.save)
+        self.cancelCTkButton = CTkButton(self.buttonCTkFrame, text="Abbrechen", command=self.cancel)
 
         self.label.grid(row=0, column=0, padx=10, pady=10)
         self.entry.grid(row=0, column=1, padx=10)
-        self.buttonFrame.grid(row=1, columnspan=2, padx=10, pady=10)
+        self.buttonCTkFrame.grid(row=1, columnspan=2, padx=10, pady=10)
 
-        self.saveButton.grid(row=0, column=0, padx=10)
-        self.cancelButton.grid(row=0, column=1)
+        self.saveCTkButton.grid(row=0, column=0, padx=10)
+        self.cancelCTkButton.grid(row=0, column=1)
 
         self.entry.focus_set()
         self.bind("<Return>", lambda e: self.save())
 
         if id != -1:
-            self.update()
+            self.refresh()
 
-    def update(self):
+    def refresh(self):
         room = fetch_room(self.id)
 
         self.entry.delete(0, END)
@@ -58,20 +58,20 @@ class RoomEditToplevel(Toplevel):
             response = edit_room(self.id, room)
             if response != "OK":
                 app_context.logger.error(f"Speichern nicht möglich!\n{response}")
-                showerror(title="Speichern nicht möglich!", message=response)
+                CTkMessageBox(title="Speichern nicht möglich!", message=response, icon="error")
             else:
                 app_context.logger.info("Erfolgreich gespeichert")
-                app_context.mainWindow.update()
+                app_context.mainWindow.refresh()
                 self.destroy()
 
         else:
             response = create_room(room)
             if response != "OK":
                 app_context.logger.error(f"Speichern nicht möglich!\n{response}")
-                showerror(title="Speichern nicht möglich!", message=response)
+                CTkMessageBox(title="Speichern nicht möglich!", message=response, icon="error")
             else:
                 app_context.logger.info(f"Created room with name {room}")
-                app_context.mainWindow.update()
+                app_context.mainWindow.refresh()
                 self.destroy()
 
 

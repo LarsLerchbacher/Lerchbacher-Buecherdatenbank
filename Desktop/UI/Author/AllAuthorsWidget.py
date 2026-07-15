@@ -1,6 +1,6 @@
 #
 #   The Lerchbacher book database project
-#   © Lars Lerchbacher 2025
+#   © Lars Lerchbacher 2025-2026
 #
 #   This file is part of the Lerchbacher book database
 #
@@ -17,21 +17,22 @@
 import app_context
 from database import fetch_authors
 from UI.Author.AuthorWidget import AuthorWidget
-from tkinter import Frame
+from customtkinter import CTkFrame
 
 
-class AllAuthorsWidget(Frame):
+class AllAuthorsWidget(CTkFrame):
     def __init__(self, *args, **kwargs):
+        kwargs.setdefault("fg_color", "transparent")
         super().__init__(*args, **kwargs)
         app_context.logger.info("Creating 'all authors widget'")
         self.authors = fetch_authors()
 
         self.authorWidgets = []
 
-        self.update()
+        self.refresh()
 
 
-    def update(self):
+    def refresh(self):
         app_context.logger.info("Updating 'all authors widget'")
         self.authors = fetch_authors()
 

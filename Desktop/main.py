@@ -3,7 +3,7 @@
 # ----------
 #
 #   The Lerchbacher book database project
-#   © Lars Lerchbacher 2025
+#   © Lars Lerchbacher 2025-2026
 #
 #   This file is part of the Lerchbacher book database
 #
@@ -100,9 +100,6 @@ def init_files() -> None:
     """Function that checks for the necesary files and folders and creates/downloads them if necesary"""
     global logger
 
-    # Checking for the cache folder
-    logger.info("Checking for image folder...")
-    
     if not os.path.exists("./img"):
         logger.warning("No existing image folder found! Creating one...")
         os.mkdir("img")
@@ -111,9 +108,6 @@ def init_files() -> None:
         logger.info("Existing img folder found!")
 
     
-    # Checking for the noCover.png file
-    logger.info("Checking for noCover.png file...")
-
     if not os.path.exists("./img/noCover.png"):
         logger.warning("File not found! Downloading it...")
 
@@ -128,7 +122,6 @@ def init_files() -> None:
 
     
     # Checking for the database
-    logger.info("Checking for database...")
     if not os.path.exists("./database.sqlite"):
         logger.warning("No existing database found! Creating a new one...")
 
@@ -176,7 +169,7 @@ def init_files() -> None:
 
         cur.execute("CREATE TABLE dbVersion (id INTEGER PRIMARY KEY AUTOINCREMENT, version VARCHAR(5));")
 
-        cur.execute("INSERT INTO dbVersion (id, version) VALUES (0, '1.2.0');");
+        cur.execute("INSERT INTO dbVersion (id, version) VALUES (0, ?);", (app_context.version,));
 
         # Commiting the changes
         db.commit()
@@ -213,7 +206,7 @@ def main() -> None:
 if __name__ == "__main__":
 
     # Setting the application's version that is displayed
-    app_context.version = "1.2.1" 
+    app_context.version = "2.0.0" 
 
     # Init the logger and check for any flags
     init_logger()

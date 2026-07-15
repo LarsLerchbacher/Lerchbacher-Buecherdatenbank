@@ -1,6 +1,6 @@
 #
 #   The Lerchbacher book database project
-#   © Lars Lerchbacher 2025
+#   © Lars Lerchbacher 2025-2026
 #
 #   This file is part of the Lerchbacher book database
 #
@@ -14,7 +14,7 @@
 #
 
 
-from tkinter import Button, Label
+from customtkinter import CTkButton, CTkLabel
 from UI.BookType.AllTypesWidget import AllTypesWidget
 from UI.BookType.TypeEditToplevel import TypeEditToplevel
 from UI.Tab import Tab
@@ -23,15 +23,15 @@ from UI.Tab import Tab
 class TypesTab(Tab):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.header_label = Label(self.inner_frame, text="Buchtypen", font="Arial 25 bold")
+        self.header_label = CTkLabel(self, text="Buchtypen", font=("Arial", 25, "bold"))
         self.header_label.pack(padx=0, pady=10)
 
-        self.create_button = Button(self.inner_frame, text='Neuen Typ hinzufügen', command=lambda: TypeEditToplevel(-1))
+        self.create_button = CTkButton(self, text='Neuen Typ hinzufügen', command=lambda: TypeEditToplevel(-1))
         self.create_button.pack(padx=0, pady=5)
 
-        self.types = AllTypesWidget(self.inner_frame)
+        self.types = AllTypesWidget(self)
         self.types.pack(padx=0, pady=5)
 
-    def update(self):
-        self.types.update()
+    def refresh(self):
+        self.types.refresh()
 

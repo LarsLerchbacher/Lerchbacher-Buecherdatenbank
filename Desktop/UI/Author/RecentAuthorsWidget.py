@@ -1,6 +1,6 @@
 #
 #   The Lerchbacher book database project
-#   © Lars Lerchbacher 2025
+#   © Lars Lerchbacher 2025-2026
 #
 #   This file is part of the Lerchbacher book database
 #
@@ -16,12 +16,13 @@
 
 import app_context
 from database import fetch_authors
-from tkinter import Frame, Label
+from customtkinter import CTkFrame, CTkLabel
 from UI.Author.AuthorWidget import AuthorWidget
 
 
-class RecentAuthorsWidget(Frame):
+class RecentAuthorsWidget(CTkFrame):
     def __init__(self, *args, **kwargs):
+        kwargs.setdefault("fg_color", "transparent")
         super().__init__(*args, **kwargs)
         app_context.logger.info("Creating 'recent authors widget'")
 
@@ -29,14 +30,14 @@ class RecentAuthorsWidget(Frame):
         all_authors = fetch_authors()
         self.authors = all_authors[-12:]
 
-        self.header = Label(self, text="Neueste Autoren", font="Arial 14 bold")
+        self.header = CTkLabel(self, text="Neueste Autoren", font=("Arial", 14, "bold"))
         self.authorWidgets = []
 
         self.header.pack()
 
-        self.update()
+        self.refresh()
 
-    def update(self):
+    def refresh(self):
         app_context.logger.info("Updating 'recent authors widget'")
 
         # Fetching all authors and selecting only the last 12
