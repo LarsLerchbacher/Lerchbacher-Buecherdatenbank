@@ -223,6 +223,8 @@ class SearchTab(Tab):
 
         self.exportCTkButton.configure(state=DISABLED)
 
+        self.exportButton.config(state=DISABLED)
+
         # Then show the ones needed for the current selection
         match self.selectVar.get():
             case "1":

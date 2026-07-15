@@ -23,7 +23,7 @@ from UI.Author.AuthorEditToplevel import AuthorEditToplevel
 
 class AuthorWidget(CTkFrame):
     def __init__(self, parent, id, *args, **kwargs):
-        super().__init__(parent, *args, **kwargs)
+        super().__init__(parent, relief=SUNKEN, bd=1, *args, **kwargs)
 
         self.id = id
 
