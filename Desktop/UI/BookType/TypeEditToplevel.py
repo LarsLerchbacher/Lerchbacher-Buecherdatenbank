@@ -60,7 +60,7 @@ class TypeEditToplevel(CTkToplevel):
                 app_context.logger.error(f"Speichern nicht möglich!\n{response}")
                 CTkMessagebox(title="Speichern nicht möglich!", message=response, icon="error")
             else:
-                app_context.logger.info("Erfolgreich gespeichert")
+                app_context.logger.info("Saved successfully")
                 app_context.mainWindow.refresh()
                 self.destroy()
 

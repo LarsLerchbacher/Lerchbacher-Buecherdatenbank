@@ -76,8 +76,8 @@ class SearchTab(Tab):
         #
         #  The frame in which the filter options for the above selected option appear
         #
-        self.filterCTkFrame = CTkFrame(self, fg_color="transparent")
-        self.filterCTkFrame.pack(padx=10, pady=10, expand=True, fill="both")
+        self.filterCTkFrame = CTkFrame(self, fg_color="transparent", width=1500, height=250)
+        self.filterCTkFrame.pack(padx=10, pady=10, expand=True, fill="x")
 
 
         #
@@ -99,7 +99,7 @@ class SearchTab(Tab):
         #
         # The filters for searching for books
         #
-        self.filterBooks = SearchFilterBooks(self.filterCTkFrame)
+        self.filterBooks = SearchFilterBooks(self.filterCTkFrame, width=750, height=750)
         
         #
         # The filters for searching authors
@@ -232,6 +232,7 @@ class SearchTab(Tab):
                 self.all_types = fetch_book_types()
                 self.all_rooms = fetch_rooms()
                 self.filterAll.pack()
+                self.filterCTkFrame.configure(height=250)
 
             case "2":
                 # Books
@@ -239,21 +240,25 @@ class SearchTab(Tab):
                 self.all_rooms = fetch_rooms()
                 self.filterBooks.pack(expand=True, fill="both")
                 self.resultBooksCTkFrame.pack(pady=10)
+                self.filterCTkFrame.configure(height=750)
 
             case "3":
                 # Authors
                 self.filterAuthors.pack()
                 self.resultAuthorsCTkFrame.pack(pady=10)
+                self.filterCTkFrame.configure(height=250)
             
             case "4":
                 # Book types
                 self.filterTypes.pack()
                 self.resultTypesCTkFrame.pack(pady=10)
+                self.filterCTkFrame.configure(height=250)
 
             case "5":
                 # Rooms
                 self.filterRooms.pack()
                 self.resultRoomsCTkFrame.pack(pady=10)
+                self.filterCTkFrame.configure(height=250)
 
     def search(self):
         for book in self.resultBooks:

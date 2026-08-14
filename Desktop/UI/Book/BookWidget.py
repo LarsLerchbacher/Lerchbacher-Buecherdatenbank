@@ -39,7 +39,7 @@ class BookWidget(CTkFrame):
 
         image_data = PIL.Image.open("./img/noCover.png")
         image_data = rescale_image(image_data)
-        self.image_tk = CTkImage(light_image=image_data, dark_image=image_data)
+        self.image_tk = CTkImage(light_image=image_data, dark_image=image_data, size=image_data.size)
         self.image = CTkLabel(self.details, image = self.image_tk, text="")
 
         self.publisher = CTkLabel(self.details, text = 'Verlag: ')
@@ -114,7 +114,7 @@ class BookWidget(CTkFrame):
 
         image = get_image(book)
 
-        self.image_data = PIL.ImageTk.PhotoImage(image)
+        self.image_data = CTkImage(light_image=image, dark_image=image, size=image.size)
         self.image.configure(image = self.image_data)
 
         self.publisher.configure(text = f'Verlag: {book.publisher}')

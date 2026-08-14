@@ -84,7 +84,7 @@ class BookEditToplevel(CTkToplevel):
         else:
             self.edit.isbn.insert(0, "Unbekannt")
 
-        self.edit.edition.set(book.edition)
+        self.edit.edition.set(int(book.edition) or 0)
 
         self.edit.year.set(book.year)
 
@@ -148,7 +148,7 @@ class BookEditToplevel(CTkToplevel):
                     app_context.logger.info(f"Speicher nicht möglich\n{response}")
                     CTkMessagebox(title="Speichern nicht möglich!", message=response, icon="error")
                 else:
-                    app_context.logger.info("Erfolgreich gespeichert!")
+                    app_context.logger.info("Saved successfully!")
 
                     update_image(book)
 
@@ -162,7 +162,7 @@ class BookEditToplevel(CTkToplevel):
                 else:
                     self.id = response
                     book.id = response
-                    app_context.logger.info("Erfolgreich gespeichert!")
+                    app_context.logger.info("Saved successfully!")
 
                     update_image(book)
 
