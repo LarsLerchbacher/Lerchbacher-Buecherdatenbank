@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lerchbacher Bücherdatenbank - Version 2.1.0</title>
+    <link rel="stylesheet" href="stylesheets/index.css">
+    <link rel="stylesheet" href="stylesheets/table-of-contents.css">
+</head>
+<body>
+    <header>
+        <h1>Lerchbacher Bücherdatenbank - Version 2.1.0.</h1>
+    </header>
+    <main>
+        <a href="index.html" class="home-link">Zurück zur Übersicht</a>
+        <h2>Inhaltsübersicht</h2>
+        <div class="toc">
+            <ol>
+				<li>
+					<a href="#general">Allgemein</a>
+					<ol>
+						<li><a href="#changes">Änderungen zur Vorgängerversion</a></li>
+					</ol>
+				</li>
+				<li>
+					<a href="#installation">Installation</a>
+				</li>
+				<li><a href="#overview">Übersicht</a></li>
+				<li>
+					<a href="#books">Bücher</a>
+					<ol>
+						<li><a href="#book-add">Buch via ISBN hinzufügen</a></li>
+						<li>
+							<a href="#book-edit">Bearbeitungs-Dialog</a>
+							<ol>
+								<li><a href="#book-edit-title">Titel</a></li>
+								<li><a href="#book-edit-authors">Autoren</a></li>
+								<li><a href="#book-edit-language">Sprache</a></li>
+								<li><a href="#book-edit-publisher">Verlag</a></li>
+								<li><a href="#book-edit-isbn">ISBN</a></li>
+								<li><a href="#book-edit-edition">Auflage</a></li>
+								<li><a href="#book-edit-type">Typ</a></li>
+								<li><a href="#book-edit-tags">Kategorien</a></li>
+								<li><a href="#book-edit-room">Raum</a></li>
+								<li><a href="#book-edit-lend">Verliehen</a></li>
+								<li><a href="#book-edit-lend-to">Verliehen an</a></li>
+								<li><a href="#book-edit-buttons">Knöpfe</a></li>
+							</ol>
+						</li>
+					</ol>
+				</li>
+				<li>
+					<a href="#authors">Autoren</a>
+					<ol>
+						<li>
+							<a href="#author-edit">Bearbeitungs-Dialog</a>
+							<ol>
+								<li><a href="#author-edit-first-name">Vorname</a></li>
+								<li><a href="#author-edit-last-name">Nachname</a></li>
+								<li><a href="#author-edit-buttons">Knöpfe</a></li>
+							</ol>
+						</li>	
+					</ol>
+				</li>
+				<li>
+					<a href="#book-types">Buchtypen</a>
+					<ol>
+						<li><a href="#type-edit">Bearbeitungs-Dialog</a></li>
+					</ol>
+				</li>
+				<li>
+					<a href="#rooms">Räume</a>
+					<ol>
+						<li><a href="#room-edit">Bearbeitungs-Dialog</a></li>
+					</ol>
+				</li>
+				<li>
+					<a href="#search">Suche</a>
+					<ol>
+						<li><a href="#search-general">Alle</a></li>
+						<li><a href="#search-books">Bücher</a></li>
+						<li><a href="#search-authors">Autoren</a></li>
+						<li><a href="#search-book-types">Buchtypen</a></li>
+						<li><a href="#search-rooms">Räume</a></li>
+					</ol>
+				</li>
+			</ol>
+        </div>
+
+        <h2 id="general">1. Allgemein</h2>
+		
+		<p>Dieses Handbuch bezieht sich momentan nur auf die Desktop Version. Die Webseite wird hinzugefügt werden, wenn ich sie entwickelt habe.</p>
+	
+		<p>Die Desktop Version (auch Applikation genannt) ist in fünf Tabs gegliedert, die in der Leiste oben links ersichtlich sind. Das wechseln zwischen Tabs funktioniert einfach durch anklicken des gewünschten Ziel-Tabs.</p>
+		
+		<p>Die Eingaben werden zwar im UTF-8 Format gespeichert, <b>es sollten dennoch keine Unicode Zeichen, wie Emojis, eingefügt werden</b>, da dies die Applikation zum Absturz bringt (Python kann Unicode Zeichen nicht richtig darstellen). Sonderzeichen ihrer Anzeigesprache (wie die deutschen Umlaute) scheinen dennoch zu funktionieren.</p>
+		
+		<p>Sollten Fehler auftreten, befinden sich weiter Informationen dazu in der log.txt Datei, die von der Applikation automatisch angelegt wird. Diese ist vor allem für den Entwickler zur Fehlerbehebung sehr hilfreich. <b>Bitte beachten Sie, das die Datei beim erneuten Start der Applikation überschrieben wird.</b> Sollten Sie also einem Fehler begegnen, kopieren Sie sich bitte die log.txt Datei, wenn Sie den Fehler auch auf Github melden wollen. Ich würde mich sehr darüber freuen und natürlich versuchen ihn zu beheben.</p>
+		
+		<p>Die folgenden Tabs sind momentan enthalten:</p>
+		
+		<div class="text-list">
+			<ol>
+				<li><a href="#overview">Übersicht</a></li>
+				
+				<li><a href="#books">Bücher</a></li>
+				
+				<li><a href="#authors">Autoren</a></li>
+				
+				<li><a href="#book-types">Buchtypen</a></li>
+				
+				<li><a href="#rooms">Räume</a></li>
+				
+				<li><a href="#search">Suche</a></li>
+            </ol>
+		</div>
+		
+		<h3 id="changes">Änderungen zur Vorgängerversion</h3>
+
+		<p>
+			Die folgenden Dinge wurde geändert: <br>
+			<div class="text-list">
+				<ul>
+					<li>Einige kleine Fehler wurden behoben (Hintergrundfehler, die hoffentlich nicht wirklich sichtbar waren)</li>
+					<li>Alle Pop-Up Fenster haben Namen bekommen</li>
+					<li>Es wurde ein Button hinzugefügt, mithilfe dessen man Bücher direkt mit Daten von Google Books befüllen kann, indem man nur die ISBN angibt. Dies enhält jedoch nicht alle Daten die man eingeben kann.</li>
+				</ul>
+			</div>
+		</p>
+				
+		<h2 id="installation">2. Installation</h2>
+		
+		<p>Ich freue mich, verkünden zu dürfen, dass ab dieser Version (2.1.0) <b>KOMPILIERTE VERSIONEN</b> des Programms zur Verfügung gestellt werden. Nach einer zweiter Prüfung aller Lizenen der Abhängigkeiten dieses Projekts habe ich bemerkt, dass nun alle Abhängigkeiten unter mit der AGPL v3 kompatiblen Lizenzen veröffentlicht wurden. Damit steht der Bereitstellung von vorkompilierten Versionen der Applikation nichts mehr im Wege.<br><br>
+		Diese Änderungen bedeuten auch, dass die Installation deutlich einfacher wird. Installieren können Sie das Programm nun wie folgt:
+		- Laden Sie die .zip or .tar.xz Datei für Ihr Betriebssystem herunter
+		- Extrahieren Sie diese in einen Ordner, der nun Ihre Bücherdatenbank beinhalten soll (oder in den Ordner mit der Vorgängerversion). Wählen Sie hierbei Ersetzen aus um die vorherige Version zu überschreiben, sollten Sie die Frage bekommen, was Sie mit diesen Dateien machen möchten.
+		- Fertig! Nun können Sie das Proramm über die ausführbare "Lerchbacher Bücherdatenbank"(.exe auf Windows) starten.
+
+		<h2 id="overview">3. Übersicht</h2>
+		
+		<p>Der Übersicht Tab zeigt die Anzahl der Bücher und Autoren in der Datenbank sowie die 12 zuletzt hinzugefügten Bücher und Autoren an. Ebenfalls finden Sie hier eine Anzeige der aktuell installierten Version, sowie den Link zum zur Version passenden Handbuch.</p>
+		
+		<img src="img/2.1.0/overview.png">
+		
+		<p>Bücher und Autoren lassen sich über den "Mehr anzeigen" Knopf ausklappen. Dadurch werden mehr Informationen und Optionen angezeigt, wie etwas "Bearbeiten" und "Löschen".</p>
+		<img src="img/2.1.0/overview-book.png">
+		
+		<br>
+		
+		<h2 id="books">4. Bücher</h2>
+		
+		<p>Der Bücher Tab enthält eine Liste alle Bücher, die in der Datenbank gespeichert sind. Ebenfalls findet sich dort die Möglichkeit, neue Bücher hinzuzufügen. Dies können Sie entweder manuell über den 'Neues Buch hinzufügen' Button tuen, oder automatisch mithilfe des 'Buch via ISBN hinzufügen' Buttons. Auch hier lassen sich Bücher über den "Mehr anzeigen" Knopf ausklappen. Dadurch werden mehr Informationen und Optionen angezeigt, wie etwas "Bearbeiten" und "Löschen".</p>		
+		<img src="img/2.1.0/books.png">
+		
+		<h3 id="book-add">Buch via ISBN hinzufügen</h3>
+		
+		<p>Mithilfe dieses Dialogs können Sie Bücher schneller hinzufügen. Geben Sie einfach die ISBN Nummer des Buches ein und das Programm wird versuchen, einige Daten zu dem Buch von Google Books abzufragen. Dies kann jedoch auch fehlschlagen. Entweder, weil zu viele Anfragen in kurzer Zeit gestellt wurden, wegen einer falschen ISBN oder weil Google Books keine Informationen zu diesem Buch gespeichert hat.</p>
+		<img src="img/2.1.0/book-add-isbn.png">
+		
+		<h3 id="book-edit">Bearbeitungs-Dialog</h3>
+		
+
+		<p>Ein Klick auf den Knopf "Neues Buch hinzufügen" öffnent einen leeren Buch-Bearbeitungs Dialog.<br>
+		Der selbige wird auch geöffnet, sollten Sie bei einem Buch "Bearbeiten" wählen.<br>
+		In diesem finden sich eine Vielzahl an Eingabefeldern. Die Felder, die mit einem <code>*</code> markiert sind, müssen immer ausgefüllt werden, die übrigen sind optional. Alle sind beschriftet, aber wir gehen Sie hier trotzdem einmal durch.</p>
+		
+		<img src="img/2.1.0/book-edit.png">
+		
+		<h4 id="book-edit-title">Titel</h4>
+		
+		<p>Dieses Feld speichert den Titel eines Buches.</p>
+		
+		<img src="img/2.1.0/book-edit-title.png">
+		
+		<h4 id="book-edit-authors">Autoren</h4>
+		
+		<p>Dieses Feld erlaub ihnen, eine beliebige Anzahl an Autoren zum Buch hinzuzufügen. Bitte beachten Sie, dass <b>mindestens 1 Autor angegeben werden muss!</b> Sollten Sie also ein Buch von einem unbekannten Autor eintragen wollen, empfiehlt es sich, einen "Unbekannt" Autor hinzuzufügen. (Siehe <button href="authors">5. Autoren</button>)<br>
+		Neben der Möglichkeit, nach Autoren zu suchen, finden Sie hier ebenfalls einen Knopf, um einen neuen Autor zu erstellen.</p>
+		
+		<img src="img/2.1.0/book-edit-authors.png">
+		
+		<p>Sehen wir es uns nun etwas genauer an:</p>
+		
+		<div class="text-list">
+			<ul>
+				<li>Das zentrierte kleine Textfeld dient dem Filtern der Autoren. Gefilter werden allerdings nur die noch nicht hinzugefügten Autoren.</li>
+				<li>Auf der linken Seite befindet sich eine Auflistung aller Autoren, die den Inhalt des Suchfeldes in ihrem Namen haben. <br>Sie können durch einen einfachen Klick an- oder abgewählt werden. Gewählte Autoren werden blau markiert und unterstrichen.</li>
+				<li>
+					In der Mitte befinden sich vier Knöpfe:
+					<ul>
+						<li>Der <code>></code> Knopf verschiebt alle markierten Autoren von der linken auf die rechte Seite.</li>
+						<li>Der <code><</code> Knopf verschiebt alle markierten Autoren von der rechten auf die linke Seite.</li>
+						<li>Der <code>>></code> Knopf verschiebt alle Autoren von der linken auf die rechte Seite, egal ob gewählt oder nicht.</li>
+						<li>Der <code><<</code> Knopf verschiebt alle Autoren von der rechten auf die linke Seite, egal ob gewählt oder nicht.</li>
+					</ul>
+				</li>
+				<li>Auf der rechten Seite befindet sich eine Auflistung aller Autoren, die dem aktuellen Buch zugeordnet wurden. <br>Sie können durch einen einfachen Klick an- oder abgewählt werden. Gewählte Autoren werden blau markiert und unterstrichen.</li>
+				<li>Über der rechten Seite finden Sie den Knopf, über den Sie einen neuen Autor erstellen können. Nach dem erstellen wird die Liste der Autoren automatisch aktualisiert.</li>
+			</ul>
+		</div>
+
+		<h4 id="book-edit-language">Sprache</h4>
+		
+		<p>Speichert die Sprache des Buches (wenn es leer gelassen wird, wird 'Unbekannt' eingefügt.</p>
+
+		<img src="img/2.1.0/book-edit-language.png">
+		
+		
+		<h4 id="book-edit-publisher">Verlag</h4>
+		
+		<p>Hier könne Sie den Verlag / Herausgeber des Buches eintragen</p>
+		
+		<img src="img/2.1.0/book-edit-publisher.png">
+		
+		<h4 id="book-edit-isbn">ISBN</h4>
+		
+		<p>Dieses Feld bietet die Möglichkeit, die ISBN-13 des Buches einzugeben. Die Beistriche zwischen den verschiedenen Segmenten werden automatisch gesetzt. Die Länge dieses Feldes wurde, Aufgrund des einzugebenden Wertes, auf 13 Zeichen, ausgenommen der Beistriche, begrenzt. Schreiben Sie bitte nicht zu schnell, da die Formatierung etwas langsam ist. Zur Referenz, die ISBN-13 hat die Form <b>xxx-x-xxx-xxxxx-x</b>. Sollten Sie nur eine kürzere ISBN finden, die mit 3 beginnt, können Sie einfach 978 davorstellen um Sie zu auf das neue Format zu übertrage (es handelt sich dabei um ältere Versionen des ISBN-Formats).</p>		
+		<img src="img/2.1.0/book-edit-isbn.png">
+		
+		<h4 id="book-edit-edition">Auflage</h4>
+		
+		<p>Hier könne Sie die Auflage des Buches eintragen. Der akzeptierte Wertebereich liegt zwischen 1 und 20.</p>
+
+		<img src="img/2.1.0/book-edit-edition.png">
+		
+		<h4 id="book-edit-type">Typ</h4>
+		
+		<p>Dieses Feld speichert den Buchtypen des Buches. Dieser kann aus der Liste gewählt werden, die beim Klicken auf den kleinen Pfeil rechts angezeigt wird. Bitte prüfen Sie vor Erstellen des Buches, ob der gewünschte Buchtyp bereits existiert (<a href="#book-types)">6. Buchtypen</a>"') Das Feld verfügt ausserdem über eine Autovervollständigung für die möglichen Buchtypen. Sie können also den Anfang eines Typen eingeben und bekommen einen Vorschlag zur Vervollständigung.</p>
+		
+		<img src="img/2.1.0/book-edit-type.png">
+		
+		<h4 id="book-edit-tags">Kategorien</h4>
+		
+		<p>Hier könne Sie Kategorien oder Stichwörter zum Buch eintragen. Die einzelnen Einträge können Leerzeichen enthalten und werden durch Semikolone(';') getrennt.</p>
+
+		<img src="img/2.1.0/book-edit-tags.png">
+		
+		<h4 id="book-edit-room">Raum</h4>
+		
+		<p>Dieses Feld speichert den Raum des Buches. Dieser kann aus der Liste gewählt werden, die beim Klicken auf den kleinen Pfeil rechts angezeigt wird. Bitte prüfen Sie vor Erstellen des Buches, ob der gewünschte Raum bereits existiert (<a href="#rooms)">7. Räume</a>"') Das Feld verfügt ausserdem über eine Autovervollständigung für die möglichen Räume. Sie können also den Anfang eines Raumes eingeben und bekommen einen Vorschlag zur Vervollständigung.</p>
+		
+		<img src="img/2.1.0/book-edit-room.png">
+		
+		<h4 id="book-edit-shelf">Regal</h4>
+		
+		<p>Hier können Sie das Regal eintragen, in dem das Buch normalerweise steht.</p>
+		
+		<img src="img/2.1.0/book-edit-shelf.png">
+		
+		<h4 id="book-edit-lend">Verliehen</h4>
+		
+		<p>Speichert, ob das Buch im Moment verliehen iwindow.scrollTo({ top: 0, behavior: 'smooth' });st oder nicht. Den Zustand des Felder ändern Sie durch anklicken.</p>
+		
+		<img src="img/2.1.0/book-edit-lend.png">
+		
+		<h4 id="book-edit-lend-to">Verliehen an</h4>
+		
+		<p>Dieses Feld wird nur angezeigt, wenn im vorherigen Feld angegeben wurde, dass das Buch momentan verliehen ist. Hier kann eingetragen werden, an welche Person das Buch vergeben wurde.</p>
+		
+		<img src="img/2.1.0/book-edit-lend-to.png">
+		
+		<h4 id="book-edit-buttons">Knöpfe</h4>
+		
+		<p>Am unteren Ende der Bearbeitungs- und Erstellungsdialoge befinden sich der "Speichern" und der "Abbrechen" Knopf. <br>
+		Der Speichern Knopf speichert die Daten der Felder in der Datenbank ab und schliesst den Dialog. Wurde der Dialog über den "Neues Buch hinzufügen" Knopf geöffnet, wird ein neues Buch erstellt. <b>Das drücken von "Enter", während dieser Dialog geöffnet ist, speichert ebenfalls.</b><br>
+		Der Abbrechen Knopf schliesst den Dialog, ohne die gemachten änderungen/Eintragungen in der Datenbank zu speichern.<br>
+		Diese beiden Knöpfe werden in der ganzen Applikation mehrmals verwendet.</p>
+		
+		<img src="img/2.1.0/save-cancel-buttons.png">
+		
+		<h2 id="authors">5. Autoren</h2>
+		
+		<p>Der Autoren Tab enthält eine Liste alle Autoren, die in der Datenbank gespeichert sind. Ebenfalls findet sich dort die Möglichkeit, neue Autoren hinzuzufügen. Auch hier lassen sich Autoren über den "Mehr anzeigen" Knopf ausklappen. Dadurch werden mehr Informationen und Optionen angezeigt, wie etwas "Bearbeiten" und "Löschen".</p>
+
+		<p><b>WARNUNG: Wenn Sie das Programm von einer vorherigen Version ( <= 1.1.2 ) aktualisiert haben, wird Ihre Datenbank automatisch in das Format der neuen Version ( >= 2.1.0 ) konvertiert. Dabei werden Daten über die Autoren verloren gehen, da das neue Format die Felder für Autoren stark reduziert hat. Ebenfalls zu beachten ist, dass für das Aufteilen das Namens (in älteren Versionen gab es nur ein Name Feld) nur den letzen, durch Leerzeichen abgetrennten Teil des Namens als Nachnamen verwendet. Sollte das für Autoren in Ihrer Datenbank nicht passen, müssen Sie es leider manuell korigieren.</b></p>
+		
+		<img src="img/2.1.0/authors.png">
+		
+		<h3 id="author-edit">Bearbeitungs-Dialog</h3>
+		
+		<p>Ein Klick auf den Knopf "Neuen Autor hinzufügen" öffnet einen leeren Autoren-Bearbeitungs-Dialog.<br>
+		Der selbige wird auch geöffnet, sollten Sie bei einem Autor "Bearbeiten" wählen.<br>
+		In diesem finden sich zwei Eingabefelder, die eigentlich selbsterklärend sind.</p>
+		
+		<img src="img/2.1.0/author-edit.png">
+		
+		<h4 id="author-edit-first-name">Vorname</h4>
+		
+		<p>Hier könnnen Sie den Vornamen des Autors eintragen</p>
+
+		<h4 id="author-edit-last-name">Nachname</h4>
+
+		<p>Hier können Sie den Nachnamen des Autors eintragen</p>
+		
+		<h4 id="author-edit-buttons">Knöpfe</h4>
+		
+		<p>Am unteren Ende der Bearbeitungs- und Erstellungsdialoge befinden sich der "Speichern" und der "Abbrechen" Knopf. <br>
+		Der Speichern Knopf speichert die Daten der Felder in der Datenbank ab und schliesst den Dialog. Wurde der Dialog über den "Neuen Autor hinzufügen" Knopf geöffnet, wird ein neuer Autor erstellt. <b>Das drücken von "Enter", während dieser Dialog geöffnet ist, speichert ebenfalls.</b><br>
+		Der Abbrechen Knopf schliesst den Dialog, ohne die gemachten änderungen/Eintragungen in der Datenbank zu speichern.<br>
+		Diese beiden Knöpfe werden in der ganzen Applikation mehrmals verwendet.</p>
+		
+		<img src="img/2.1.0/save-cancel-buttons.png">
+		
+		<h2 id="book-types">6. Buchtypen</h2>
+		
+		<p>In diesem Tab finden Sie eine Auflistung aller in der Datenbank gespeicherten Buchtypen. über den "Neen Buchtypen hinzufügen" Knopf könne Sie einen neuen Buchtypen anlegen. über den "Bearbeiten" Knopf neben jedem Buchtypen lässt sich der Name des Typen ändern und über den "Löschen" Knopf aus der Datenbank entfernen. <b>Das drücken von "Enter", während dieser Dialog geöffnet ist, speichert ebenfalls.</b></p>
+		
+		<img src="img/2.1.0/types.png">
+		
+		<h3 id="type-edit">Bearbeitungs-Dialog</h3>
+		
+		<p>Hier können Sie den Namen des Buchtypen ändern, bzw. einen neuen mit dem angegebenen Namen erstellen.</p>
+		
+		<img src="img/2.1.0/type-edit.png">
+		
+		<h2 id="rooms">7. Räume</h2>
+		
+		<p>In diesem Tab finden Sie eine Auflistung aller in der Datenbank gespeicherten Räume. über den "Neuen Raum hinzufügen" Knopf könne Sie einen neuen Raum anlegen. über den "Bearbeiten" Knopf neben jedem Raum lässt sich der Name des Raumes ändern und über den "Löschen" Knopf aus der Datenbank entfernen. <b>Das drücken von "Enter", während dieser Dialog geöffnet ist, speichert ebenfalls.</b></p>
+		
+		<img src="img/2.1.0/rooms.png">
+		
+		<h3 id="room-edit">Bearbeitungs-Dialog</h3>
+		
+		<p>Hier können Sie den Namen des Raumes ändern, bzw. einen neuen mit dem angegebenen Namen erstellen.</p>
+		
+		<img src="img/2.1.0/room-edit.png">
+		
+		<h2 id="search">8. Suche</h2>
+		
+		<p>Der Suchen Tab stellt ihnen die Möglichkeit, die Datenbank zu dursuchen, zur verfügung.<br>
+		Sie können wählen, ob sie eine generelle Suche nach einem Stichwort, oder eine Suche nach einem bestimmten Art von Eintrag in der Datenbank (Buch, Autor, Buchtyp oder Raum) durchführen möchten.<br><br>
+		Ebenfalls finden Sie hier die möglichkeit, die Suchergebnisse der Suche (außer der generellen Stichwortsuche) in Form einer CSV Datei exportiert werden. Wenn der Button hierfür deaktiviert ist, prüfen Sie bitte, ob Sie bereits eine Suche durchgeführt haben oder ob Sie die Suchoption "Alles" gewählt haben.<br>
+		<img src="img/2.1.0/csv-export.png"><br>
+		<b>Dieser Screenshot wurde auf Linux aufgenommen. Die für diesen Dialog verwendete Technologie (Tk) sieht auf Linux leider nicht zeitgemäß aus. WINDOWS VERWENDET HIER EINEN GANZ NORMALEN SPEICHERN-UNTER DIALOG.</b><br>
+		Wenn Sie ihre Auswahl ändern, wird Ihnen eine andere Sammlung an Suchfeldern angezeigt. Diese Unterscheiden sich nur minimal von den Bearbeitungs-Dialogen der einzelnen Eintragstypen.<br>
+			Die Unterschiede werden im Folgenden erläutert: </p>
+		
+		<h3 id="search-general">Alles</h3>
+		
+		<p>Mit dieser Option könne Sie eine Suche nach einem bestimmten Stichwort in den Daten aller Einträge in der Datenbank durchführen. Die Ergebnisse werden nach Typ gegliedert angezeigt.</p>
+		
+		<img src="img/2.1.0/search-all.png">
+		
+		<h3 id="search-books">Bücher</h3>
+		
+		<p>Diese Option lässt Sie nach Büchern suchen. Die Suchfelder, die hier angezeigt werden, sind eine Kopie des <a href="#book-edit">Bearbeitungs-Dialoges für Bücher</a>, abgesehen vom "Verliehen')" Feld.<br>
+		Dieses wurde durch ein Textfeld mit Autovervollständigung ersetzt (Ja, Nein).</p>
+		
+		<img src="img/2.1.0/search-books.png">
+		
+		<h3 id="search-authors">Autoren</h3>
+		
+		<p>Diese Option lässt Sie nach Autoren suchen. Die Suchfelder, die hier angezeigt werden, sind eine Kopie des <a href="#author-edit">Bearbeitungs-Dialoges für Autoren</a>.</p>
+		
+		<img src="img/2.1.0/search-authors.png">
+		
+		<h3 id="search-book-types">Buchtypen</h3>
+		
+		<p>Hier können Sie nach Buchtypen suchen, die den Inhalt des Eingabefelds in ihrem Titel haben.</p>
+		
+		<img src="img/2.1.0/search-book-types.png">
+		
+		<h3 id="search-rooms">Räume</h3>
+		
+		<p>Hier können Sie nach Räumen suchen, die den Inhalt des Eingabefelds in ihrem Titel haben.</p>
+		
+		<img src="img/2.1.0/search-rooms.png">
+
+    </main>
+    <footer>
+        <p>© 2025–2026 Lars Lerchbacher. Diese Dokumentation ist lizenziert unter der Creative Commons Attribution-NonCommercial 4.0 International License (CC BY-NC 4.0).</p>
+    </footer>
+    <button onclick="scrollToTop()" id="toTopButton" class="to-top-button" title="Nach oben">Nach oben</button>
+    <script src="scripts/scrolling.js"></script><script src="scripts/toc-scrolling.js"></script>
+</body>
+</html>
