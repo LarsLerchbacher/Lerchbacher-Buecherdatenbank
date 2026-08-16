@@ -862,12 +862,16 @@ def fetch_room_id(name) -> int:
         cur.close()
         db.close()
 
-        app_context.logger.debug(f"Successfully fetched room ID for: {name}")
         return id
     except Exception as e:
         app_context.logger.error(f"Failed to fetch room ID for {name}: {e}")
         return -1
 
+        app_context.logger.debug(f"Successfully fetched room ID for: {name}")
+        return id
+    except Exception as e:
+        app_context.logger.error(f"Failed to fetch room ID for {name}: {e}")
+        return -1
 
 
 def fetch_room(room_id) -> str:

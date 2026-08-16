@@ -220,9 +220,6 @@ class SearchTab(Tab):
                 child.destroy()
 
         self.filterBooks.refresh()
-
-        self.exportButton.configure(state=DISABLED)
-
         self.exportButton.configure(state=DISABLED)
 
         # Then show the ones needed for the current selection
