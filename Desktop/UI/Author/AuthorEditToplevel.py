@@ -23,6 +23,8 @@ from CTkMessagebox import CTkMessagebox
 class AuthorEditToplevel(CTkToplevel):
     def __init__(self, id: int, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.title("Autor bearbeiten")
+
         self.id = id
         if self.id != -1:
             app_context.logger.info(f"Opening author editing dialog for author with id {self.id}")

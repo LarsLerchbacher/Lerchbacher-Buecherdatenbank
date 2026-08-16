@@ -26,6 +26,7 @@ from UI.Book.BookEditWidget import BookEditWidget
 class BookEditToplevel(CTkToplevel):
     def __init__(self, id, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.title("Buch bearbeiten")
 
         self.minsize(600, 800)
 

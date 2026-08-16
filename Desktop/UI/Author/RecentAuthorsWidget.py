@@ -44,10 +44,8 @@ class RecentAuthorsWidget(CTkFrame):
         all_authors = fetch_authors()
         self.authors = all_authors[-12:]
         
-        # Deleting the old AuthorWidgets including their children
+        # Deleting the old AuthorWidgets
         for authorWidget in self.authorWidgets:
-            for child in authorWidget.winfo_children():
-                child.destroy()
             authorWidget.destroy()
 
         self.authorWidgets = []

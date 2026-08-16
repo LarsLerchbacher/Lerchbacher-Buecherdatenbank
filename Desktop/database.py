@@ -80,7 +80,7 @@ class Book:
 
     def __str__(self):
         authors = [fetch_author(id).getName() for id in self.author_ids]
-        return f"{self.id},, {self.title},, {authors},, {self.publisher},, {self.isbn},, {self.edition},, {self.year},, {self.book_type},, {self.tags},, {self.room},, {self.shelf},, {self.lend},, {self.lend_to},, {self.language}"
+        return f"{self.id}; {self.title}; {authors}; {self.publisher}; {self.isbn}; {self.edition}; {self.year}; {self.book_type}; {self.tags}; {self.room}; {self.shelf}; {self.lend}; {self.lend_to}; {self.language}"
 
 
 class Author:
@@ -100,7 +100,7 @@ class Author:
         self.lastName = lastName
 
     def __str__(self) -> str:
-        return f"{self.id},, {self.firstName},, {self.lastName}"
+        return f"{self.id}; {self.firstName}; {self.lastName}"
 
     def getName(self) -> str:
         return self.firstName + " " + self.lastName
@@ -535,7 +535,7 @@ def delete_book(book_id:int) -> bool:
         db, cur = prepare_db()
         
         try:
-            isbn = cur.execute("SELECT isbn FROM books WHERE book_id = ?;", (book_id,)).fetchone()[0]
+            isbn = cur.execute("SELECT book_isbn FROM books WHERE book_id = ?;", (book_id,)).fetchone()[0]
             app_context.logger.info(f"Deleting cover for book with isbn {isbn}")
             os.remove(os.path.join(os.curdir), "img", isbn)
             app_context.logger.info("Successfully deleted cover!")
@@ -685,14 +685,14 @@ def fetch_book_by_isbn(isbn:str) -> Book:
 
         # Turns the fetched book into a Book object
         book = Book(id=book[0], title=book[1], author_ids=authorIDs, publisher=book[2], isbn=book[3], edition=book[4],
-                    year=book[5], book_type=book[6], tags=eval(book[7]), room=book[8], shelf=book[9], lend=book[10], lend_to=book[11])
+                    year=book[5], book_type=book[6], tags=eval(book[7]), room=book[8], shelf=book[9], lend=book[10], lend_to=book[11], language=book[12])
 
         # Returns the found book
         app_context.logger.debug(f"Successfully fetched book by ISBN: {isbn}")
         return book
     except Exception as e:
         app_context.logger.error(f"Failed to fetch book by ISBN {isbn}: {e}")
-        raise
+        return None
 
 
 def fetch_book_types() -> list[str]:
@@ -747,7 +747,7 @@ def fetch_book_type_id(name) -> int:
         return id
     except Exception as e:
         app_context.logger.error(f"Failed to fetch book type ID for {name}: {e}")
-        raise
+        return -1
 
 
 def fetch_book_type(type_id) -> str:
@@ -866,7 +866,7 @@ def fetch_room_id(name) -> int:
         return id
     except Exception as e:
         app_context.logger.error(f"Failed to fetch room ID for {name}: {e}")
-        raise
+        return -1
 
 
 

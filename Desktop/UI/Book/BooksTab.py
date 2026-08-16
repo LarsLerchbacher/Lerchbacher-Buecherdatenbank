@@ -16,6 +16,7 @@
 
 from customtkinter import CTkButton, CTkLabel
 from UI.Book.AllBooksWidget import AllBooksWidget
+from UI.Book.BookAddToplevel import BookAddToplevel
 from UI.Book.BookEditToplevel import BookEditToplevel
 from UI.Tab import Tab
 
@@ -30,6 +31,9 @@ class BooksTab(Tab):
 
         self.create_button = CTkButton(self, text='Neues Buch hinzufügen', command=lambda: BookEditToplevel(-1))
         self.create_button.pack(padx=0, pady=5)
+
+        self.add_button = CTkButton(self, text='Buch via ISBN hinzufügen', command=lambda: BookAddToplevel())
+        self.add_button.pack(padx=0, pady=5)
 
         self.books = AllBooksWidget(self)
         self.books.pack()

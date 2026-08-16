@@ -1,5 +1,5 @@
 # Gitignore file
-# Includes a linx and windows variation of each path
+# Includes a linux and windows variation of each path
 
 Desktop/__pycache__
 Desktop\__pycache__
@@ -30,3 +30,5 @@ Web\__pycache__
 Web/__pycache__
 
 output
+
+.vscode

@@ -132,11 +132,11 @@ class BookWidget(CTkFrame):
 
         self.type.configure(text = f'Buchtyp: {fetch_book_type(book.book_type)}')
 
-        tag_string = ""
-        tag_loop = book.tags
+        tag_string = "; ".join(book.tags)
+        """tag_loop = book.tags
         while len(tag_loop) > 1:
             tag_string += f" {tag_loop.pop()};"
-        tag_string += f" {tag_loop.pop()}"
+        tag_string += f" {tag_loop.pop()}"""
         self.tags.configure(text = f'Stichwörter: {tag_string}')
 
         self.room.configure(text = f'Raum: {fetch_room(book.room)}')
