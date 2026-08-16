@@ -206,7 +206,7 @@ def main() -> None:
 if __name__ == "__main__":
 
     # Setting the application's version that is displayed
-    app_context.version = "2.0.0" 
+    app_context.version = "2.1.0" 
 
     # Init the logger and check for any flags
     init_logger()
