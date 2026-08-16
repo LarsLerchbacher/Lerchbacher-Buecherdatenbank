@@ -36,10 +36,8 @@ class AllAuthorsWidget(CTkFrame):
         app_context.logger.info("Updating 'all authors widget'")
         self.authors = fetch_authors()
 
-        # Deleting all old Author widgets including their children
+        # Deleting all old Author widgets
         for authorWidget in self.authorWidgets:
-            for child in authorWidget.winfo_children():
-                child.destroy()
             authorWidget.destroy()
 
         self.authorWidgets = []

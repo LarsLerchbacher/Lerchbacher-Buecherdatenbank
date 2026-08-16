@@ -40,8 +40,6 @@ class RecentBooksWidget(CTkFrame):
         self.books = all_books[-12:]
         
         for bookWidget in self.bookWidgets:
-            for child in bookWidget.winfo_children():
-                child.destroy()
             bookWidget.destroy()
 
         self.bookWidgets = []

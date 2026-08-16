@@ -39,7 +39,7 @@ class BookWidget(CTkFrame):
 
         image_data = PIL.Image.open("./img/noCover.png")
         image_data = rescale_image(image_data)
-        self.image_tk = CTkImage(light_image=image_data, dark_image=image_data)
+        self.image_tk = CTkImage(light_image=image_data, dark_image=image_data, size=image_data.size)
         self.image = CTkLabel(self.details, image = self.image_tk, text="")
 
         self.publisher = CTkLabel(self.details, text = 'Verlag: ')
@@ -114,7 +114,7 @@ class BookWidget(CTkFrame):
 
         image = get_image(book)
 
-        self.image_data = PIL.ImageTk.PhotoImage(image)
+        self.image_data = CTkImage(light_image=image, dark_image=image, size=image.size)
         self.image.configure(image = self.image_data)
 
         self.publisher.configure(text = f'Verlag: {book.publisher}')
@@ -132,11 +132,11 @@ class BookWidget(CTkFrame):
 
         self.type.configure(text = f'Buchtyp: {fetch_book_type(book.book_type)}')
 
-        tag_string = ""
-        tag_loop = book.tags
+        tag_string = "; ".join(book.tags)
+        """tag_loop = book.tags
         while len(tag_loop) > 1:
             tag_string += f" {tag_loop.pop()};"
-        tag_string += f" {tag_loop.pop()}"
+        tag_string += f" {tag_loop.pop()}"""
         self.tags.configure(text = f'Stichwörter: {tag_string}')
 
         self.room.configure(text = f'Raum: {fetch_room(book.room)}')

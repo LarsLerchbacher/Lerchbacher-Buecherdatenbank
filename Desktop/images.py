@@ -47,7 +47,7 @@ def update_image(book):
 
 def download_cover(book):
     """Function that downloads the cover of a book if available"""
-    app_context.logger.info("Downloading cover...")
+    app_context.logger.info(f"Downloading cover for book with isbn {book.isbn}...")
     try:
         url_target = f"https://www.googleapis.com/books/v1/volumes?q=isbn:{book.isbn}" 
         response = requests.get(url_target, headers={"x-goog-api-key": "AIzaSyDuEts1XTeWZ0r-882BfQPM9pnUaS27xVs"})
@@ -56,16 +56,11 @@ def download_cover(book):
 
 
         # If the request got redirected (cover did exist)
-        #if len(response.history) > 1:
         file = open(f"./img/{book.id}.jpg", mode="wb+")
         file.write(cover.content)
         file.close()
         app_context.logger.info("Successfully downloaded cover!")
-        app_context.mainWindow.update()
-
-        # Cover did not exist
-        #else:
-        #    app_context.logger.info("Could not download cover (does not exist)")
+        app_context.mainWindow.refresh()
 
     # An error occured
     except Exception as e:

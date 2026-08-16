@@ -26,6 +26,9 @@ from UI.Book.BookEditWidget import BookEditWidget
 class BookEditToplevel(CTkToplevel):
     def __init__(self, id, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.title("Buch bearbeiten")
+
+        self.minsize(600, 800)
 
         self.minsize(600, 800)
 
@@ -84,7 +87,7 @@ class BookEditToplevel(CTkToplevel):
         else:
             self.edit.isbn.insert(0, "Unbekannt")
 
-        self.edit.edition.set(book.edition)
+        self.edit.edition.set(int(book.edition) or 0)
 
         self.edit.year.set(book.year)
 
@@ -148,7 +151,7 @@ class BookEditToplevel(CTkToplevel):
                     app_context.logger.info(f"Speicher nicht möglich\n{response}")
                     CTkMessagebox(title="Speichern nicht möglich!", message=response, icon="error")
                 else:
-                    app_context.logger.info("Erfolgreich gespeichert!")
+                    app_context.logger.info("Saved successfully!")
 
                     update_image(book)
 
@@ -162,7 +165,7 @@ class BookEditToplevel(CTkToplevel):
                 else:
                     self.id = response
                     book.id = response
-                    app_context.logger.info("Erfolgreich gespeichert!")
+                    app_context.logger.info("Saved successfully!")
 
                     update_image(book)
 

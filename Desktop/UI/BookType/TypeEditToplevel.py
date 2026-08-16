@@ -22,6 +22,7 @@ from customtkinter import *
 class TypeEditToplevel(CTkToplevel):
     def __init__(self, id, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.title("Buchtyp bearbeiten")
 
         self.id = id
 

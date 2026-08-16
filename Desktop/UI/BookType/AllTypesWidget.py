@@ -39,8 +39,6 @@ class AllTypesWidget(CTkFrame):
         self.types = fetch_book_type_ids()
 
         for widget in self.type_widgets:
-            for child in widget.winfo_children():
-                child.destroy()
             widget.destroy()
         
         self.type_widgets = []

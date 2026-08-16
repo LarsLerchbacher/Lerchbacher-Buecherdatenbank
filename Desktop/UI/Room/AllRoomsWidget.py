@@ -40,8 +40,6 @@ class AllRoomsWidget(CTkFrame):
         self.rooms = fetch_room_ids()
 
         for widget in self.room_widgets:
-            for child in widget.winfo_children():
-                child.destroy()
             widget.destroy()
         
         self.room_widgets = []

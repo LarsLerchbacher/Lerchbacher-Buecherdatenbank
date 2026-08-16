@@ -37,8 +37,6 @@ class AllBooksWidget(CTkFrame):
         self.books = fetch_books()
         
         for bookWidget in self.bookWidgets:
-            for child in bookWidget.winfo_children():
-                child.destroy()
             bookWidget.destroy()
         
         self.bookWidgets = []
