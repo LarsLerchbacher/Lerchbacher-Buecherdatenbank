@@ -7,7 +7,7 @@
 ![Codezeilen: Über 2000](https://img.shields.io/badge/Zeilen_Code-%C3%9Cber_2000-green)
 
 ## Über dieses Projekt
-Dies ist ein Bücherverwaltungssystem, welche in zwei große Teile aufgespalten ist: die Desktop Applikation und die Website.
+Dies ist ein System zur Verwaltung von Büchern und Autoren. Man kann es nutzen, um den Bücherbestand in einem Haushalt zu verfolgen und nach bestimmten Büchern oder Autoren zu suchen.
 
 Ich mache dieses Projekt hauptsächlich für meine Familie, allerdings werde ich dieses Repo veröffentlichen, um es anderen Menschen zugänglich zu machen.
 Feature-Requests werden nur von meiner Familie und Freunden akzeptiert. 
@@ -20,29 +20,13 @@ Alle Fehler oder mögliche Sicherheitslücken können über Github Issues gemeld
 Es ist auch möglich, dass dieses Projekt umschriebene Umlaute (ae, ue, oe) enthält, da ich normalerweise das US Tastaturlayout benutze und nicht immer zum deutschen wechseln kann und will.
 
 
-**Bitte seid so nett und ignoriert meinen fürchterlichen Code-Stil in diesem Projekt. Einige Teile sind schon sehr alt. Damals wusste ich noch nichts über
-die Konventionen für sauberen Code... Ich versuche immer wieder, Code-Teile auszubessern, wenn mir diese besonders stark aufallen.**
+### Die Desktop-Applikation
 
+Die Desktop-Applikation bildet den Kern des Systems. Sie dient der Verwaltung von Büchern und Autoren und bietet zusätzlich eine integrierte Suchfunktion.
 
-### Die Desktop Applikation
-Die Desktop Applikation ist der Kern des Systems, mit seiner Hilfe werden Bücher und Autoren verwaltet. Sie beinhaltet ebenfalls eine Suchfunktion.
+Änderungen werden nach dem Abschluss einer Aktion, beispielsweise beim Erstellen, Bearbeiten oder Löschen eines Eintrags, automatisch gespeichert.
 
-Alle Änderungen werden automatisch nach dem abschliessen der Aktion (Erstellen, Bearbeiten, Löschen) gespeichert.
-
-Die Desktop Applikation kann für Einzelanwender ohne die Website Version oder einen Server genutzt werden, da die Datenbank nur eine lokale Datei ist. Bei mehreren
-Nutzern empfiehlt es sich, die Applikation samt Dateien und Ordnern in einen Netzwerk-/Cloudordner zu verschieben, da die Datenbank somit für alle Nutzer synchron bleibt.
-
-
-### Die Website
-**DIE WEBSITE IST IN EINEM NICHT FERTIGEN ZUSTAND UND KANN NICHT VERWENDET WERDEN! BITTE IGNORIEREN SIE SIE!**
-Daran werde ich später einmal arbeiten, im Moment aber nicht.
-
-Die Website ist eine Möglichkeit, die Datenbank auch auf Geräten, auf denen die Desktop Applikation nicht installiert ist (Handys, Tablets, etc.), zu durchsuchen.
-
-Die Vorraussetzung dafür ist allerdings, das sich das Gerät im selben Netzwerk wie der Website Server befindet.
-
-Die Website enthält KEINE Möglichkeiten zur Erstellung, Bearbeitung oder Löschung von Daten.
-
+Die Applikation ist für die lokale Nutzung durch einen einzelnen Anwender ausgelegt. Die Datenbank wird dabei als lokale Datei auf dem Computer gespeichert. Eine gleichzeitige Bearbeitung derselben Datenbank durch mehrere Anwender, etwa über einen Netzwerk- oder Cloudordner, wird nicht empfohlen, da dabei Dateisperren und Datenbankbeschädigungen auftreten können.
 
 ## Lizenz
 Dieses Projekt und alle enthaltenen Dateien, ausgenommen der Dateien im docs Verzeichnis und allen seinen Subverzeichnissen, werden unter der GNU AGPL-v3 zur Verfügung gestellt.
@@ -51,9 +35,3 @@ Genauere Infos finden sich an den Anfängen der Quellcode-Dateien und ebenfalls 
 Die Dokumentation, inklusive aller HTML, CSS und Javascript Dateien im docs Verzeichnis und allen seinen Subverzeichissen, wird unter der
 Creative Commons Attribution-NonCommercial 4.0 International License (CC BY-NC 4.0) zur Verfügung gestellt.
 
-
-## Organisation
-Ja, dieses Repo ist leider nicht sehr gut organisiert. Ich versuche es zu verbessern, aber es ist inzwischen sehr groß geworden.
-Ich weiß nicht wieso, aber ich habe zuerst gelernt, Pull-Requests zu verwenden und erst später, wie man Merges mit der git CLI macht. Ich werde ab Version 1.2.1 wahrscheinlich auf letzteres umsteigen.
-
-Und bitte ignoriert meinen fürchterlichen Commit Stil in den Anfängen des Projekts. Dieses Repo ist eines meiner ersten überhaupt. Damals wusste ich nicht wirklich, wie man Commits beyeichnen soll. Die (meisten) Infos zu den Änderungen dieser Commits finden sich in der Datei Changelog.md, welche nur in älteren Versionen existiert. Später habe ich das dann geändert und normale Commit-Messages verwendet.
